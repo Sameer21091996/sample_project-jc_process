@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sample Project
 
 Welcome to **Sample Project**! This is a brief overview and setup guide for getting started with this Django web application.
@@ -47,3 +48,6 @@ python manage.py makemigrations <appname>
 ```bash
 python manage.py migrate <appname>
 ```
+=======
+# sample_project-jc_process
+>>>>>>> b7890c1e8d2a0b567ffb46ff6fa25153c21eec8e
