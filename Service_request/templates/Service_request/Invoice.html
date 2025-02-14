@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 750px;
+      margin: 0 auto;
+      padding: 20px;
+      position: relative;
+      max-height: 100vh;
+      overflow-y: scroll;
+    }
+
+    body::before {
+      content: "INVOICE";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 120px;
+      color: rgba(220, 220, 220, 0.3);
+      white-space: nowrap;
+      z-index: -1;
+      font-weight: bold;
+    }
+
+    .logo-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .logo-left {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .logo-center img {
+      height: 40px;
+    }
+
+    .logo-right {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .contact-info {
+      text-align: center;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .address-box {
+      border: 1px solid black;
+      text-align: center;
+      padding: 3px;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid black;
+      margin-bottom: 10px;
+    }
+
+    .grid-header {
+      grid-column: 1 / -1;
+      border-bottom: 1px solid black;
+      display: flex;
+      justify-content: space-between;
+      padding: 5px;
+      background-color: #fff;
+    }
+
+    .grid-header-left {
+      font-weight: bold;
+    }
+
+    .grid-header-right {
+      text-align: right;
+    }
+
+    .grid-section {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+    }
+
+    .grid-label {
+      padding: 3px;
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
+      font-size: 11px;
+    }
+
+    .grid-value {
+      padding: 3px;
+      border-bottom: 1px solid black;
+      font-size: 11px;
+    }
+
+    .grid-section:last-child .grid-label,
+    .grid-section:last-child .grid-value {
+      border-bottom: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 3px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #fff;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .amount-cell {
+      text-align: right;
+    }
+
+    .total-row {
+      font-weight: bold;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    .summary-table table {
+      width: 100%;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid black;
+      padding: 3px;
+      text-align: left;
+    }
+
+    .summary-table th {
+      background-color: #fff;
+      font-weight: bold;
+    }
+
+    .summary-table .amount-cell {
+      text-align: right;
+    }
+
+    .summary-table .adjustment-row td {
+      text-align: left;
+      font-weight: bold;
+    }
+
+    /* Remove the split-cell classes since we're using regular borders */
+    .summary-table td {
+      border: 1px solid black !important;
+    }
+
+    .footer-section {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0;
+      border: 1px solid black;
+      margin-bottom: 5px;
+    }
+
+    .footer-label {
+      padding: 3px;
+      border-right: 1px solid black;
+      font-size: 11px;
+      width: 150px;
+    }
+
+    .footer-value {
+      padding: 3px;
+      font-size: 11px;
+    }
+
+    .footer-text {
+      text-align: center;
+      font-style: italic;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .print-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .table-header th {
+      width: 50%;
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .label {
+      font-weight: bold;
+      white-space: nowrap;
+      width: 10%
+    }
+
+    .wide {
+      width: 80%;
+    }
+
+    .small {
+      width: 20%;
+    }
+
+    .right-align {
+      text-align: right;
+    }
+
+
+    
+  </style>
+</head>
+
+<body>
+  <div class="logo-section">
+    <div class="logo-left">AUTO SPORT</div>
+    <div class="logo-right">أوتو سبورت</div>
+  </div>
+
+
+  <div class="contact-info">
+    Tel : 02-6671665 Email : bateensuzukiworkshop@alyousuf.com
+  </div>
+
+  <div class="address-box">
+    Shop # 11, Auto Sport Al Bateen, PO Box: , DELMA COOPERATIVE SOCIETY Building, Abu Dhabi, United Arab Emirates
+  </div>
+  <table>
+    <tr>
+      <th colspan="3">TAX INVOICE</th>
+      <th colspan="3">CREDIT SALE</th>
+    </tr>
+    <tr>
+      <td width="16.67%">Bill To</td>
+      <td width="16.67%" data-field="bill-to"></td>
+      <td width="16.67%">Unit Sale Date</td>
+      <td width="16.67%" data-field="unit_sale_date"></td>
+      <td width="16.67%">Invoice Date</td>
+      <td width="16.67%" data-field="invoice_date"></td>
+    </tr>
+    <tr>
+      <td rowspan="3">Address</td>
+      <td rowspan="3" data-field="address"></td>
+      <td>Unit Sale Order</td>
+      <td data-field="unit_sale_order"></td>
+      <td>Invoice No</td>
+      <td data-field="invoice_no"></td>
+    </tr>
+    <tr>
+      <td>Unit Sale Loc</td>
+      <td data-field="unit_sale_loc"></td>
+      <td>TRN</td>
+      <td data-field="trn"></td>
+    </tr>
+    <tr>
+      <td>Make</td>
+      <td data-field="make"></td>
+      <td>Job Card Type</td>
+      <td data-field="job_card_type"></td>
+    </tr>
+    <tr>
+      <td rowspan="2">Cust. TRN</td>
+      <td rowspan="2" data-field="customer_trn"></td>
+      <td>Model</td>
+      <td data-field="model"></td>
+      <td>Date IN</td>
+      <td data-field="date_in"></td>
+    </tr>
+    <tr>
+      <td>VIN</td>
+      <td data-field="vin"></td>
+      <td>RO Number</td>
+      <td data-field="ro_number"></td>
+    </tr>
+    <tr>
+      <td>Ship To</td>
+      <td data-field="ship-to"></td>
+      <td>Registration</td>
+      <td data-field="registration"></td>
+      <td>Work Department</td>
+      <td data-field="work_department"></td>
+    </tr>
+    <tr>
+      <td rowspan="3">Address</td>
+      <td rowspan="3" data-field="shipping_address"></td>
+      <td>Mileage</td>
+      <td data-field="mileage"></td>
+      <td>LPO/WO/Claim</td>
+      <td data-field="lpo_wo_claim"></td>
+    </tr>
+    <tr>
+      <td>Registered BT</td>
+      <td data-field="registered_bt"></td>
+      <td>Location</td>
+      <td data-field="location"></td>
+    </tr>
+    <tr>
+      <td>Receipt No</td>
+      <td data-field="receipt_no"></td>
+      <td>Due Date</td>
+      <td data-field="due_date"></td>
+    </tr>
+    <tr>
+      <td>Tel No</td>
+      <td data-field="tel_no"></td>
+      <td>Pre Job Card</td>
+      <td data-field="pre_job_card"></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>SN</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Unit Price (AED)</th>
+        <th>Qty</th>
+        <th>Gross Amount (AED)</th>
+        <th>Discount (AED)</th>
+        <th>Total Price Excl. VAT (AED)</th>
+        <th>VAT %</th>
+        <th>VAT AED</th>
+        <th>TOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Will be populated by JavaScript -->
+    </tbody>
+  </table>
+
+  <div class="summary-table">
+    <table>
+      <thead>
+        <tr>
+          <th>SN</th>
+          <th>Particulars</th>
+          <th>Receipt No</th>
+          <th>Date</th>
+          <th>Ref No</th>
+          <th>PT Invoice No</th>
+          <th>Amount Collected</th>
+          <th>Unadjusted Advance</th>
+          <th>Advance Adjusted</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Will be populated by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+
+  <div style="text-align: right; margin-bottom: 10px;">
+    <table style="width: auto; margin-left: auto;">
+      <tr>
+        <td>Total Invoice Value Excl. VAT</td>
+        <td class="amount-cell"></td>
+      </tr>
+      <tr>
+        <td>VAT</td>
+        <td class="amount-cell"></td>
+      </tr>
+      <tr>
+        <td>Balance Due</td>
+        <td class="amount-cell"></td>
+      </tr>
+    </table>
+  </div>
+
+  <div>
+    <table>
+      <tr>
+        <td class="label">Customer Complain</td>
+        <td class="separator">:</td>
+        <td colspan="4" class="wide"></td>
+      </tr>
+      <tr>
+        <td class="label">Resolution/Recomemendation</td>
+        <td class="separator">:</td>
+        <td colspan="4" class="wide"></td>
+      </tr>
+      <tr>
+        <td class="label">Next Due Date</td>
+        <td class="separator">:</td>
+        <td colspan="4" class="wide"></td>
+      </tr>
+      <tr>
+        <td class="label">Invoice By</td>
+        <td class="separator">:</td>
+        <td class="small"></td>
+        <td class="label left-align">Print Date</td>
+        <td class="separator">:</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="footer-text">
+    *This is computer generated invoice no stamp or signature required
+  </div>
+
+
+
+  <script src="{% static 'js/invoice.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+</body>
+
+</html>

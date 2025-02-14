@@ -1,0 +1,90 @@
+<template id="select_account_temp">
+  <div data-classification="select" data-type="select" class="formulate-input" data-has-errors="true">
+    <div :class="context.wrapper">
+      <label for="account_type" class="formulate-input-label formulate-input-label--before">[[context.label]]</label>
+      <div :class="`formulate-input-element formulate-input-element--${context.class}`" :data-type="context.type">
+        <select class="form-control select2_mobile_number" :name="context.name" :id="context.id" v-model="context.model"
+          v-bind="context.attributes">
+        </select>
+        <input type="hidden" name="mobile_number">
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<script>
+  Vue.component('selectaccountcomp', {
+    template: '#select_account_temp',
+    delimiters: ['[[', ']]'],
+    props: {
+      context: {
+        type: Object,
+        required: true
+      },
+    },
+    data() {
+      return {
+        selectedIndex: 0
+      }
+    },
+    mounted() {
+      var self = this;
+      var edit_data_numbers = [];
+      //initilizing select2
+      $('.select2_mobile_number').select2({
+
+        data: edit_data_numbers,
+        minimumInputLength: 3,
+        tags: true,
+        placeholder: "Primary Phone number",
+        ajax: { //load matching accounts based on given primary number
+          url: this.context.data_url,
+          processResults: function (data) {
+            return {
+              results: $.map(data.items, function (value, key) {
+                return {
+                  id: value[0],
+                  text: value[1] + '-' + value[2]
+                }
+              })
+            };
+          }
+        },
+        createTag: function (params) { //create new tag if the account primary number exists
+          var term = $.trim(params.term);
+          if (term === '') {
+            return null;
+          }
+          return {
+            id: 'new_num_' + term, //attaching prefix 'new_num' to identify newly added tag/primary number
+            text: term,
+            newTag: true
+          }
+        }
+
+      });
+
+
+      //fetchin account information when select the exising account primary number
+      $('.select2_mobile_number').on("change", function (e) {
+        var account_id = $("#mobile_number option:selected").val();
+        self.context.model = this.selectedIndex = account_id
+        EventBus.$emit("mobile_number_selected", account_id);
+      });
+
+    },
+    watch: {
+      model() {
+        this.selectedIndex = this.context.model
+        console.log('this.selectedIndex', this.selectedIndex)
+      }
+    },
+    computed: {
+      model() {
+        console.log('this.context.model', this.context.model)
+        return this.context.model
+      }
+    }
+  })
+</script>

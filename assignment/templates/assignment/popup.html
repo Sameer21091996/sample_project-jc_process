@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Date in Table</title>
+    <style>
+        /* Table styles */
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .editable {
+            cursor: pointer;
+            color: #007BFF;
+        }
+
+        .editable:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: absolute;
+            background-color: #fefefe;
+            padding: 15px;
+            border: 1px solid #888;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Technician</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Complete Report</td>
+                <td class="editable" data-fieldtype="dropdown-selector"></td>
+                <td class="editable" data-fieldtype="date-selector">2024-12-20</td>
+                <td class="editable" data-fieldtype="time-selector">2024-12-20</td>
+        
+            
+            </tr>
+            <tr>
+                <td>Complete Report</td>
+                <td class="editable" data-fieldtype="dropdown-selector"></td>
+                <td class="editable" data-fieldtype="date-selector">2024-12-20</td>
+                <td class="editable" data-fieldtype="time-selector">2024-12-20</td>
+        
+            
+            </tr>
+            
+            
+        </tbody>
+    </table>
+
+     
+    <div id="dateModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+        <div class="time-selector popup-selector" style="display: none;">
+            <label>Select Time:</label>
+            <input type="time" class="time-picker" id="timePicker">
+        </div>
+        <div class="date-selector popup-selector" style="display: none;">
+            <label>Select Date:</label>
+            <input type="date" id="datePicker">
+        </div>
+        <div class="dropdown-selector popup-selector" style="display: none;">
+            <select id="dropdownPicker">
+                <option value="">-</option>
+                <option value="Abbu Bakar" selected="">Abbu Bakar</option><option value="Kaif">Kaif</option><option value="SHAHID">SHAHID</option>
+            </select>
+           
+        </div>
+           
+
+       
+            <br><br>
+            <button id="saveBtn">Save</button>
+        </div>
+    </div>
+
+    <script>
+        // Get modal elements
+        const modal = document.getElementById("dateModal");
+        const datePicker = document.getElementById("datePicker");
+        const timePicker = document.getElementById("timePicker");
+        const dropdownPicker = document.getElementById("dropdownPicker");
+        const saveBtn = document.getElementById("saveBtn");
+        const closeModal = document.getElementById("closeModal");
+
+        let currentTd; // Variable to store the clicked table cell
+
+        // Open modal near the clicked cell
+        document.querySelectorAll(".editable").forEach(td => {
+            td.addEventListener("click", (e) => {
+                const fieldType = td.getAttribute("data-fieldtype");
+                document.querySelectorAll(".popup-selector").forEach(selector => {
+                        selector.style.display = "none";
+                        
+                    })
+
+                if (fieldType === "date-selector") {
+                  document.querySelector(".date-selector").style.display = "block";
+                    
+                }
+                if (fieldType === "dropdown-selector") {
+                  document.querySelector(".dropdown-selector").style.display = "block";
+                    
+                }
+                if (fieldType === "time-selector") {
+                  document.querySelector(".time-selector").style.display = "block";
+                    
+                }
+
+
+                currentTd = e.target;
+                datePicker.value = currentTd.innerText; // Pre-fill with current date
+                
+                // Get the bounding rectangle of the clicked cell
+                const rect = currentTd.getBoundingClientRect();
+                modal.style.top = `${rect.top + window.scrollY + rect.height + 5}px`; // Position below the cell
+                modal.style.left = `${rect.left + window.scrollX}px`; // Align horizontally with the cell
+                modal.style.display = "block";
+            });
+        });
+
+        // Close modal
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        // Save date and update table cell
+        saveBtn.addEventListener("click", () => {
+            if (currentTd && currentTd.getAttribute("data-fieldtype") === "date-selector") {
+                if (currentTd && datePicker.value) {
+                    currentTd.innerText = datePicker.value; 
+                   
+                    modal.style.display = "none"; // Close modal
+                }
+                
+            }
+            if (currentTd && currentTd.getAttribute("data-fieldtype") === "time-selector") {
+                if (currentTd && timePicker.value) {
+                    currentTd.innerText = timePicker.value; 
+                   
+                    modal.style.display = "none"; // Close modal
+                }
+                
+            }
+            if (currentTd && currentTd.getAttribute("data-fieldtype") === "dropdown-selector") {
+                if (currentTd && dropdownPicker.value) {
+                    currentTd.innerText = dropdownPicker.value; 
+                   
+                    modal.style.display = "none"; // Close modal
+                }
+                
+            }
+           
+        });
+
+        // Close modal when clicking outside the modal content
+        window.addEventListener("click", (e) => {
+            if (e.target !== modal && !modal.contains(e.target) && e.target !== currentTd) {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

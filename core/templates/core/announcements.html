@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AY  Connect | User Announcements</title>
+    {% load static %}
+    <!-- Google Font: Source Sans Pro -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="{% static 'plugins/fontawesome-free/css/all.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+      integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+      crossorigin="anonymous"
+    />
+    <!-- icheck bootstrap -->
+    <link
+      rel="stylesheet"
+      href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}"
+    />
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}" />
+    <!-- jQuery -->
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'js/adminlte.min.js' %}"></script>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <style>
+      ion-icon {
+        font-size: 64px;
+        color: #fff;
+        --ionicon-stroke-width: 16px;
+      }
+      #myVideo {
+        position: fixed;
+        margin: 0;
+        padding: 0;
+        min-width: 100%;
+        min-height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="row m-0" style="width: 100vw; height: 100vh;">
+      <video autoplay muted loop id="myVideo">
+        <source src={% static "videos/2.mp4"%} type="video/mp4" />
+      </video>
+      <div
+        class="col-8 d-flex justify-content-center align-items-center"
+        style="height: 100vh; box-sizing: border-box; padding: 0 4px;background: rgb(255 255 255 / 37%);"
+      >
+        <form action="#" method="post" style="background: rgb(255 255 255 / 37%);
+        height: 300px;">
+          {% csrf_token %}
+          <div class="row m-4 pl-5">
+            <style>
+              .tile {
+  color: white;
+  padding: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+}
+.tile--expanded {
+  z-index: 1000;
+}
+.tile--red {
+  background-color: #EC644C;
+}
+.tile--blue {
+  background-color: #3498DB;
+}
+.tile--purple {
+  background-color: #9B59B6;
+}
+.tile--orange {
+  background-color: #F57C00;
+}
+.tile--green {
+  background-color: #2AB866;
+}
+.tile--yellow {
+  background-color: #FFA000;
+}
+
+.app .grid .row {
+  height: 100px;
+  display: flex;
+}
+.app .grid .row:not(:last-child) {
+  margin-bottom: 10px;
+}
+.app .grid .row .grid-item {
+  width: 100px;
+}
+.app .grid .row .grid-item:not(:last-child) {
+  margin-right: 10px;
+}
+            </style>
+            <div class="app">
+              <div class="grid">
+                <div class="row">
+                  {% for item in menu.main_menu %}
+                      {% if  item.id in user_menus %}
+                      <div class="text-center">
+
+                        <div class="rounded-circle  grid-item tile {{item.color_class}}">
+                          <a
+                          href="/home?open={{item.url}}" >
+                            <ion-icon name="{{item.icon_class}}" style="
+                            width: 100%;
+                            padding-top: 8px;
+                            "></ion-icon>
+
+                          </a>
+                        </div>
+                        <label >{{item.name}}</label>
+                      </div>
+                        {% endif %} 
+                    {% endfor %} 
+                  <!-- <div class="rounded-circle  grid-item tile tile--orange">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--green">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--blue">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--green">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--blue">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--red">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--orange">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--red">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--blue">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--orange">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div>
+                  <div class="rounded-circle  grid-item tile tile--green">
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+
+
+
+            
+          </div>
+        </form>
+      </div>
+      <div
+        class="col-4"
+        style="
+          height: 100vh;
+          background: rgb(255 255 255 / 65%);
+          box-sizing: border-box;
+          padding-top: 4px;
+        "
+      >
+        <div class="card-header text-center">
+          <a href="#" class="h1">Announcements</a>
+        </div>
+        {% if announcements %}
+        <div
+          class="announcements"
+          style="width: 100%; height: 90%; box-sizing: border-box"
+        >
+          <div
+            class=""
+            style="
+              width: 100%;
+              height: 100%;
+              box-sizing: border-box;
+              marging: 16px;
+              padding: 32px;
+            "
+          >
+            <marquee
+              direction="up"
+              scrollamount="4"
+              style="
+                width: 100%;
+                height: 100%;
+                box-sizing: border-box;
+                marging: 16px;
+                padding: 32px;
+              "
+            >
+              <h2 class="font-italic">
+                <ul>
+                  {% for announcement in announcements %}
+                  <li>{{ announcement.text }}</li>
+                  {% endfor %}
+                </ul>
+              </h2>
+            </marquee>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

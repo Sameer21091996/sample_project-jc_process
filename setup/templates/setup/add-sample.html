@@ -1,0 +1,636 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+dt{
+    margin-top:15px
+}
+dd{
+    margin-top:15px
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<div>
+    {% comment %} <datatableheadercomp :header_meta='defaultProp.header_meta'> </datatableheadercomp> {% endcomment %}
+    <div class="tab-content">
+        <!-- Content Wrapper. Contains page content -->
+        <div class="" v-if="receipt_methods.length">
+            <div class="d-none" id="receipt_div">
+                <div class="invoice p-3 mb-3">
+                    <div class="card-header">
+                    </div>
+
+
+                    <form id="receiptForm" class="form-horizontal" >
+
+                        <!-- title row -->
+                        <div class="row form-group ">
+                            <div class="col-4">
+                            </div>
+                            <div class="col-5">
+                            </div>
+                            <div class="col-3">
+                            </div>
+                        </div>
+
+                        <!-- info row -->
+                        <div class="row invoice-info">
+                            <div class="col-sm-6 invoice-col">
+                                <div class="form-horizontal">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Entry Fields</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <label for="inputEmail3" class="col-sm-5 col-form-label">Receipt
+                                                Type  </label>
+                                            <div class="col-sm-7">
+                                                <select class="form-control select2_ip" name="receipt_type"
+                                                    id="receipt_type">
+                                                    <option v-for="option in receipt_methods"
+                                                        :value="option.lookup_value_id">
+                                                        [[option.code]]
+                                                    </option>
+                                                </select>
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-5 col-form-label">Receivable Levels</label>
+                                            <div class="col-sm-7">
+                                                <select name="receivable_levels" id="receivable_levels"
+                                                    class="receivable_levels" style="width: 100% ; " required>
+                                                    <option value=""> Select Receivable level </option>
+                                                    <option v-for="option in receivable_levels" :value="option.id">
+                                                        [[option.level_name]]
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group row"  v-if="!cash && !pdc" >
+                                            <label class="col-sm-5 col-form-label">Receipt number</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" name="receipt_number"
+                                                    id="receipt_number">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row" v-if="bank || cheque">
+                                            <label class="col-sm-5 col-form-label">Accounting Date</label>
+                                            <div class="col-sm-7">
+                                                <input type="date" class="form-control" name="gl_date"
+                                                    id="gl_date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" v-if="pdc">
+                                            <label class="col-sm-5 col-form-label">PDC Batch Number</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" name="remit_batch"
+                                                    id="remit_batch">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row ">
+                                            <label class="col-sm-5 col-form-label">Customer</label>
+                                            <div class="col-sm-7">
+                                                <select name="main_customer_id" id="searchCust" style="width: 100% ; ">
+                                                    <option></option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        
+                                        <div class="form-group row "  v-if="cheque">
+                                            <label class="col-sm-5 col-form-label">Customer Bank name</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" name="customer_bank_name" id="customer_bank_name"
+                                                class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row " v-if="cheque">
+                                            <label class="col-sm-5 col-form-label">Customer Bank branch</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" name="customer_bank_branch" id="customer_bank_branch"
+                                                class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row " v-if="cheque">
+                                            <label class="col-sm-5 col-form-label">Customer IBAN Number</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" name="customer_bank_account" id="customer_bank_account"
+                                                class="form-control">
+                                            </div>
+                                        </div>
+                                       
+
+                                        
+                                        <div class="form-group row " v-if="!pdc">
+                                            <label class="col-sm-5 col-form-label">Amount </label>
+                                            <div class="col-sm-7">
+                                                <input type="text" name="amount" id="amount"
+                                                class="form-control" required >
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" v-if="credit_card">
+                                            <label class="col-sm-5 col-form-label">Credit Card Machine Id </label>
+                                            <div class="col-sm-7">
+                                                <input type="text" name="credit_card_machine" id="credit_card_machine"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row" v-if="!pdc">
+                                            <label class="col-sm-5 col-form-label">Comments</label>
+                                            <div class="col-sm-7">
+                                                <textarea name="comments" class="form-control"> </textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row" v-if="cheque">
+                                            <label class="col-sm-5 col-form-label">Attachments</label>
+                                            <div class="col-sm-7  ">
+                                                <label for="formFileSm" class="form-label"> Emirates ID Copy</label>
+                                                <div class="col-sm-12 row">
+                                                    <input class="col-sm-9 form-control form-control-sm "  type="file" name="emirates_id_copy" id="emirates_id_copy" @change="loadFile($event)"/> 
+                                                    <div class="col-sm-3 d-none"> <a class="link" download> Download </a></div>
+                                                </div>
+
+                                                <label for="formFileSm" class="form-label"> Trade License Copy </label>
+                                                <div class="col-sm-12 row">
+                                                    <input class="col-sm-9 form-control form-control-sm" type="file" name="trade_license_copy"  id="trade_license_copy" @change="loadFile($event)"/>
+                                                    <div class="col-sm-3 d-none">  <a class="link" download> Download </a> </div>
+                                                </div>
+                                                
+                                                <label for="formFileSm" class="form-label"> Passport Copy </label>
+                                                <div class="col-sm-12 row">
+                                                    <input class="col-sm-9 form-control form-control-sm" type="file" name="passport_copy" id="passport_copy" @change="loadFile($event)"/>
+                                                    <div class="col-sm-3 d-none">  <a class="link" download> Download </a> </div>
+                                                </div>
+
+                                                <label for="formFileSm" class="form-label"> Others </label>
+                                                <div class="col-sm-12 row">
+                                                    <input class="col-sm-9 form-control form-control-sm" type="file" name="other_file" id="other_file" @change="loadFile($event)"/>
+                                                    <div class="col-sm-3 d-none">  <a class="link" download> Download </a> </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    	
+
+                                    <div class="card-body" v-show="pdc">
+                                        <a id="addRow" class="btn btn-secondary btn-xs">Add new row</a>
+                                            <table id="pdc_table" class="table table-bordered table-hover dataTable dtr-inline" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Receipt Number</th>
+                                                        <th>Receipt Amount</th>
+                                                        <th>Accounting date </th>
+                                                        <th>Customer Bank name</th>
+                                                        <th>Customer Bank Branch</th>
+                                                        <th>Comments</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <!-- /.col -->
+                            {% comment %} <div class="col-sm-2 invoice-col">
+                            </div> {% endcomment %}
+                            <!-- /.col -->
+                            <div class="col-sm-6 invoice-col">
+                                <div class="">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Auto populated Fields</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <dl class="row">
+                                            <dt class="col-sm-5">Customer Name</dt>
+                                            <dd class="col-sm-7" id="main_cust"> </dd>
+                                            <dt class="col-sm-5">Customer Number</dt>
+                                            <dd class="col-sm-7" id="main_customer_number"> </dd>
+                                            <dt class="col-sm-5">Receipt Method</dt>
+                                            <dd class="col-sm-7" id="receipt_method"></dd>
+                                            <dt class="col-sm-5">Entry Date</dt>
+                                            <dd class="col-sm-7 cur_date" id="entry_date"></dd>
+                                            <dt class="col-sm-5">Receipt Date</dt>
+                                            <dd class="col-sm-7 cur_date" id="receipt_date"></dd>
+                                            <dt class="col-sm-5">Accounting Date</dt>
+                                            <dd class="col-sm-7 cur_date" id="accounting_date"></dd>
+                                            <dt class="col-sm-5">Banking status</dt>
+                                            <dd class="col-sm-7" id="banking_status"></dd>
+                                            <dt class="col-sm-5">Settlement status</dt>
+                                            <dd class="col-sm-7" id="settlement_status"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.col -->
+                        </div>
+
+                        <input type="hidden" name="receipt_id" id="receipt_id" value="">
+                        <!-- this row will not appear when printing -->
+                        <div class="row no-print">
+                            <div class="col-12 text-center">
+
+                                {% comment %} <button type="button" class="btn btn-success" id="save_btn"  @click="saveReceipt()"">
+                                    Save
+                                </button> {% endcomment %}
+
+                                {% comment %} <button type="button" class="btn btn-warning d-none after-save" @click="openPreview()">
+                                    Preview
+                                </button> {% endcomment %}
+
+                                {% comment %} <button type="button" id="finalize" class="btn btn-primary after-save"
+                                    style="margin-right: 5px;" @click="saveReceipt(true)">
+                                    Finalize
+                                </button> {% endcomment %}
+
+                                <button class="btn btn-primary  after-save" type="submit">Finalize</button>
+
+                                <button type="button" id="reset" class="btn btn-danger after-save"
+                                    style="margin-right: 5px;" @click="resetForm()">
+                                    Reset
+                                </button>
+
+                                
+
+                                <button type="button" class="btn btn-warning after-save" @click="saveReceipt()">
+                                    PDF Preview
+                                </button>
+
+                                <a href="invoice-print.html" rel="noopener" id="print" target="_blank"
+                                    class="btn btn-default d-none" onclick="printPDF()">
+                                    <i class="fas fa-print"></i> Print
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <!-- /.content -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %}
+
+{% comment %} {% include 'components/datatableheadercomp.html' %}
+
+{% include 'components/columnsettingcomp.html' %} {% endcomment %}
+
+<script>
+
+    
+
+    vAppProperties.data = Object.assign(vAppProperties.data, {
+        'receipt_methods': {{ receipt_methods | safe }},
+        'receivable_levels': {{ receivable_levels | safe }},
+        'cash' : true, 'credit_card' : false,'bank' : false, 'cheque' : false, 'pdc' : false,
+        
+    })
+
+    vAppProperties.mounted = function () {
+
+        var self = this;
+        var defs = localStorage.getItem('defs');
+
+        $('#receiptForm').validate({
+            {% comment %} rules: {
+              email: {
+                required: true,
+                email: true,
+              },
+            },
+            messages: {
+              email: {
+                required: "Please enter a email address",
+                email: "Please enter a valid email address"
+              },
+            }, {% endcomment %}
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+              error.addClass('invalid-feedback');
+              element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+              $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+              $(element).removeClass('is-invalid');
+            }
+        });
+
+        $('#receiptForm').submit(function (event) {
+            console.log('triggered')
+            event.preventDefault();
+            
+            if ($('#receiptForm')[0].checkValidity() === false) {
+                event.stopPropagation();
+            } else {
+                //do your ajax submition here
+                self.saveReceipt(true)
+            }
+            $('#receiptForm').addClass('was-validated');
+        });
+
+        //pdc table
+        var t =$('#pdc_table').DataTable({
+            "paging": false,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+
+        var counter = 1;
+        $('#addRow').on('click', function () {
+            t.row.add([ '<input type="text" class="form-control" name="receipt_number[]">', 
+                        '<input type="text" class="form-control" name="amount[]">', 
+                        '<input type="date" class="form-control" name="gl_date[]">', 
+                        '<input type="text" class="form-control" name="customer_bank_name[]">', 
+                        '<input type="text" class="form-control" name="customer_bank_branch[]">', 
+                        '<input type="text" class="form-control" name="comments[]">'
+                        ]).draw(false);
+            counter++;
+        });    
+        
+        
+
+        $('#receipt_type').select2({})
+        $('#receivable_levels').select2({
+            placeholder: 'Select receivable level'
+        })
+        $("#searchCustBank").select2({})
+        $('#searchCust').select2({
+            ajax: {
+                url: '{% url 'search-customers' %}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    if ($('.select2-results').find('.search-loader').length == 0) {
+                        $('.select2-results').append(
+                            '<div class="d-flex search-loader justify-content-center p-2"><div class="spinner-grow text-info" role="status"><span class="sr-only">Loading...</span></div></div>'
+                        );
+                    }
+                    return {
+                        q: params.term, // search term
+                        type: 'all', //ocument.getElementById('serach_based_on_type').value,
+                        page: params.page
+                    };
+
+                },
+                processResults: function (data, params) {
+                    $('.search-loader').remove();
+                    params.page = params.page || 1;
+                    return {
+                        results: data.items,
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Search for a customer',
+            minimumInputLength: 3,
+            templateResult: self.formatRepo,
+            templateSelection: self.formatRepoSelection,
+            //   dropdownAutoWidth : true
+
+        });
+
+
+        $(document).on('select2:select', '#searchCust', function (e) {
+            var id = e.params.data.id;
+            var customer_name = e.params.data.customer_name;
+            var customer_number = e.params.data.customer_number;
+            var main_customer_id = e.params.data.id;
+            document.getElementById('main_cust').innerText = customer_name;
+            document.getElementById('main_customer_number').innerText = customer_number;
+        })
+
+
+        $(document).on('select2:select', '#receipt_type', function (e) {
+            var id = e.params.data.id;
+            self.cash  = self.credit_card = self.bank = self.cheque = self.pdc = false
+            if (id == 22 || id == 23) {
+                self.credit_card = true
+            }else if(id == 24){
+                self.bank = true
+            }else if(id == 25){
+                self.cheque = true
+            }else if(id == 26){
+                self.pdc = true
+                $('#addRow').trigger('click')
+            }else{
+                self.cash  = true
+            }
+        })
+
+        $(document).on('select2:select', '#receivable_levels', function (e) {
+            var id = e.params.data.id;
+            let receipt_type_id = $("#receipt_type").val()
+            var url = '/receipt/get_populated_values/' + id + '/' + receipt_type_id;
+            axios.get(url)
+                .then(response => {
+                    receipt_method = response.data.receipt_method
+                    $("#receipt_method").text(receipt_method)
+                    $(".cur_date").text(moment().format('D-MMM-YY'))
+                    $("#receipt_method").text(receipt_method)
+                    $("#banking_status").text(response.data.banking_status)
+                    $("#settlement_status").text(response.data.settlement_status)
+                })
+                .catch(e => {
+                    console.log(e)
+                });
+        })
+
+        $("#receipt_div").removeClass('d-none')
+    }
+
+    vAppProperties.methods = Object.assign(vAppProperties.methods, {
+        formatRepoSelection(repo) {
+            return repo.text || repo.customer_name;
+        },
+        formatRepo(repo) {
+            if (repo.loading) {
+                return 'Searching for customer...';
+            }
+            var $container =
+                '<table style="width: 100%;font-size:14px;"><tr> <th class="small" scope="row">Customer Name:</th>\
+                        <td>' + repo.customer_name + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th class="small" scope="row">Telephone No:</th>\
+                        <td>' + repo.default_phone_no + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th class="small" scope="row">Email:</th>\
+                        <td>' + repo.additional_email_address + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th class="small" scope="row">Mobile No:</th>\
+                        <td>' + repo.default_mobile_no + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th class="small" scope="row">Account No:</th>\
+                        <td>' + repo.account_number + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th class="small" scope="row">TRN No:</th>\
+                        <td>' + repo.trn_number + '</td>\
+                    </tr>\
+                </table>'
+
+            var str = document.querySelector(
+                "body > span > span > span.select2-search.select2-search--dropdown > input").value
+
+            str = (str.toUpperCase()).trim()
+            str_arr = str.split(' ');
+            for (var i = 0; i < str_arr.length; i++) {
+                str = str_arr[i]
+                if (str != '') {
+                    $container = $container.replaceAll(str,
+                        "<span class='font-weight-bold' style='color: yellow;'>" + str + "</span>");
+                }
+
+            }
+            return $($container);
+        },
+        saveReceipt(isFinalize=false){
+            
+            if ($('#receiptForm')[0].checkValidity() === false) {
+                console.log('validation failed')
+                return false
+            }
+            var formData = new FormData();
+            let form_data = $('#receiptForm').serializeArray().reduce((function (acc, val) {
+                field_name = val.name.replace('[', '_').replace(']', '')
+                if(field_name in acc)
+                    typeof acc[field_name] === 'string' ? acc[field_name] = [ acc[field_name] , val.value ] :  acc[field_name].push(val.value)
+                else 
+                    acc[field_name] = val.value;
+                formData.append(field_name,acc[field_name])
+                return acc
+            }), {});
+            form_submit_url = " {{ view_meta.form_submit_url | safe }}";
+
+            if(this.cheque!==false){
+                if($('#emirates_id_copy').get(0).files.length!=0){
+                    emirates_id_copy = $('#emirates_id_copy').get(0).files[0];
+                    formData.append("emirates_id_copy", emirates_id_copy, emirates_id_copy.name);
+                }
+                if($('#trade_license_copy').get(0).files.length!=0){
+                    trade_license_copy = $('#trade_license_copy').get(0).files[0];
+                    formData.append("trade_license_copy", trade_license_copy, trade_license_copy.name);
+                }
+                if($('#passport_copy').get(0).files.length!=0){
+                    passport_copy = $('#passport_copy').get(0).files[0]
+                    formData.append("passport_copy", passport_copy, passport_copy.name);
+                }
+                if($('#other_file').get(0).files.length!=0){
+                    other_file = $('#other_file').get(0).files[0]
+                    formData.append("other_file", other_file, other_file.name);
+                }
+
+            }
+            
+            axios.post(form_submit_url, formData, {
+                    headers: {
+                        'X-CSRFTOKEN': '{{ csrf_token }}',
+                    },
+                })
+                .then(response => {
+                    receipt_id = response.data.receipt_id
+                    $("#receipt_id").val(receipt_id)
+                    message = response.data.message
+                    //toastr.success(message)
+                    $(".after-save").removeClass("d-none");
+                    if(isFinalize===false)
+                        this.openPreview()
+                    else
+                        this.finalize();
+                })
+                .catch(e => {
+                    console.log(e)
+                }); 
+        },
+        openPreview(removeActive=false) {
+            receipt_id = $("#receipt_id").val()
+            tab_url = 'receipt/action/preview/' + receipt_id
+            tab_title = 'Preview receipt ' + receipt_id
+            tab_name = 'viewreceipt' + receipt_id
+            console.log('removeActive1--->',removeActive)
+            this.addOpenIframePage(tab_url, tab_title, tab_name,'createTab',removeActive)
+        },
+        addOpenIframePage(tab_url, tab_title, tab_name,method='createTab',removeActive) {
+            var data = [method, tab_title, tab_url, tab_name, true,removeActive]
+            var event = new CustomEvent('addOpenIframePage', {
+                detail: data
+            })
+            window.parent.document.dispatchEvent(event)
+        },
+        finalize() {
+            receipt_id = $("#receipt_id").val()
+            console.log('receipt_id---->',receipt_id)
+            if(receipt_id!=''){
+                var url = '/receipt/finalize_receipt/' + receipt_id;
+                axios.get(url)
+                    .then(response => {
+                        receipt_id = response.data.receipt_id
+                        message = response.data.message
+                        toastr.success(message)
+                        console.log('toaster message--->', message)
+                        $("#print").removeClass("d-none");
+                        $("#save_btn").addClass("d-none");
+                        $("#finalize").addClass("d-none");
+                        var self = this;
+                        setTimeout(function(scope) { 
+                            self.openPreview(false)
+                            var event = new CustomEvent('closeTab', {
+                                detail: ['addreceipt']
+                            })
+                            window.parent.document.dispatchEvent(event)
+                        }, 1000);
+
+                        
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+                }
+        },
+        loadFile(e){
+            elm = $(e.target)
+            const file = e.target.files[0];
+            let objectURL = URL.createObjectURL(file);
+            link_elm = elm.parent().find('a.link')
+            link_elm.attr("download", file.name)
+            link_elm.attr("href", objectURL)
+            link_elm.parent().removeClass('d-none')
+        },
+        resetForm(){
+            $("#receiptForm").trigger('reset');
+            $("dd").text('');
+        }
+    })
+</script>
+
+{% endblock %}

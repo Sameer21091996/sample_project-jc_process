@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+    .dt-buttons.btn-group.flex-wrap {
+        float: right;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="card-body">
+    <div class="col-md-6">
+        <form id="permission-form">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="Employee role">Employee role [[edit_data.role_data.employee_role]] </label>
+                    <select  data-placeholder-selected="true" placeholder="Employee role" id="employee_role"
+                        name="employee_role" id="employee_role" class="form-control form_select2" >
+                        <option value="" disabled="disabled">
+                            Employee role
+                        </option>
+                        <option v-for="option in roles" :value="option.value" :selected="edit_data.role_data.employee_role == option.value" >
+                            [[option.label]]
+                        </option>
+                    </select>
+    
+                </div>
+                <div class="form-group">
+                    <label for="Navigation item">Navigation item</label>
+                    <select data-placeholder-selected="true" placeholder="Navigation item" id="navigation_item"
+                        name="navigation_item" id="navigation_item" class="form-control form_select2" >
+                        <option value="" disabled="disabled">
+                            Navigation item
+                        </option>
+                        <option v-for="option in nav_menus" :value="option.value" :selected="edit_data.role_data.navigation_item == option.value">
+                            [[option.label]] 
+                        </option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5> CRUD Access </h5>
+                        <!-- checkbox -->
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="full_access" :checked="edit_data.role_data.full_access == 'true' ? true: false"  >
+                                <label class="form-check-label">Full Access  </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="read_access" :checked="edit_data.role_data.read_access == 'true' ? true: false" >
+                                <label class="form-check-label">Read Access </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="edit_access" :checked="edit_data.role_data.edit_access == 'true' ? true: false" >
+                                <label class="form-check-label">Edit Access</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="create_access"  :checked="edit_data.role_data.create_access == 'true' ? true: false" >
+                                <label class="form-check-label">Create access</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="delete_access"  :checked="edit_data.role_data.delete_access == 'true' ? true: false"  >
+                                <label class="form-check-label">Delete access</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <h5> Custom button Access - [[edit_data.role_data.custom_data]] </h5>
+                        <div class="form-group">
+                            <div class="form-check" v-for="permission in custom_permissions" >
+                                <input class="form-check-input" type="checkbox" name="custom_permission"  :value="permission.value" >
+                                <label class="form-check-label">[[permission.label]]</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- Custom Javascript of page -->
+{% block js_files %}
+<script>
+
+    vAppProperties.data = Object.assign(vAppProperties.data,{
+        'roles': {{all_roles|safe}} ,
+        'employee_role' : '',
+        'nav_menus': {{nav_menus|safe}} ,
+        'navigation_item' : '',
+        'custom_permissions': {{custom_permissions|safe}} ,
+        'custom_permission':[],
+        'full_access': false,
+        'read_access': false,
+        'edit_access': false,
+        'create_access': false,
+        'delete_access': false,
+        'edit_data': {{edit_data|safe}},
+    })
+   
+    vAppProperties.mounted = function(){
+        self = this
+        $('.form_select2').select2({});
+        let  new_test = 123
+        $('#permission-form').on('submit', function(event){
+            event.preventDefault();
+            form = document.getElementById("permission-form");
+            var data = new FormData(form);
+            post_data = {}
+            for (var [key, value] of data) {
+                console.log(key, value)
+                if(key=='custom_permission'){
+                    if(post_data[key]==undefined)
+                        post_data[key]= [] 
+                    post_data[key].push(value)
+                }else{
+                    post_data[key] = true ? value=='on' : value 
+                }
+                
+            }
+            post_data['employee_role'] = $('#employee_role').find(":selected").val()
+            post_data['navigation_item'] = $('#navigation_item').find(":selected").val()
+            
+            let json_data = JSON.stringify(post_data)
+            let post_url = '/accounts/role_permissions'
+            axios.post(post_url,json_data ,
+                      {
+                        headers: {
+                            'X-CSRFTOKEN': '{{ csrf_token }}',
+                        },
+                    })
+                    .then(response => {
+                        console.log('response.data-->',response.data)
+                      {% comment %} var data = [response.data.list_src.slice(0,-1) , response.data.list_tab ]
+                      var event = new CustomEvent('refresTabPage', { detail: data })
+                      window.parent.document.dispatchEvent(event) {% endcomment %}
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+
+            console.log('post_data-->',post_data)
+
+        });
+    }
+</script>
+<!-- include custom component files -->
+
+{% endblock %}

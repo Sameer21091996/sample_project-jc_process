@@ -1,0 +1,84 @@
+{% load static %}
+
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="#" class="brand-link">      
+      <span class="brand-text font-weight-light" style="font-size: 20px;padding-left: 8%;">Reservation Process</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex" style="    margin-left: -12px;">
+        <div class="image">
+          <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block" id="u_full_name"  style="white-space: pre-wrap;    margin-top: -10px;">{{ request.session.user_full_name }}</a>
+        </div>
+      </div>
+
+      <div class="input-group input-group-sm">
+        <input class="form-control form-control-navbar" type="search" id="input" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-navbar"  style="background: white; "  type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+<script>
+var input = document.getElementById('input');
+input.onkeyup = function () 
+{
+    var filter = input.value.toUpperCase();
+    document.querySelectorAll(".has-treeview  > a > p")[1].innerText
+    var lis =document.querySelectorAll(".has-treeview  > a > p");  
+    for (var i = 0; i < lis.length; i++) 
+    {
+      var name =document.querySelectorAll(".has-treeview  > a > p")[i].innerText;
+      if ((name.toUpperCase()).includes(filter)) 
+        document.querySelectorAll(".has-treeview")[i].style.display = 'list-item'       
+      else
+        document.querySelectorAll(".has-treeview")[i].style.display =  'none';
+    }
+}
+
+</script>
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" style="    margin-left: -20px;">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+         
+               {% if dynamic_menu %}
+               {{dynamic_menu|safe}}
+            
+               {% endif %}
+            
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 id="active_breadcumb_w_title">Welcome</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active" id="active_breadcumb">Welcome</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <section class="content">
+      <div class="container-fluid">

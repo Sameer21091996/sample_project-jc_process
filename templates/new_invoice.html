@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Invoice Print  ||    {{ohid|safe}}  </title>
+<script src="{% static 'js/axios.min.js' %}"></script>
+<script src="{% static 'js/vue.min.js' %}"></script>
+</head>
+<style>
+/* Styles go here */
+
+.page-header, .page-header-space 
+{
+  height: 200px;
+}
+
+.page-footer, .page-footer-space 
+{
+  height: 410px;
+
+}
+
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid black; /* for demo */
+  background: yellow; /* for demo */
+}
+
+.page-header {
+  position: fixed;
+  top: 0mm;
+  width: 100%;
+  border-bottom: 1px solid black; /* for demo */
+  background: yellow; /* for demo */
+}
+
+.page 
+{
+  page-break-after: always;
+}
+
+@page {
+  margin: 10mm
+}
+
+@media print {
+   thead {display: table-header-group;} 
+   tfoot {display: table-footer-group;}
+   
+   button {display: none;}   
+   body {margin: 0;}
+}
+
+
+</style>
+
+
+
+<body>
+
+    <!-- <template> -->
+    <div class="invoice-box" id="v-invoice"  >   
+    
+            <div class="page-header" style="text-align: center">
+            
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                        <!-- <td style="width: 16%;">
+                            <img    v-if="invs[0].logo_path_special"  :src="base_url+'/'+invs[0].logo_path_special"    v-if="invs[0].org_id == '94'"    style="    padding-top: 1%;width:100%;float: left;">
+                        </td> -->
+                        <td style="text-align: center;">
+                            <img   v-if="invs[0].logo_path"  :src="base_url+'/'+invs[0].logo_path"  style="    width: 60%;" >
+                            <br>
+                            <br>
+                        
+                        </td>
+                    </tr>   
+                    <tr>
+
+                        <td colspan="2" class="t_c" style="    text-align: left;"> 
+                            [[invs[0].inv_loc_address]] ,   [[invs[0].ae_emirate]]    , [[invs[0].country]] 
+                            <br>
+                        </td>
+                    </tr> 
+                    
+                </table>
+
+
+            </div>
+
+            <div class="page-footer">
+                <table class="table ">                               
+                    <tbody> 
+                        <tr>
+            <td colspan="3">
+                
+                Products purchased within a period of 7 days from the invoice date are eligible for EXCHANGE ONLY, items should be in original packing and unused condition with Original invoice.
+                No Return/ Exchange / Warranty on items above 30% discounts.
+                
+            
+            </td>
+            
+            
+                        </tr>
+                        <tr>
+            
+                            <td colspan="3" style="text-align:right;">
+                            
+                                االمنتجات التي تم شرائها خلال سبعة أيام من تاريخ الفاتورة يمكن استبدالها فقط, ويجب أن تكون بالمغلّف الأصلي و غير مستعملة ويجب ابراز الفاتوره الاصلية.لا يمكن ارجاع أو استبدال أو ضمان المنتجات المخفّضة أكثر من30 %. 
+                        <br><br></td>
+                            
+                            
+                                        </tr>
+            
+                        <tr>
+                            <td>
+                                CUSTOMER SIGNATURE:
+                            </td>
+                            <td>
+                              
+                            </td>
+            
+                            <td>
+            
+                                COMPANY REPRESENTATIVE:  
+            
+                            </td>
+                            <td>
+                                [[ invs[0].sales_rep]] 
+                            </td>                
+                        </tr>
+            
+                        <tr>
+                            <td>
+                                Report Printed by:  
+                            </td>
+                            <td style="width: 25%;text-transform: uppercase;" >
+                                {{ user }}
+                            </td>
+            
+                            <td>
+                                Report Printed Date & time :
+                            </td>
+                            <td>
+            
+            
+                                
+                            </td>                
+                        </tr>
+            
+                        </tbody>
+                        </table>
+                                <br>
+                            
+                                        <div v-if="invs[0].org_id == '94'" class="col-md-12">
+                                            <table style="    width: 100%;" border="1">
+                                                <tr>                            
+                                                    <td class="border_td">
+                                                    Dubai
+                                                    </td>
+                                                    <td class="border_td">
+                                                    Abu Dhabi
+                                                    </td>
+                                                    <td class="border_td" >
+                                                    Ajman
+                                                    </td>
+                                                    <td class="border_td" >
+                                                    Fujairah
+                                                    </td>
+                                                    <td class="border_td" >
+                                                    Ras Al Khaimah
+                                                    </td>  
+                                                </tr>
+                                                <tr>                            
+                                                    <td class="border_td">
+                                                    04-5094013
+                                                    </td>
+                                                    <td class="border_td">
+                                                    02-5588890
+                                                    </td>
+                                                    <td class="border_td">
+                                                    06-7116000
+                                                    </td>
+                                                    <td class="border_td">
+                                                    09-2221188
+                                                    </td >
+                                                    <td class="border_td">
+                                                    07-2356900
+                                                    </td>  
+                                                </tr>		
+                                                <tr>	
+                                                    <td colspan="5" style="text-align: center;" class="border_td">			
+                                                    Website: www.aym.ae
+                                                    </td>
+                                                </tr>	
+            
+            
+                                                <tr>	
+                                                    <td colspan="2" style="border: none !important;text-align: center;" class="border_td">			
+                                                  
+                                                    </td>
+                                                    <td   style="border: none !important;">
+            
+                                                    <div style="    display: inline-flex;    text-align: center;    margin-left: 20px;">
+                                                        <br>
+                                                            <span>
+                                                                <img src="/media/logos/aym.ae.png"   style="    width: 31%;" />
+            
+                                                                <br> 
+                                                                <span>www.yamaha.aym.ae</span>
+            
+                                                            </span>
+            
+            
+                                                            <span>
+            
+                                                                    <img src="/media/logos/aymmotorsport.png"  style="   width: 31%;"/>
+                                                                    <br> 
+                                                                    <span>www.aymotorsports.com</span>
+            
+                                                            </span>
+                                                    </div>
+            
+                                                    </td>
+            
+            
+                                                    
+            
+            
+                                                    <td    style="border: none !important;">
+            
+                                                        
+            
+                                                    </td>
+                                                    <td colspan="1" style="text-align: center;border: none !important;" class="border_td">			
+                                                     </td>
+                                                </tr>	
+            
+            
+            
+                                        </table>
+                                        </div>
+                                
+                                
+                                        <div v-if="invs[0].org_id == '97'" class="col-md-12">
+                                            <table style="    width: 100%;" border="1">
+                                                <tr>                            
+                                                <td class="border_td">
+                                                Auto Sports Deira 
+                                                </td>
+                                                <td class="border_td">
+                                
+                                
+                                                Sharjah	
+                                                </td>                        
+                                                <td class="border_td">
+                                                RAK	Al Ain
+                                                </td>
+                                                <td class="border_td">	Musaffah
+                                                </td>
+                                                <td class="border_td">	Mina
+                                                </td>	
+                                                <td class="border_td">
+                                                UAQ	Dibba
+                                                </td>
+                                
+                                
+                                
+                                                </tr>
+                                                <tr>                            
+                                                         <td class="border_td"> 04-2214336</td>
+                                                        <td class="border_td"></td>	06-5321117</td>
+                                                        <td class="border_td"></td>	07-2223369</td>
+                                                        <td class="border_td"></td>	03-7212172</td>
+                                                        <td class="border_td"></td>	02-5552283</td>
+                                                        <td class="border_td"></td>	02-6733886</td>
+                                                        <td class="border_td"></td>	06-7653737</td>
+                                                        <td class="border_td"></td>	09-2432578</td>                            
+                                                </tr>		
+                                                <tr>	
+                                                    <td colspan="5" style="text-align: center;" class="border_td">			
+                                                    Website: www.aym.ae
+                                                    </td>
+                                                </tr>	
+            
+            
+                                                
+                                        </table>
+                                        </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+            
+            <table>
+
+                <thead>
+                <tr>
+                    <td>
+                    <!--place holder for the fixed-position header-->
+                    <div class="page-header-space"></div>
+                    </td>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>
+                    <!--*** CONTENT GOES HERE ***-->
+                    
+                    
+                    <div class="page" style="line-height: 2;">
+                       
+                        PAGE 3 - Long Content
+                        <br/> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tincidunt metus eu consectetur rutrum. Praesent tempor facilisis dapibus. Aliquam cursus diam ac vehicula pulvinar. Integer lacinia non odio et condimentum. Aenean faucibus cursus
+                        mi, sed interdum turpis sagittis a. Quisque quis pellentesque mi. Ut erat eros, posuere sed scelerisque ut, pharetra vitae tellus. Suspendisse ligula sapien, laoreet ac hendrerit sit amet, viverra vel mi. Pellentesque faucibus nisl et dolor
+                        pharetra, vel mattis massa venenatis. Integer congue condimentum nisi, sed tincidunt velit tincidunt non. Nulla sagittis sed lorem pretium aliquam. Praesent consectetur volutpat nibh, quis pulvinar est volutpat id. Cras maximus odio posuere
+                        suscipit venenatis. Donec rhoncus scelerisque metus, in tempus erat rhoncus sed. Morbi massa sapien, porttitor id urna vel, volutpat blandit velit. Cras sit amet sem eros. Quisque commodo facilisis tristique. Proin pellentesque sodales rutrum.
+                        Vestibulum purus neque, congue vel dapibus in, venenatis ut felis. Donec et ligula enim. Sed sapien sapien, tincidunt vitae lectus quis, ultricies rhoncus mi. Nunc dapibus nulla tempus nunc interdum, sed facilisis ex pellentesque. Nunc vel
+                        lorem leo. Cras pharetra sodales metus. Cras lacus ex, consequat at consequat vel, laoreet ac dui. Curabitur aliquam, sapien quis congue feugiat, nisi nisl feugiat diam, sed vehicula velit nulla ac nisl. Aliquam quis nisi euismod massa blandit
+                        pharetra nec eget nunc. Etiam eros ante, auctor sit amet quam vel, fringilla faucibus leo. Morbi a pulvinar nulla. Praesent sed vulputate nisl. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean commodo
+                        mollis iaculis. Maecenas consectetur enim vitae mollis venenatis. Ut scelerisque pretium orci id laoreet. In sit amet pharetra diam. Vestibulum in molestie lorem. Nunc gravida, eros non consequat fermentum, ex orci vestibulum orci, non accumsan
+                        sem velit ac lectus. Vivamus malesuada lacus nec velit dignissim, ac fermentum nulla pretium. Aenean mi nisi, convallis sed tempor in, porttitor eu libero. Praesent et molestie ante. Duis suscipit vitae purus sit amet aliquam. Vestibulum lectus
+                        justo, lobortis a purus a, dapibus efficitur metus. Suspendisse potenti. Duis dictum ex lorem. Suspendisse nec ligula consectetur magna hendrerit ullamcorper et eget mauris. Etiam vestibulum sodales diam, eget venenatis nunc luctus quis. Ut
+                        fermentum placerat neque nec elementum. Praesent orci erat, rhoncus vitae est eu, dictum molestie metus. Cras et fermentum elit. Aenean eget augue lacinia, varius ante in, ullamcorper dolor. Cras viverra purus non egestas consectetur. Nulla
+                        nec dolor ac lectus convallis aliquet sed a metus. Suspendisse eu imperdiet nunc, id pulvinar risus. Maecenas varius sagittis est, vel fermentum risus accumsan at. Vestibulum sollicitudin dui pharetra sapien volutpat, id convallis mi vestibulum.
+                        Phasellus commodo sit amet lorem quis imperdiet. Proin nec diam sed urna euismod ultricies at sed urna. Quisque ornare, nulla et vehicula ultrices, massa purus vehicula urna, ac sodales lacus leo vitae mi. Sed congue placerat justo at placerat.
+                        Aenean suscipit fringilla vehicula. Quisque iaculis orci vitae arcu commodo maximus. Maecenas nec nunc rutrum, cursus elit quis, porttitor sapien. Sed ac hendrerit ipsum, lacinia fringilla velit. Donec ultricies feugiat dictum.
+                        
+                    </div>
+                    
+                    </td>
+                </tr>
+                </tbody>
+
+                <tfoot>
+                <tr>
+                    <td>
+                    <!--place holder for the fixed-position footer-->
+                   
+                    <div class="page-footer-space"></div>
+                    </td>
+                </tr>
+                </tfoot>
+
+            </table>
+
+
+
+  
+</div>
+
+<!-- </template> -->
+
+
+</body>
+
+<script>
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.withCredentials = true;
+    
+    var vInv = new Vue({
+       el:'#v-invoice',
+       delimiters:["[[","]]"],
+       methods:{
+           formatCalculation(d){
+               if(d=="" || d==null || d==" ")
+               {
+                   d=0
+               }
+               return parseFloat(d).toLocaleString(undefined,{minimumFractionDigits: 2,
+                                                               maximumFractionDigits: 2});
+           },
+       },
+       mounted(){
+        //showloader();
+    
+      
+               this.base_url = window.location.origin;
+               axios.post("{% url 'get-sales-inv-api' %}",{
+                   ohid:"{{ohid|safe}}",              
+               })
+               .then(function (res) 
+               {
+                   // hideloader()
+                   console.log(res.data)
+                   vInv.invs = res.data.invs;
+                   vInv.drafts = res.data.drafts;
+               })
+               .catch(function () 
+               {
+                   // hideloader()
+                    alert('No Invoice Record found');
+               })
+       },
+       data:{
+           html:'',
+           invs: [],
+           base_url:'',
+           drafts: [],
+           draft_line_number:0,
+           draft_line_number_2:0,
+           
+       }
+    });
+    
+    </script>
+</html>

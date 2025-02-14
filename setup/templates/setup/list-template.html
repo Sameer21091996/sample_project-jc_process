@@ -1,0 +1,168 @@
+{% extends 'base.html' %} {% load static %} {% block css_files %}
+<style>
+  .dt-buttons.btn-group.flex-wrap {
+    float: right;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<div class="border rounded m-3 p-5">
+  <div class="">
+    <div class="d-flex align-items-center justify-content-between py-2">
+      <h2>All templates</h2>
+      <button class="btn btn-success" onclick="openNewTemplateTab()">
+        Create new Template
+      </button>
+    </div>
+    <table class="table table-striped border table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Has lines</th>
+          <th scope="col">Active</th>
+          <th scope="col">View</th>
+          <th scope="col">Load</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line in lines %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{line.template_name}}</td>
+          <td>{{line.has_lines|yesno:"yeah,no"}}</td>
+          <td>{{line.active|yesno:"yeah,no"}}</td>
+          <td>
+            <button
+              type="button"
+              onclick="openViewTemplateTab('{{line.template_name}}')"
+              class="btn btn-link"
+            >
+              view
+            </button>
+          </td>
+          <td>
+            <button
+              class="btn btn-info"
+              onclick='loadTemplate("{{line.template_name}}")'
+            >
+              Download
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="border rounded p-2 mt-3 d-flex justify-content-center d-none"
+    id="view-template-container"
+  >
+    <div id="print-div" class="p-5" style="width: auto; height: auto"></div>
+  </div>
+</div>
+
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %} 
+{% include 'components/datatableheadercomp.html' %} 
+{% include 'components/datatablecomp.html' %} 
+{% include 'components/viewrowsidebarcomp.html' %} 
+{% include 'components/editviewcomponent.html' %} 
+{% include 'components/selectaccountcomp.html' %} 
+{% include 'components/columnsettingcomp.html' %}
+
+<script>
+  const openViewInIFrame = (data) => {
+    var event = new CustomEvent("addOpenIframePage", { detail: data });
+    window.parent.document.dispatchEvent(event);
+  };
+  const openNewTemplateTab = () => {
+    const containsCreateTemplate =
+      $('ul[role="tablist"]')
+        .find("*")
+        .filter(function () {
+          return $(this).text() === "Create Template";
+        }).length > 0;
+    console.log("containsCreateTemplate", containsCreateTemplate);
+    if (!containsCreateTemplate) {
+      openViewInIFrame([
+        "createTab",
+        "Create Template",
+        `setup/template-view`,
+        "8181",
+        true,
+      ]);
+    }
+  };
+  const openViewTemplateTab = (template_name) => {
+    openViewInIFrame([
+      "createTab",
+      "View Template",
+      `setup/template-view?template_name=${template_name}`,
+      template_name,
+      true,
+    ]);
+  };
+
+  async function loadTemplate(templateName) {
+    const { data } = await axios.post(`{% url 'setup:template-api' %}`, {
+      template_name: templateName,
+      header_context: {
+        dept: "neeenwnww",
+        numb: 33,
+        date: "23/111",
+        cust_name: "Tabish new",
+        cust_code: "123",
+        tel: 808729,
+        addr: "pune",
+        total_aed: 11000000,
+        from: "Tabish",
+        sum_aed: 10100101,
+      },
+      data_list: [
+      [
+        {
+          'serial': 1,
+          'bank': 'SBI',
+          'cheque': 101,
+          'due_date': '10/10',
+          'invoice': 1001,
+          'amount': 101,
+        },
+      ],
+      [
+        {
+          'serial': 1,
+          'bank': 'SBI',
+          'cheque': 101,
+          'due_date': '10/10',
+          'invoice': 1001,
+          'amount': 101,
+        },
+        {
+            'serial': 2,
+            'bank': 'SBI2',
+            'cheque': 102,
+            'due_date': '11/11',
+            'invoice': 1002,
+            'amount': 102,
+        },
+        {
+            'serial': 3,
+            'bank': 'SBI3',
+            'cheque': 103,
+            'due_date': '12/12',
+            'invoice': 1003,
+            'amount': 103,
+        }
+      ],
+    ],
+    });
+    $("#view-template-container").removeClass("d-none");
+    $("#print-div").empty().append(data.html);
+    printPDF(data.html, 'print-div')
+  }
+</script>
+
+{% endblock %}

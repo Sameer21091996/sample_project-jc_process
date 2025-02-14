@@ -1,0 +1,1619 @@
+{% extends 'base.html' %} {% load static %} {% load humanize %}
+{% block content_app %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Follow-Up</title>
+    <!-- Add in the head section -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+
+
+        .assignment-table th {
+            background-color: #0b7adc;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-right: 1px solid #ffffff30;
+        }
+
+
+        .assignment-table td {
+            border-right: 1px solid #eee;
+        }
+
+        .assignment-table tr:hover {
+            background-color: #f5f5f5;
+            text-align: right;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .close-button {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            float: right;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            background-color: darkred;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            height: 100vh;
+            background-size: cover;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 5px;
+
+        }
+
+        .assignment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .assignment-table th,
+        .assignment-table td {
+
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            white-space: normal;
+            word-wrap: break-word;
+            /* 
+            padding: 15px 25px; */
+            min-width: 100px;
+            max-width: 250px;
+            height: 40px;
+            vertical-align: middle;
+        }
+
+        .assignment-table td:nth-child(2) {
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .assignment-table td:nth-child(13) {
+            min-width: 180px;
+            max-width: 280px;
+        }
+
+
+        .cell-content {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        .assignment-table {
+            width: 100%;
+            border-collapse: collapse;
+
+        }
+
+
+        select {
+            appearance: none;
+            background-color: transparent;
+            border: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            border-bottom: 2px solid #0b7adc;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            background-color: #f8f9fa;
+        }
+
+        select:focus {
+            outline: none;
+            border-bottom-color: #005bb7;
+        }
+
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 12px;
+            color: #0b7adc;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .table-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .assignment-table {
+            border-spacing: 0;
+            min-width: 100%;
+        }
+
+        .assignment-table tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        @media screen and (max-width: 1200px) {
+            .container {
+                padding: 10px;
+            }
+
+
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+
+            .table-container {
+                border-radius: 3px;
+            }
+
+
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+
+        }
+
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-filter input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .nav-button {
+            background-color: #0b7adc;
+            color: white;
+            padding: 8px 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #5a6268;
+        }
+
+        .date-cell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-icon {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .date-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+        }
+
+
+        .date-popup label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .date-popup input[type="date"] {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 150px;
+        }
+
+        .save-date-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 100%;
+            height: 38px;
+        }
+
+        .save-date-btn:hover {
+            background: #0056b3;
+        }
+
+        .datetime-cell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .time-icon {
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 5px;
+        }
+
+        .datetime-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+        }
+
+        .datetime-popup input {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 150px;
+        }
+
+        .datetime-popup label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: auto;
+            min-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+        }
+
+        .popup-selector {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-position {
+            display: flex;
+            flex-wrap: initial;
+            justify-content: left;
+            align-items: center;
+        }
+
+        .pending-end-time {
+            background-color: #f30d0d;
+        }
+
+        .status-ongoing {
+            color: #ff6600;
+            font-weight: bold;
+        }
+
+        .status-filters {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-btn {
+            padding: 8px 15px;
+            border: 1px solid black;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+
+        .status-btn.active {
+            background-color: #0b7adc;
+            color: white;
+        }
+
+        #count-all,
+        #count-draft,
+        #count-schedule,
+        #count-ongoing,
+        #count-completed {
+            background-color: #28a745;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .status-filters {
+            margin: 20px 0;
+            gap: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-btn {
+            padding: 5px;
+
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .sort-controls {
+            display: flex;
+            flex-direction: column;
+            margin-left: 8px;
+        }
+
+        .sort-icon {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            line-height: 8px;
+        }
+
+        .sort-icon.active {
+            color: white;
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+
+        .search-row input {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .search-row td {
+            background: #f8f9fa;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            background: #f8f9fa;
+        }
+
+
+        .pagination-container {
+            margin-top: 20px;
+            margin-right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 10px;
+            border-top: 1px solid #dee2e6;
+         
+            z-index: 10;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+        }
+
+        .pagination select {
+            width: 80px;
+            margin: 0 10px;
+            height: 100%;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .page-link {
+            color: #0b7adc;
+            cursor: pointer;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .page-item.active .page-link {
+            background-color: #0b7adc;
+            border-color: #0b7adc;
+        }
+
+        hr.solid {
+            border-top: 3px solid #bbb;
+        }
+
+        .scrollable-container {
+            max-height: calc(100vh - 250px);
+         
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            position: relative;
+        }
+
+      
+
+
+        .scrollable-container {
+            scroll-behavior: smooth;
+        }
+
+        .scrollable-container::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+        .select2-container--classic .select2-selection--single {
+    height: 38px;
+    border: 1px solid #e0e0e0;  /* Light gray border */
+    border-radius: 4px;
+    background: transparent !important;
+}
+
+.select2-container--classic .select2-selection--single .select2-selection__arrow {
+    display: none;  /* Removes dropdown icon */
+}
+
+.select2-container--classic .select2-selection--single .select2-selection__rendered {
+    line-height: 36px;
+    padding-left: 12px;
+    border: none;
+}
+
+/* Remove default Select2 borders and backgrounds */
+.select2-container--classic .select2-selection--single:focus,
+.select2-container--classic.select2-container--open .select2-selection--single {
+    border: 1px solid #e0e0e0;
+    background: transparent;
+}
+
+#dateFilter {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100px;
+}
+
+/* Or if you want to keep a subtle bottom border only */
+#dateFilter {
+    border: none;
+    /* border-bottom: 1px solid #ddd; */
+    outline: none;
+    background: transparent;
+}
+
+
+.assignment-table th:nth-child(1) {  /* Tech team column */
+    max-width: 100px;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none;     /* Hide scrollbar for Firefox */
+}
+
+/* Hide scrollbar for Chrome/Safari/Opera */
+.assignment-table th:nth-child(1)::-webkit-scrollbar {
+    display: none;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <template id="sortableHeader">
+        <div class="header-content">
+            <span class="header-text"></span>
+            <div class="sort-controls">
+                <i class="fas fa-sort-up sort-icon"></i>
+                <i class="fas fa-sort-down sort-icon"></i>
+            </div>
+        </div>
+    </template>
+    <div class="container">
+        <div class="table-container ">
+            <div class="header-controls">
+                <h4>Technician Board</h4>
+                
+            </div>
+            <div class="status-filters">
+                <button class="status-btn active" data-status="all">All (<span id="count-all">0</span>)</button>
+                <button class="status-btn" data-status="draft">Draft (<span id="count-draft">0</span>)</button>
+                <button class="status-btn" data-status="schedule">Schedule (<span id="count-schedule">0</span>)</button>
+                <button class="status-btn" data-status="ongoing">Ongoing (<span id="count-ongoing">0</span>)</button>
+                <button class="status-btn" data-status="completed">Completed (<span
+                        id="count-completed">0</span>)</button>
+            </div>
+            <hr class="solid">
+            <div class="header-controls">
+                <div class="date-filter">
+                    <button class="nav-button" id="prevDate">&lt; Previous</button>
+                    <input type="date" id="dateFilter">
+                    <button class="nav-button" id="nextDate">Next &gt;</button>
+                </div>
+            </div>
+            <div class="scrollable-container">
+                <table class="assignment-table table table-bordered table-sm">
+                    <thead>
+
+                        <tr>
+                            <th class="sortable" data-field="tech_team" data-label=""></th>
+                            <th class="sortable" data-field="assign_start" data-label="Assign Start"></th>
+                            <th class="sortable" data-field="assign_end" data-label="Assign End"></th>
+                            <th class="sortable" data-field="start_time" data-label="Start Time"></th>
+                            <th class="sortable" data-field="end_time" data-label="End Time"></th>
+                            <th class="sortable" data-field="status" data-label="Status"></th>
+                        </tr>
+                       
+                    </thead>
+                    <tbody>
+
+
+                    </tbody>
+                </table>
+                <div id="universalModal" class="modal">
+                    <div class="modal-content">
+                        <span id="closeModal" class="close">&times;</span>
+                        <div class="time-selector popup-selector" style="display: none;">
+                            <label>Select Time:</label>
+                            <input type="time" class="time-picker" id="timePicker">
+                        </div>
+                        <div class="date-selector popup-selector" style="display: none;">
+                            <label>Select Date:</label>
+                            <input type="date" id="datePicker">
+                        </div>
+                        <div class="dropdown-selector popup-selector" style="display: none;">
+                            <select id="dropdownPicker">
+                                <option value="">-</option>
+                            </select>
+                        </div>
+                        <br><br>
+                        <button id="saveBtn" class="save-date-btn">Save</button>
+                    </div>
+                </div>
+
+                <div class="modal" id="assignmentModal">
+                    <div class="modal-content">
+                        <button class="close-button" id="closeModalBtn">X</button>
+                        <div class="modal-header">Add Assignment</div>
+                        <form id="assignmentForm">
+                            <div class="form-group">
+                                <label for="clientInformation">Client Information</label>
+                                <textarea id="clientInformation" name="client_information" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="button">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <script>
+
+                let tableSorter;
+                let tableSearchManager;
+                // let tablePagination;
+
+                function initializeTableFeatures() {
+                    tableSorter = new TableSorter('.assignment-table');
+                    tableSearchManager = new TableSearchManager('.assignment-table');
+                    // tablePagination = new TablePagination('.assignment-table');
+                }
+
+
+                const loggedInTechTeam = "{{ tech_team_name }}";
+                console.log('Logged in tech team:', loggedInTechTeam);
+                const universalModal = document.getElementById("universalModal");
+                const datePicker = document.getElementById("datePicker");
+                const timePicker = document.getElementById("timePicker");
+                const dropdownPicker = document.getElementById("dropdownPicker");
+                const saveBtn = document.getElementById("saveBtn");
+
+                const modal = document.getElementById('assignmentModal');
+                const addBtn = document.getElementById('addAssignmentBtn'); 
+                const closeBtn = document.getElementById('closeModalBtn');
+                const form = document.getElementById('assignmentForm');
+                const dateFilter = document.getElementById('dateFilter');
+                const prevDateBtn = document.getElementById('prevDate');
+                const nextDateBtn = document.getElementById('nextDate');
+                const datepopup = document.getElementById('datepopup');
+                const datetimepopup = document.getElementById('datetimepopup');
+                let currentCell;
+                const today = new Date().toISOString().split('T')[0];
+                datePicker.min = today;
+                dateFilter.valueAsDate = new Date();
+
+
+                const fp = flatpickr(dateFilter, {
+                defaultDate: new Date(),
+                dateFormat: "d-M-Y",
+                formatDate: function(date, format) {
+                    let monthName = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+                    let day = String(date.getDate()).padStart(2, '0');
+                    let year = date.getFullYear();
+                    return `${day}-${monthName}-${year}`;
+                },
+                onChange: function(selectedDates) {
+                    loadAssignments(selectedDates[0]);
+                }
+            });
+
+
+
+                async function getLookupOptions(lookupName) {
+                    const response = await fetch(`/assignment/get_meaning_options/${lookupName}/`);
+                    const data = await response.json();
+                    return data.meanings;
+                }
+
+
+                async function saveDropdownValue(select, assignmentId, fieldType) {
+                    showloader();
+                    const originalValue = select.value;
+                    try {
+                        const response = await fetch('/assignment/update_datetime/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({
+                                assignment_id: assignmentId,
+                                field_type: fieldType,
+                                new_value: select.value
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (response.ok) {
+                            await loadAssignments();
+                        } else {
+                            select.value = originalValue;
+                            alert(data.error || 'Failed to update status');
+                            await loadAssignments();
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        select.value = originalValue;
+                        alert('Failed to update status');
+                        await loadAssignments();
+                    } finally {
+                        hideloader();
+                    }
+                }
+
+                async function loadAssignments(filterDate) {
+    showloader();
+    try {
+        const response = await fetch(`/assignment/api/technician-assignments/?tech_team=${loggedInTechTeam}`);
+        console.log(response)
+        const data = await response.json();
+        console.log('API Response:', data);
+        
+        let filteredAssignments = data.assignments;
+        if (filterDate) {
+            const selectedDate = new Date(filterDate);
+            selectedDate.setHours(0, 0, 0, 0);
+            const formattedFilterDate = selectedDate.toISOString().split('T')[0];
+            
+            filteredAssignments = filteredAssignments.filter(assignment => {
+                const assignmentDate = new Date(assignment.date);
+                assignmentDate.setHours(0, 0, 0, 0);
+                return assignmentDate.toISOString().split('T')[0] === formattedFilterDate;
+            });
+        }
+
+        const sortedAssignments = filteredAssignments.sort((a, b) => {
+            const dateA = new Date(a.date || 0);
+            const dateB = new Date(b.date || 0);
+            return dateB - dateA;
+        });
+
+        const tableBody = document.querySelector('.assignment-table tbody');
+        const statusOptions = await getLookupOptions('STATUS');
+
+        // Update header with logged in tech team name
+        const headerLabel = document.querySelector('[data-field="tech_team"]');
+        if (headerLabel) {
+            headerLabel.setAttribute('data-label', loggedInTechTeam);
+            const headerText = headerLabel.querySelector('.header-text');
+            if (headerText) {
+                headerText.textContent = loggedInTechTeam;
+            }
+        }
+
+        if (!filteredAssignments || filteredAssignments.length === 0) {
+            tableBody.innerHTML = `
+            <tr class="no-results">
+                <td colspan="6" style="text-align: center; padding: 20px;">
+                    No assignments found for ${loggedInTechTeam}
+                </td>
+            </tr>`;
+        } else {
+            tableBody.innerHTML = sortedAssignments.map(assignment => {
+                const formatTime = (timeString) => {
+                    if (!timeString) return '-';
+                    return timeString.split('.')[0];
+                };
+
+                return `
+                <tr data-assignment-id="${assignment.id}">
+                    <td class="data-position">${assignment.client_information || '-'}</td>
+                    <td>
+                        <span>${(assignment.assign_start)}</span>
+                        <i class="" data-field="assign_start"></i>
+                    </td>
+                    <td>
+                        <span>${(assignment.assign_end || '-')}</span>
+                        <i class="" data-field="assign_end"></i>
+                    </td>
+                    <td onclick="showPicker(this, 'start_time')">
+                        <span>${formatTime(assignment.start_time)}</span>
+                        <i class="" data-field="start_time"></i>
+                    </td>
+                    <td onclick="showPicker(this, 'end_time')" class="${assignment.start_time && !assignment.end_time ? 'pending-end-time' : ''}">
+                        <span>${formatTime(assignment.end_time)}</span>
+                        <i class=" icon-position" data-field="end_time"></i>
+                    </td>
+                    <td onclick="showPicker(this, 'status')">
+                        <span class="${assignment.start_time && !assignment.end_time ? 'status-ongoing' : ''}">${assignment.start_time && !assignment.end_time ? 'Ongoing' : (assignment.status || '-')}</span>
+                        <i class="" data-field="status" data-type="dropdown"></i>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        updateStatusCounts();
+        const allRows = Array.from(tableBody.querySelectorAll('tr'));
+        initializePickers();
+        // tablePagination.updateRows(allRows);
+
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+        const tableBody = document.querySelector('.assignment-table tbody');
+        tableBody.innerHTML = `
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 20px;">
+                Error loading assignments. Please try again.
+            </td>
+        </tr>`;
+    } finally {
+        hideloader();
+    }
+}
+                
+                
+                
+                dateFilter.addEventListener('change', (e) => {
+                    const selectedDate = e.target.value;
+                    loadAssignments(selectedDate);
+                    dateFilter.disabled = false;
+                });
+                document.getElementById('prevDate').addEventListener('click', function() {
+    const currentDate = fp.selectedDates[0];
+    currentDate.setDate(currentDate.getDate() - 1);
+    fp.setDate(currentDate);
+    loadAssignments(currentDate);
+});
+
+document.getElementById('nextDate').addEventListener('click', function() {
+    const currentDate = fp.selectedDates[0];
+    currentDate.setDate(currentDate.getDate() + 1);
+    fp.setDate(currentDate);
+    loadAssignments(currentDate);
+});
+
+dateFilter.addEventListener('change', (e) => {
+    const selectedDate = new Date(e.target.value);
+    loadAssignments(selectedDate);
+});
+
+
+                
+                document.addEventListener('DOMContentLoaded', loadAssignments);
+
+
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                function setupTimePicker(fieldType) {
+                    const timePicker = document.getElementById('timePicker');
+
+                    if (fieldType === 'assign_start' || fieldType === 'assign_end') {
+                        timePicker.step = "1800";
+                        timePicker.pattern = "([01]?[0-9]|2[0-3]):(00|30)";
+
+                        timePicker.addEventListener('change', (e) => {
+                            const time = e.target.value;
+                            const [hours, minutes] = time.split(':');
+                            const validMinutes = minutes >= 30 ? '30' : '00';
+                            e.target.value = `${hours}:${validMinutes}`;
+                        });
+                    } else {
+                        timePicker.step = "60";
+                        timePicker.pattern = "";
+                        timePicker.replaceWith(timePicker.cloneNode(true));
+                    }
+                }
+
+                function showPicker(element, fieldType) {
+                    const row = element.closest('tr');
+                    const date = row.querySelector('[data-field="date"]')?.parentElement.querySelector('span').textContent;
+
+                    const techTeam = row.querySelector('[data-field="tech_team"]')?.parentElement.querySelector('span').textContent;
+                    const assignStart = row.querySelector('[data-field="assign_start"]')?.parentElement.querySelector('span').textContent;
+                    const assignEnd = row.querySelector('[data-field="assign_end"]')?.parentElement.querySelector('span').textContent;
+                    const startTime = row.querySelector('[data-field="start_time"]')?.parentElement.querySelector('span').textContent;
+                    if (fieldType === 'tech_team' && (date === '-' || date === '')) {
+                        alert('Please select Date first');
+                        return;
+                    }
+                    if (fieldType === 'assign_start' && (techTeam === '-' || techTeam === '')) {
+                        alert('Please select Tech Team first');
+                        return;
+                    }
+
+                    if (fieldType === 'assign_end' && (assignStart === '-' || assignStart === '')) {
+                        alert('Please enter Assign Start time first');
+                        return;
+                    }
+
+                    if (fieldType === 'start_time' && (assignEnd === '-' || assignEnd === '')) {
+                        alert('Please enter Assign End time first');
+                        return;
+                    }
+
+                    if (fieldType === 'end_time' && (startTime === '-' || startTime === '')) {
+                        alert('Please enter Start Time first');
+                        return;
+                    }
+
+                    currentCell = element;
+                    const rect = element.getBoundingClientRect();
+
+                    document.querySelectorAll(".popup-selector").forEach(selector => {
+                        selector.style.display = "none";
+                    });
+
+                    if (fieldType === 'tech_team') {
+                        document.querySelector(".dropdown-selector").style.display = "block";
+                        loadDropdownOptions('TECH TEAM');
+                    } else if (fieldType === 'status') {
+                        document.querySelector(".dropdown-selector").style.display = "block";
+                        loadDropdownOptions('STATUS');
+                    } else if (fieldType === 'assign_start' || fieldType === 'assign_end' || fieldType.includes('time')) {
+                        document.querySelector(".time-selector").style.display = "block";
+                        const timeValue = element.querySelector('span')?.textContent;
+                        timePicker.value = timeValue !== '-' ? timeValue : '';
+                        setupTimePicker(fieldType);
+                        initializePickers();
+
+                    } else if (fieldType.includes('date')) {
+                        const dateSelector = document.querySelector(".date-selector");
+                        dateSelector.style.display = "block";
+                        datePicker.min = today;
+                        datePicker.value = element.querySelector('span')?.textContent !== '-' ?
+                            element.querySelector('span').textContent : today;
+                    }
+
+                    universalModal.style.top = `${rect.bottom + window.scrollY}px`;
+                    universalModal.style.left = `${rect.left + window.scrollX}px`;
+                    universalModal.style.display = "block";
+                }
+
+
+                async function loadDropdownOptions(lookupName) {
+    console.log('Loading options for:', lookupName);
+    const options = await getLookupOptions(lookupName);
+    console.log('Received options:', options);
+
+    const currentValue = currentCell.querySelector('span')?.textContent;
+    dropdownPicker.innerHTML = `
+        <option value="">-</option>
+        ${options.map(option => `
+            <option value="${option}" ${currentValue === option ? 'selected' : ''}>
+                ${option}
+            </option>
+        `).join('')}
+    `;
+
+    // Initialize Select2
+    $(dropdownPicker).select2({
+        dropdownParent: $('#universalModal'),
+        width: '100%',
+        theme: 'classic'
+    });
+}
+
+
+
+                saveBtn.addEventListener("click", async () => {
+                    const fieldType = currentCell.querySelector('i').getAttribute('data-field');
+                    let value;
+
+                    if (fieldType === 'tech_team' || fieldType === 'status') {
+                        value = dropdownPicker.value;
+                    } else if (fieldType === 'assign_start' || fieldType === 'assign_end') {
+                        const [hours, minutes] = timePicker.value.split(':');
+                        const validMinutes = minutes >= 30 ? '30' : '00';
+                        value = `${hours}:${validMinutes}`;
+                    } else if (fieldType === 'start_time' || fieldType === 'end_time') {
+                        // Get the direct value from timePicker
+                        value = document.getElementById('timePicker').value;
+                    } else {
+                        value = datePicker.value;
+                    }
+
+                    // Log the request payload
+                    console.log('Request Payload:', {
+                        assignment_id: currentCell.closest('tr').getAttribute('data-assignment-id'),
+                        field_type: fieldType,
+                        new_value: value
+                    });
+                    try {
+                            const response = await fetch('/assignment/update_datetime/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCookie('csrftoken')
+                                },
+                                body: JSON.stringify({
+                                    assignment_id: currentCell.closest('tr').getAttribute('data-assignment-id'),
+                                    field_type: fieldType,
+                                    new_value: value
+                                })
+                            });
+
+                            const data = await response.json();
+                            console.log('Response:', data); // Add this for debugging
+
+                            if (response.ok) {
+                                // alert(data.error || "Time slot conflict detected. Please select a different time.");
+                                currentCell.querySelector('span').textContent = value;
+                                
+
+                            
+                                if (fieldType === 'start_time') {
+                                    await fetch('/assignment/update_datetime/', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': getCookie('csrftoken')
+                                        },
+                                        body: JSON.stringify({
+                                            assignment_id: currentCell.closest('tr').getAttribute('data-assignment-id'),
+                                            field_type: 'status',
+                                            new_value: 'Ongoing'
+                                        })
+                                    });
+                                }
+
+                                universalModal.style.display = "none";
+                                await loadAssignments(dateFilter.value);
+                            } else {
+                                throw new Error(data.error || 'Failed to update value');
+                                const errorMessage = data.error || 'An error occurred';
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Cannot Update',
+                                    text: errorMessage,
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Time slot conflict detected. Please select a different time.",
+                        confirmButtonText: 'OK'
+                    });
+                }
+                });
+
+
+                window.addEventListener("click", (e) => {
+                    if (e.target === universalModal) {
+                        universalModal.style.display = "none";
+                    }
+                });
+
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.date-cell') && !e.target.closest('.datetime-cell')) {
+                        document.querySelectorAll('.date-popup, .datetime-popup').forEach(popup => {
+                            popup.style.display = 'none';
+                        });
+                    }
+                });
+
+
+                async function saveDateTime() {
+                    showloader();
+                    const value = currentCell.closest('.datetime-cell') ? timePicker.value : datePicker.value;
+                    const fieldType = currentCell.getAttribute('data-field');
+                    const assignmentId = currentCell.closest('tr').getAttribute('data-assignment-id');
+
+                    try {
+                        const response = await fetch('/assignment/update_datetime/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({
+                                assignment_id: assignmentId,
+                                field_type: fieldType,
+                                [fieldType?.includes('time') ? 'new_time' : 'new_date']: value
+                            })
+                        });
+
+                        const data = await response.json();
+
+
+                        if (response.ok) {
+                            currentCell.querySelector('span').textContent = value;
+                            universalModal.style.display = 'none';
+                            await loadAssignments();
+                        } else {
+                            let errorMessage = data.error || 'Failed to update value';
+                            if (fieldType.includes('assign_') && data.error.includes('before the main date')) {
+                                errorMessage = 'Assignment date cannot be before the main date';
+                            }
+                            else if (fieldType === 'end_time') {
+                                errorMessage = 'End time must be later than start time';
+                            } else if (fieldType === 'assign_end') {
+                                errorMessage = 'End date must be later than or equal to start date';
+                            } else if (fieldType.includes('date')) {
+                                errorMessage = 'Selected date cannot be in the past';
+                            }
+                            alert(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        const defaultMessage = fieldType.includes('time') ?
+                            'Please select a valid time' :
+                            'Please select a valid date';
+                        alert(defaultMessage);
+                    } finally {
+                        hideloader();
+                    }
+                }
+
+                class TableHeaderManager {
+                    constructor(tableSelector) {
+                        this.table = document.querySelector(tableSelector);
+                        this.headerTemplate = document.getElementById('sortableHeader');
+                        this.setupTableHeaders();
+                    }
+
+                    // Initialize all sortable headers in the table
+                    setupTableHeaders() {
+                        const sortableHeaders = this.table.querySelectorAll('th.sortable');
+                        sortableHeaders.forEach(header => this.createHeaderWithSortIcons(header));
+                    }
+
+                    // Add sort icons and text to each header
+                    createHeaderWithSortIcons(header) {
+                        const headerContent = this.headerTemplate.content.cloneNode(true);
+                        const headerTextElement = headerContent.querySelector('.header-text');
+                        headerTextElement.textContent = header.dataset.label;
+                        header.appendChild(headerContent);
+                    }
+
+                    // Update the visual state of sort icons
+                    updateSortIcons(activeHeader, sortDirection) {
+                        const allSortIcons = this.table.querySelectorAll('.sort-icon');
+                        allSortIcons.forEach(icon => icon.classList.remove('active'));
+                        const iconToActivate = activeHeader.querySelector(
+                            sortDirection === 'asc' ? '.fa-sort-up' : '.fa-sort-down'
+                        );
+                        iconToActivate?.classList.add('active');
+                    }
+                }
+
+                // Handles the sorting functionality of the table
+                class TableSorter {
+                    constructor(tableSelector) {
+                        this.headerManager = new TableHeaderManager(tableSelector);
+                        this.table = document.querySelector(tableSelector);
+                        this.sortState = {
+                            field: null,        // Currently sorted column
+                            direction: 'asc'    // Current sort direction
+                        };
+                        this.addSortingClickHandlers();
+                    }
+
+                    // Add click handlers to all sortable headers
+                    addSortingClickHandlers() {
+                        const sortableHeaders = this.table.querySelectorAll('th.sortable');
+                        sortableHeaders.forEach(header => {
+                            header.addEventListener('click', () => this.sortByColumn(header));
+                        });
+                    }
+
+                    // Handle sorting when a header is clicked
+                    sortByColumn(header) {
+                        const columnField = header.dataset.field;
+                        if (this.sortState.field === columnField) {
+                            this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            this.sortState.field = columnField;
+                            this.sortState.direction = 'asc';
+                        }
+                        this.headerManager.updateSortIcons(header, this.sortState.direction);
+                        this.sortTableData();
+                    }
+
+                    // Sort and update the table data
+                    sortTableData() {
+                        const tableRows = Array.from(this.table.querySelectorAll('tbody tr'));
+                        const sortedRows = this.getSortedRows(tableRows);
+                        const tableBody = this.table.querySelector('tbody');
+                        tableBody.innerHTML = '';
+                        sortedRows.forEach(row => tableBody.appendChild(row));
+                    }
+
+                    // Sort the table rows based on current sort state
+                    getSortedRows(rows) {
+                        return rows.sort((rowA, rowB) => {
+                            const valueA = this.getValueFromCell(rowA, this.sortState.field);
+                            const valueB = this.getValueFromCell(rowB, this.sortState.field);
+
+                            const comparisonResult = this.compareValuesByType(valueA, valueB);
+                            // Reverse comparison if sort direction is descending
+                            return this.sortState.direction === 'asc' ? comparisonResult : -comparisonResult;
+                        });
+                    }
+
+                    // Get the value from a cell for sorting
+                    getValueFromCell(row, field) {
+                        const columnIndex = Array.from(this.table.querySelectorAll('th'))
+                            .findIndex(th => th.dataset.field === field);
+                        // Try to get value from span first, fall back to cell text
+                        return row.cells[columnIndex].querySelector('span')?.textContent.trim() ||
+                            row.cells[columnIndex].textContent.trim();
+                    }
+
+                    // Compare values based on their type (date, number, or string)
+                    compareValuesByType(valueA, valueB) {
+                        // Handle empty or dash values
+                        if (valueA === '-' && valueB === '-') return 0;
+                        if (valueA === '-') return 1;
+                        if (valueB === '-') return -1;
+
+                        // Compare dates
+                        if (this.isValidDate(valueA) && this.isValidDate(valueB)) {
+                            return new Date(valueA) - new Date(valueB);
+                        }
+                        // Compare numbers
+                        if (this.isValidNumber(valueA) && this.isValidNumber(valueB)) {
+                            return Number(valueA) - Number(valueB);
+                        }
+                        // Compare strings
+                        return String(valueA).localeCompare(String(valueB));
+                    }
+
+                    // Check if value is a valid date
+                    isValidDate(value) {
+                        return !isNaN(Date.parse(value));
+                    }
+
+                    // Check if value is a valid number
+                    isValidNumber(value) {
+                        return !isNaN(value) && !isNaN(parseFloat(value));
+                    }
+                }
+
+                // Initialize the table sorter when the page loads
+
+
+
+                class TableSearchManager {
+                    constructor(tableSelector) {
+                        this.table = document.querySelector(tableSelector);
+                        this.bindSearchEvents();
+                        this.initializeSearch();
+                    }
+
+                    initializeSearch() {
+                        this.searchInputs = this.table.querySelectorAll('.column-search');
+                        this.clearSearchInputs();
+                    }
+
+                    bindSearchEvents() {
+                        this.table.addEventListener('input', (event) => {
+                            if (event.target.classList.contains('column-search')) {
+                                this.handleSearch();
+                            }
+                        });
+                    }
+
+                    clearSearchInputs() {
+                        this.searchInputs.forEach(input => input.value = '');
+                    }
+
+                    handleSearch() {
+                        const searchCriteria = this.getSearchCriteria();
+                        const rows = Array.from(this.table.querySelectorAll('tbody tr'));
+                        const visibleRows = rows.filter(row => this.rowMatchesSearch(row, searchCriteria));
+                        this.updateTableVisibility(rows, visibleRows);
+                    }
+
+                    getSearchCriteria() {
+                        return Array.from(this.searchInputs).reduce((criteria, input) => {
+                            const value = input.value.trim();
+                            if (value) {
+                                criteria[input.dataset.field] = {
+                                    value,
+                                    type: input.type
+                                };
+                            }
+                            return criteria;
+                        }, {});
+                    }
+
+                    rowMatchesSearch(row, criteria) {
+                        return Object.entries(criteria).every(([field, search]) => {
+                            const cellValue = this.getCellValue(row, field);
+                            return this.valueMatches(cellValue, search.value, search.type);
+                        });
+                    }
+
+                    getCellValue(row, field) {
+                        const index = Array.from(this.table.querySelectorAll('th'))
+                            .findIndex(th => th.dataset.field === field);
+                        return row.cells[index].querySelector('span')?.textContent.trim() ||
+                            row.cells[index].textContent.trim();
+                    }
+
+                    valueMatches(cellValue, searchValue, inputType) {
+                        if (cellValue === '-') return false;
+                        switch (inputType) {
+                            case 'date':
+                                return this.compareDates(cellValue, searchValue);
+                            case 'time':
+                                return this.compareTimes(cellValue, searchValue);
+                            default:
+                                return cellValue.toLowerCase().includes(searchValue.toLowerCase());
+                        }
+                    }
+
+                    compareDates(cellDate, searchDate) {
+                        return new Date(cellDate).toDateString() === new Date(searchDate).toDateString();
+                    }
+
+                    compareTimes(cellTime, searchTime) {
+                        return cellTime.includes(searchTime);
+                    }
+
+                    updateTableVisibility(allRows, visibleRows) {
+                        allRows.forEach(row => row.style.display = 'none');
+                        visibleRows.forEach(row => row.style.display = '');
+                        this.updateNoResultsMessage(visibleRows.length === 0);
+                    }
+
+                    updateNoResultsMessage(showMessage) {
+                        let messageRow = this.table.querySelector('.no-results');
+                        if (showMessage) {
+                            if (!messageRow) {
+                                messageRow = document.createElement('tr');
+                                messageRow.className = 'no-results';
+                                messageRow.innerHTML = `
+                    <td colspan="${this.table.querySelectorAll('th').length}">
+                        No matching records found
+                    </td>
+                `;
+                                this.table.querySelector('tbody').appendChild(messageRow);
+                            }
+                            messageRow.style.display = '';
+                        } else if (messageRow) {
+                            messageRow.style.display = 'none';
+                        }
+                    }
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    initializeTableFeatures();
+                    loadAssignments(dateFilter.value);
+                });
+
+
+
+                closeBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+
+                const statusButtons = document.querySelectorAll('.status-btn');
+
+                statusButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        statusButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        const status = button.dataset.status;
+                        filterByStatus(status);
+                    });
+                });
+
+                function filterByStatus(status) {
+                    const rows = document.querySelectorAll('.assignment-table tbody tr');
+                    rows.forEach(row => {
+                        const statusCell = row.querySelector('td:nth-child(6)');
+                        if (status === 'all' || statusCell.textContent.trim().toLowerCase() === status) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                }
+                function updateStatusCounts() {
+                    const rows = document.querySelectorAll('.assignment-table tbody tr');
+                    let counts = {
+                        all: rows.length,
+                        draft: 0,
+                        schedule: 0,
+                        ongoing: 0,
+                        completed: 0
+                    };
+
+                    rows.forEach(row => {
+                        const statusCell = row.querySelector('td:nth-child(6)');
+                        if (statusCell) {
+                            const status = statusCell.textContent.trim().toLowerCase();
+                            if (status === 'draft') counts.draft++;
+                            if (status === 'schedule') counts.schedule++;
+                            if (status === 'ongoing') counts.ongoing++;
+                            if (status === 'completed') counts.completed++;
+                        }
+                    });
+
+                    // Update count displays with null checks
+                    const updateCount = (id, count) => {
+                        const element = document.getElementById(id);
+                        if (element) element.textContent = count;
+                    };
+
+                    updateCount('count-all', counts.all);
+                    updateCount('count-draft', counts.draft);
+                    updateCount('count-schedule', counts.schedule);
+                    updateCount('count-ongoing', counts.ongoing);
+                    updateCount('count-completed', counts.completed);
+                }
+
+
+                function formatDate(dateString) {
+                                if (!dateString || dateString === '-') return '-';
+    
+                                const date = new Date(dateString);
+                                const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                                
+                                return `${String(date.getDate()).padStart(2, '0')}-${months[date.getMonth()]}-${date.getFullYear()}`;
+                            }
+
+                            document.addEventListener('DOMContentLoaded', function() {
+
+
+
+                            });
+
+                            function initializePickers() {
+                   
+
+                    // Time picker initialization
+                    flatpickr("input[type='time']", {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                        allowInput: true
+                    });
+
+                  
+
+                  
+
+                    flatpickr("#timePicker", {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                        allowInput: true,
+                        minuteIncrement: 1,
+                        defaultHour: new Date().getHours(),
+                        defaultMinute: new Date().getMinutes(),
+                        onOpen: function (selectedDates, dateStr, instance) {
+                            instance.hourElement.focus();
+                        }
+                    });
+                }
+
+                // Call this after document loads
+                document.addEventListener('DOMContentLoaded', function () {
+                    initializePickers();
+                });
+
+
+
+
+            </script>
+</body>
+
+</html>
+
+{% endblock %}

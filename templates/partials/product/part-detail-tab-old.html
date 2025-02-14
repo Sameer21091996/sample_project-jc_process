@@ -1,0 +1,239 @@
+<div class="card card-default">
+  <div class="card-body">
+    <form id="product-detail-view-form">
+      <input
+        id="inventory_item_id-inputtttt"
+        hidden
+        disabled
+        name="inventory_item_id"
+      />
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Description</label>
+            <input name="description" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label>Item</label>
+            <input name="mfg_part_num" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label>Manufacturer</label>
+            <input name="mfg_code" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label>Product Source</label>
+            <input name="product" disabled class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-1">
+          <div class="form-group">
+            <label>Category</label>
+            <input name="category" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group">
+            <label>Sub Category</label>
+            <input name="sub_category" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group">
+            <label>Unit Cost AED</label>
+            <input name="list_price_per_unit" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group">
+            <label>Movement class</label>
+            <input name="movement_class" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group">
+            <label>Weight UOM</label>
+            <input name="uom" disabled class="form-control" />
+          </div>
+        </div>
+
+        <!-- </div> -->
+        <!-- <div class="row"> -->
+        <div class="col-md-2">
+          <div class="form-group">
+            <label>Creation Date</label>
+            <input name="creation_date" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label>Last Receipt Date</label>
+            <input name="last_receipt_date" disabled class="form-control" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label>Last Sales Date</label>
+            <input name="last_sales_date" disabled class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Remarks</label>
+            <textarea
+              name="remarks"
+              class="form-control"
+              rows="1"
+              id="product-remarks"
+            ></textarea>
+          </div>
+        </div>
+        <div class="form-group d-flex align-items-end">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="updateRemark(this)"
+          >
+            Save Remark
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="my-3 d-flex">
+            <h4 class="m-0 border-bottom border-dark border-8 text-muted">
+              Dimensions
+            </h4>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>UOM</label>
+                <input name="uom" disabled="disabled" class="form-control" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Length</label>
+                <input
+                  name="unit_length"
+                  disabled="disabled"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Width</label>
+                <input
+                  name="unit_width"
+                  disabled="disabled"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Height</label>
+                <input
+                  name="unit_height"
+                  disabled="disabled"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="my-3 d-flex">
+            <h4 class="m-0 border-bottom border-dark border-8 text-muted">
+              Work shop Price Details
+            </h4>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>List Price</label>
+                <input
+                  name="list_price_per_unit"
+                  disabled
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Warranty Price</label>
+                <input
+                  name="list_price_per_unit"
+                  disabled
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Contract Price</label>
+                <input
+                  name="list_price_per_unit"
+                  disabled
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Discount Price</label>
+                <input name="vin_price" disabled class="form-control" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="my-3 d-flex">
+            <h4 class="m-0 border-bottom border-dark border-3 text-muted">
+              Price Details
+            </h4>
+          </div>
+          <div style="height: 200px; overflow-y: auto">
+            <table class="table table-bordered table-head-fixed text-nowrap">
+              <thead>
+                <tr>
+                  <th scope="col">Sr</th>
+                  <th scope="col">Price List</th>
+                  <th scope="col">Currency</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">markup Value</th>
+                </tr>
+              </thead>
+              <tbody id="product-price-list-tbody">
+                <tr>
+                  <td class="border-0"></td>
+                  <td class="border-0"></td>
+                  <td
+                    class="border-0 d-flex justify-content-center align-items-center"
+                  >
+                    <h4 class="d-block text-muted">Nothing to show</h4>
+                  </td>
+                  <td class="border-0"></td>
+                  <td class="border-0"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

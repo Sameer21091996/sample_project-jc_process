@@ -1,0 +1,393 @@
+{% extends 'base.html' %} {% load static %} {% load humanize %}
+{% block css_files %}
+<style>
+    .dt-buttons.btn-group.flex-wrap {
+        float: right;
+    }
+    .editable-td{
+        background-color: #ffffb5;
+    }
+    .special-td{
+        background-color: #ec9b58;
+    }
+</style>
+{% endblock %} {% block content_app %}
+
+<div class="card border rounded">
+    <div class="row card-body" >
+        <div class="row col-md-12 border rounded py-3">
+            <div class="col-md-6 row" id="pricelist-form">
+                <div class="col-md-6 mb-3 form-group">
+                    <div>
+                        <label for="batch_id">Batch No</label>
+                    </div>
+                    <input name="batch_id" id="batch_id" disabled class="form-control border-success form-control-sm"  />
+                </div>
+                <div class="col-md-6 mb-3 form-group">
+                    <div>
+                        <label for="status">Status<span class="text-danger">*</span></label>
+                    </div>
+                    <input name="status" id="status" disabled class="form-control border-success form-control-sm" value="OPEN"/>
+                </div>
+                <div class="col-md-6 mb-3 form-group">
+                    <div>
+                        <label for="price_list_name">Price List<span class="text-danger">*</span></label>
+                    </div>
+                    <select id="price_list_name" name="price_list_name" data-placeholder="- Select -" class="form-control select2_field form-control-sm"></select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 mb-3 form-group">
+                        <div>
+                            <label for="top_disc_by">Discount by % / Amt</label>
+                        </div>
+                        <select id="top_disc_by"  name="top_disc_by" data-placeholder="- Select -" class="form-control form-control-sm">
+                            <option value="Percentage" selected>Percentage </option>
+                            <option value="Amount">Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3 form-group">
+                        <div>
+                            <label for="top_disc_value">Disc % / Amt</label>
+                        </div>
+                        <input name="top_disc_value" id="top_disc_value" type="number" value="0" class="form-control form-control-sm" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3 form-group">
+                        <div>
+                            <label for="START_DATE">Start Date</label>
+                        </div>
+                        <input name="START_DATE" type="date" id="START_DATE" class="form-control dt-date-fltr form-control-sm" />
+                    </div>
+                    <div class="col-md-6 mb-3 form-group">
+                        <div>
+                            <label for="END_DATE">End Date</label>
+                        </div>
+                        <input name="END_DATE" id="END_DATE" type="date" class="form-control dt-date-fltr form-control-sm" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 d-flex justify-content-end">
+                <button class="btn btn-success px-5" onclick="applyForAllConfirmation()">APPLY FOR ALL</button>
+            </div>
+        </div>
+    </div>
+    <div class="row card-body">
+        <div id="entry-new" class="d-none col-md-12">
+            <!-- <h2 class="mb-0 card d-flex" v-if="!showPreview">
+                <button type="button" class="btn btn-link text-left">Search Stock</button>
+            </h2> -->
+            
+            <div class="card m-0 table-responsive p-3" style="" >
+                
+                              
+
+            <div class="table-success d-none">NEW</div>
+            <div class="row">
+                <div class="col-sm-2">
+                  <b>Total Count :</b> 
+                  <span id="total_records">[[lines_data.length - 1]]</span>  
+                </div>
+                <div class="col-sm-2">
+                    <table v-if="lines_data.filter(x=>x.inventory_item_enabled_flag == 'E').length" style="white-space: nowrap;" class="table table-sm table-bordered">  <tbody><tr class="table-danger"> 
+                        <td>Highlighted items are not available in system.</td></tr></tbody> 
+                    </table>
+                </div>
+                <div class="col-sm-8 text-right">
+                    <textarea name ="excel_data" cols="500" id="excel_data" hidden></textarea> 
+                    <textarea name ="excel_data" id="new_excel_data" hidden></textarea> 
+                    <input type="text" name="" id="customer_vat" hidden> 
+                    <input type="tet" name="" id="customer_id" hidden>
+                    <input type="text" name="" id="page_info" value="saleswores" hidden>
+                    <button type="button" class="btn btn-info not-on-preview-ui mr-1 discount-btn" style="display:none" @click="applyListPrice()">Apply List Price</button>
+                    <button type="button" class="btn btn-info not-on-preview-ui mr-1 discount-btn" style="display:none" @click="applyDiscount()">Apply Discount</button>
+                    <button type="button" class="btn btn-danger not-on-preview-ui" v-if="!isFreezed" @click="removeNotFound()">Remove Not Found</button>
+                    <button type="button" class="btn btn-info" onclick="inventorytransfer()" hidden>Inventory Transfer</button>  
+                </div>
+            </div>
+
+            <table class="table table-sm table-bordered text-sm mt-2 mb-0" style="white-space:nowrap;" id="items-entry-tbl">
+                <thead>
+                  <tr>
+                    <th v-for="col in columns" v-if="col.visible" :data-column="col.data" class="text-center" v-html="col.title"></th>
+                    <th  class="text-center">Alert</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                    <!-- <tr v-for="(obj,trIndex) in lines_data" v-if="obj.avl_qty == ''">
+                        <td  v-for="col in columns">[[ getTDContent(col,obj) ]]</td>
+                    </tr> -->
+                    <tr v-for="(obj,trIndex) in (showPreview ? getLinesDataForPreview() : lines_data)" :class="obj.inventory_item_enabled_flag == 'E'? 'table-danger' : ''" >
+                        
+                        <td class="p-0 m-0" v-for="col in columns"  v-if="col.data == 'action' && !showPreview && trIndex != lines_data.length-1">
+                           <button class="btn btn-xs btn-danger" v-if="!isFreezed" @click="removeTr(obj,trIndex)"><i class="right fas fa-times"></i></button>
+                        </td>                           
+                        <!-- <td v-else-if="col.data == 'avl_qty' && getTDContent(col,obj) == '' " :class="(obj.item_code != '') ? '' :'table-danger '+col.col_class">
+                            [[ getTDContent(col,obj) ]]
+                       </td>
+                        <td v-else-if="col.data == 'qty' && obj.avl_qty == '' || obj.avl_qty == '0'"  :class="col.col_class">
+                            [[ getTDContent(col,obj) ]]
+                       </td> -->
+                        <td v-else-if="col.data == 'no_#' && trIndex != lines_data.length-1">
+                           [[trIndex+1]]
+                       </td>
+                       <td v-else-if="isFreezed"
+                            :class="col.col_class" 
+                            v-html="getTDContent(col,obj,trIndex)"
+                        ></td>
+                        <td v-else-if="col.data == 'disc_by' && trIndex != lines_data.length-1" class="p-0">
+                           <select :value='obj.disc_by' @change="lineDiscByChange(col,obj,trIndex, $event)" style="border: none;width:100%;height:100%;background-color: white;">
+                                <option value="Percentage">Percentage</option>
+                                <option value="Amount">Amount</option>
+                            </select>
+                       </td>
+                        
+                        <td v-else-if="col.visible"
+                                
+                            @input="editable_fields.includes(col.data) ? lineOnChange(col,obj, trIndex, $event) :null" 
+
+                            :class="col.col_class + generateTdClass(col,obj,trIndex)" 
+                            :data-column="col.data"
+
+                            :data-inventory_item_enabled_flag="obj.inventory_item_enabled_flag" 
+                            
+                            style="padding: 3px; margin: 0;    height: 30px;"  
+                            :contenteditable="editable_fields.includes(col.data) && !showPreview && canbeEditable(col,obj,trIndex) " 
+                            :data-ph="col.placeholder"
+                            @paste.prevent="onPasteItemStock(col,obj,$event)"
+                            v-html="getTDContent(col,obj,trIndex) || afterRender()"
+                        ></td>
+                        <td  :title="obj.line_error" >
+                            <button  type='button' class="btn btn-outline-danger btn-xs pr-1 pl-1 " v-show="obj.line_error" data-toggle='popover' title='Line Error' :data-content='obj.line_error'><i class='right fas fa-exclamation-triangle'></i></button>
+                        </td>
+                    </tr>                        
+                </tbody>               
+            </table>
+            
+            </div>  
+
+        </div>
+    </div>
+    <div class="d-flex justify-content-end">
+
+        {% for role in roles_json %}
+            {% if 'PRICELIST_APPROVER_' in role %}
+                <button class="btn btn-primary ml-3" onclick="savePriceList()">SAVE</button> 		
+                {% if is_update %}
+                    <button class="btn btn-success ml-3" onclick="priceListStatusUpdate('IN PROCESS')">SUBMIT</button>
+                {% endif %}	
+                    
+            {% elif 'PRICELIST_SUBMITTER_' in role %}
+                {% if is_update %}
+                    <button class="btn btn-success ml-3" onclick="priceListStatusUpdate('COMPLETED')">APPROVE</button>
+                    <button class="btn btn-danger ml-3" onclick="priceListStatusUpdate('REJECTED')">REJECT</button>
+                {% endif %}	
+            {% else %}
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}
+{% block js_files %}
+
+<script>
+    // {% include 'common/base.js' %}
+    // {% include 'partials/js/pricelist_upload/pricelist.js' %}
+</script>
+</script>
+</script>
+
+receiving-form
+<script>
+    let main_obj = {}
+    let batch_id = null
+    let linesData = []
+    var glo_is_update = false;
+
+    function applyForAllConfirmation(){
+        let a = Swal.fire({
+            title: "Are you sure, you want to apply for all?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            denyButtonText: `No`
+          }).then((result) => {
+            if (result.isConfirmed) {
+              applyForAllClick()
+            } else if (result.isDenied) {
+              Swal.fire("Changes are not saved", "", "info");
+            }
+          });
+
+
+    }
+
+    function applyForAllClick(){
+        if (itemLinesEntry.lines_data.length){
+            let newLinesData = []
+            var lastElementPosition = itemLinesEntry.lines_data.length-1;
+            const vatRate = itemLinesEntry.vatPerc/100
+            itemLinesEntry.lines_data.forEach((line, i)=>{
+                if (i === lastElementPosition) {
+                    newLinesData.push(itemLinesEntry.getEmptyLineObj())
+                }
+                else{
+                    const itemVat =  parseFloat((parseFloat(line['cur_price']) * vatRate)).toFixedRound(2)
+
+                    if (line['cur_price']){
+                        const disc_by =  $('#top_disc_by').val();
+                        const disc_value =  $('#top_disc_value').val();
+                        const start_date =  $('#START_DATE').val();
+                        const end_date =  $('#END_DATE').val();
+    
+                        const new_price = disc_by == 'Amount' ? 
+                            (parseFloat(line['cur_price']) - parseFloat(disc_value)).toFixedRound(2) : 
+                            (parseFloat(line['cur_price']) - (parseFloat(line['cur_price'])/100) *  disc_value).toFixedRound(2)
+                        const obj = {
+                            ...line,
+                            disc_by,
+                            disc_value,
+                            new_price,
+                            vat: itemVat,
+                            cur_price_vat: itemVat,
+                            new_price_vat: `${(parseFloat(new_price) + parseFloat(itemVat)).toFixedRound(2)}`,
+                            price_list_start_date: start_date,
+                            price_list_end_date: end_date
+                        } 
+                        newLinesData.push(obj)
+                    }
+                    else{
+                        newLinesData.push(line)
+                    }
+                }
+            })
+            itemLinesEntry.lines_data = newLinesData
+        }
+    }
+
+    async function savePriceList(){
+        ShowLoading(['Loading...',])
+        var price_list_name = $('#price_list_name').val();
+        if (!price_list_name) {
+            HideLoading()
+            toastr.error("Price list is required!!");
+            return;
+        } else {    
+            const data = getFormValue('pricelist-form')
+            let tableData = []
+            if (itemLinesEntry.lines_data.length){
+                var lastElementPosition = itemLinesEntry.lines_data.length-1;
+                itemLinesEntry.lines_data.forEach((line, i)=>{
+                    if (i === lastElementPosition) {}
+                    else if(!(line['item_code'] && line['cur_price'] && line['cur_price_vat'] && line['disc_by'] && line['disc_value'] && line['new_price'] && line['new_price_vat'] && line['price_list_start_date'] && line['price_list_end_date'])){
+                        HideLoading()
+                        toastr.error("Item code, Current price, Cur price vat, Disc by, Disc value, New price, New price vat, Start date, End date are required for lines!!")
+                        throw new Error("Item code, Current price, Cur price vat, Disc by, Disc value, New price, New price vat, Start date, End date are required for lines!!")
+                        return
+                    }
+                    else{
+                        tableData.push(line)
+                    }
+                })
+            }
+            console.log('RERRRRRRRRRRRRRRRRRRRRR', data, tableData)
+            let res;
+            try {
+                if (!glo_is_update){
+                    res = await axios.post(`/pricelist/api/create/`, { data, tableData }, {
+                        headers: {
+                            "X-CSRFTOKEN": "{{ csrf_token }}",
+                        },
+                    });
+                } else {
+                    data['batch_id'] = batch_id
+                    res = await axios.put(`/pricelist/api/create/`, { data, tableData }, {
+                        headers: {
+                            "X-CSRFTOKEN": "{{ csrf_token }}",
+                        },
+                    });
+                }
+                if (!glo_is_update){
+                    const event = new CustomEvent(
+                        'addOpenIframePage',
+                        { detail: ['createTab', `Edit pricelist (${res.data.batch_id})`, `pricelist/update/${res.data.batch_id}/`, `${res.data.batch_id}`, true] }
+                    )
+                        window.parent.document.dispatchEvent(event)
+                }
+                toastr.success(res.data.msg);
+                window.location.reload()
+            } catch (error) {
+                console.log('errorerror', error)
+                HideLoading();
+                console.error(error.response.data['msg']);
+                toastr.error(`Failed to save changes. (${error.response.data['msg']})`);
+            }
+
+        }
+    }
+
+    async function priceListStatusUpdate(status){
+        ShowLoading(['Loading...',])
+        const data = {
+                status,
+                batch_id,
+            }
+        try {
+            const res = await axios.post(`/pricelist/api/status-update/`, data, {
+                headers: {
+                    "X-CSRFTOKEN": "{{ csrf_token }}",
+                },
+            });
+            toastr.success(res.data.msg);
+            window.location.reload()
+        } catch (error) {
+            HideLoading()
+            console.log('errorerror', error)
+            HideLoading();
+            console.error(error.response.data['msg']);
+            toastr.error(`Failed to save changes. (${error.response.data['msg']})`);
+        }
+    }
+
+    function pageReady() {
+        try {
+            glo_is_update = '{{glo_is_update_flag}}' == 'Y' ? true : false;
+
+            main_obj = JSON.parse('{{main_obj|safe}}');
+            linesData = JSON.parse('{{lines|safe}}');
+
+            batch_id = main_obj[0]['batch_id']
+            if (!['OPEN', ].includes(main_obj[0].status)){
+                itemLinesEntry.isFreezed = true
+            }
+            if (glo_is_update) {
+                setFormValues(main_obj[0], 'pricelist-form')
+                itemLinesEntry.lines_data = linesData
+                itemLinesEntry.lines_data.push(itemLinesEntry.getEmptyLineObj())
+            }
+
+        } catch (err) {
+            console.log('EEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRR', err)
+            main_obj = {};
+            glo_is_update = false;
+        }
+    } 
+
+    $(document).ready(() => {
+        pageReady()
+        initCommonSelect2() 
+        $('.dt-date-fltr').flatpickr({
+            enableTime: false,
+            dateFormat: "d-M-Y" 
+        });
+    })
+
+</script>
+
+{% endblock %}

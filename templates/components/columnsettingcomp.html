@@ -1,0 +1,68 @@
+<template id="col_setting_sidebar">
+   <!-- Control Sidebar -->
+   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Display Columns </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <span v-for="item in list_cols" :key="item.key">
+               <input type="checkbox" class="col_class" name="col_arr[]" :value="item.key">  [[item]] <br>
+            </span>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+         </div>
+      </div>
+      </div>
+   </div>
+   <!-- /.control-sidebar -->
+ </template>
+
+<script type="application/javascript">
+
+    Vue.component('columnsettingcomp', {
+        template: '#col_setting_sidebar',
+        delimiters:['[[',']]'],
+        props:[],
+        data: function () {
+            return {
+               list_cols: {}
+            }
+      },
+        methods:{
+            view_col_setting(model_name) {
+               let get_all_col_url = getAllColumnsUrl.replace("test_modelname", model_name);
+               axios.get(get_all_col_url)
+                  .then(response => {
+                     this.list_cols = response.data.res
+                     console.log('response.data.display_col_indexes',response.data.display_col_indexes)
+                     if(response.data.display_col_indexes==null){
+                           $(".col_class").prop("checked", true);
+                     }else{
+                        
+                     }
+                     $('#exampleModal').modal({
+                           show: true
+                     }) 
+                  })
+                  .catch(e => {
+                  console.log(e)
+                  });
+                  
+            },
+            closeCtrlSidebar(elm){
+               $('.col-setting').ControlSidebar('collapse');
+            }
+        },
+        mounted(){
+            EventBus.$on('view_col_setting', this.view_col_setting);
+         }
+    })
+
+</script>

@@ -1,0 +1,47 @@
+<template id="preview_row_sidebar">
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-light row-view shadow" :style="{ width: view_meta.width + '%' }">
+       <!-- Control sidebar content goes here -->
+       <div class="p-3">
+          <div class="os-content">
+
+            <div class="card-header">
+               <h3 class="card-title"> [[view_meta.title]]  </h3>
+               <div class="card-tools">
+                  <button type="button"  @click="closeCtrlSidebar(this)" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                  </button>
+               </div>
+            </div>
+
+            <div class="card card-primary card-outline">
+               <div class="card-body">
+                  <slot> </slot>
+               </div>
+            </div>
+          </div>
+          <!-- Content of the sidebar goes here -->
+       </div>
+    </aside>
+    <!-- /.control-sidebar -->
+ </template>
+
+<script type="application/javascript">
+
+    Vue.component('previewrowsidebarcomp', {
+        template: '#preview_row_sidebar',
+        delimiters:['[[',']]'],
+        props:['preview_meta'],
+        methods:{
+            previewRowData(row_id) {
+                $('.row-preview').ControlSidebar('show');
+            },
+            closeCtrlSidebar(elm){
+               $('.row-preview').ControlSidebar('collapse');
+            }
+        },
+        mounted(){
+            EventBus.$on('preview', this.preview_sidebar);
+         }
+    })
+
+</script>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+   .dt-buttons.btn-group.flex-wrap {
+   float: right;
+   }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="border rounded m-5 p-5">
+    <div class="d-flex justify-content-center">
+        <div id='print-div' style="width: auto; height: auto;">
+            {{html|safe}}
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %}
+
+{% include 'components/datatableheadercomp.html' %}
+{% include 'components/datatablecomp.html' %}
+{% include 'components/viewrowsidebarcomp.html' %}
+{% include 'components/editviewcomponent.html' %}
+{% include 'components/selectaccountcomp.html' %}
+{% include 'components/columnsettingcomp.html' %}
+
+<script>
+    
+
+</script>
+
+{% endblock %}
+

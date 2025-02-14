@@ -1,0 +1,38 @@
+<div class="card card-default">
+  <div class="card-body">
+    <ul class="nav nav-pills mb-2">
+      <li class="nav-item">
+        <a href="#po-pending-orders" data-toggle="tab" class="nav-link active"
+          >Pending PO</a
+        >
+      </li>
+      <li class="nav-item">
+        <a href="#srv-pending-orders" data-toggle="tab" class="nav-link"
+          >Pending SRV</a
+        >
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div
+        class="table-responsive tab-pane active"
+        id="po-pending-orders"
+        style="max-height: 800px"
+      >
+        <table
+          id="product-po-pending-orders-table"
+          class="table table-bordered container text-nowrap table-sm table-head-fixed"
+        ></table>
+      </div>
+      <div
+        id="srv-pending-orders"
+        class="tab-pane table-responsive"
+        style="max-height: 800px"
+      >
+        <table
+          id="product-srv-pending-orders-table"
+          class="table table-bordered w-100 container text-nowrap table-sm table-head-fixed"
+        ></table>
+      </div>
+    </div>
+  </div>
+</div>

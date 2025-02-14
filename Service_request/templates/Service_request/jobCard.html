@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <style>
+        .form-group {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: auto;
+}
+
+/* Form Label */
+.form-label {
+    font-size: 0.9rem;
+    color: #344054;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Input Container */
+.input-container {
+    width: 100%;
+}
+
+        .required::after {
+            content: "*";
+            color: red;
+            margin-left: 2px;
+        }
+
+        .form-control,
+        .form-select {
+            height: 44px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+            border-radius: 3px;
+            border: 1px solid #ced4da;
+            width: 100%;
+        }
+
+        .view-history {
+            color: #0d6efd;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0;
+            background: none;
+            border: none;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-weight: bold;
+        }
+
+        .view-history:hover {
+            text-decoration: underline;
+        }
+
+        .nav-tabs {
+            border-bottom: none;
+            position: relative;
+        }
+
+        .nav-tabs::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1.7px;
+            background-color: #1476d7;
+            z-index: 0;
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 3px 3px 0 0;
+            position: relative;
+            z-index: 1;
+            margin-bottom: -1px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #0d6efd !important;
+            color: white !important;
+            border-color: #0d6efd !important;
+            border-bottom-color: #0d6efd !important;
+            margin-bottom: -1px;
+        }
+
+        .btn {
+            border-radius: 3px;
+        }
+
+        .tab-content {
+            padding-top: 5px;
+            padding-left: 10px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            margin-top: -21px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .g-3,
+        .gy-3 {
+            --bs-gutter-y: 0rem;
+        }
+        .btn-secondary {
+            color: #fff;
+            background-color: #323d89;
+            border-color: #323d89;
+            box-shadow: none;
+        }
+
+      /* Add these styles to adjust the form layout */
+/* Form Layout Improvements */
+
+
+.form-control,
+.form-select,
+.select2-container .select2-selection--single {
+    height: 42px !important;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    border: 1px solid #D0D5DD;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    background-color: #FFFFFF;
+}
+
+/* Spacing and Grid */
+.form-container {
+    padding: 1.5rem;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1);
+    margin-bottom: 2rem;
+}
+
+
+/* Form Controls */
+.form-control,
+.form-select,
+.select2-container .select2-selection--single {
+    height: 38px !important;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1400px) {
+    .col-12.col-sm-6.col-md-4.col-lg-2 {
+        flex: 0 0 calc(20% - 12px);
+        max-width: calc(20% - 12px);
+    }
+}
+
+@media (max-width: 1200px) {
+    .col-12.col-sm-6.col-md-4.col-lg-2 {
+        flex: 0 0 calc(25% - 12px);
+        max-width: calc(25% - 12px);
+    }
+}
+
+@media (max-width: 992px) {
+    .col-12.col-sm-6.col-md-4.col-lg-2 {
+        flex: 0 0 calc(33.333% - 12px);
+        max-width: calc(33.333% - 12px);
+    }
+}
+
+@media (max-width: 768px) {
+    .col-12.col-sm-6.col-md-4.col-lg-2 {
+        flex: 0 0 calc(50% - 12px);
+        max-width: calc(50% - 12px);
+    }
+}
+
+@media (max-width: 576px) {
+    .col-12.col-sm-6.col-md-4.col-lg-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Select2 Enhancements */
+.select2-container--default .select2-selection--single {
+    border-radius: 6px;
+    border: 1px solid #D0D5DD;
+}
+
+.select2-dropdown {
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(16, 24, 40, 0.1);
+}
+
+/* Required Field Indicator */
+.required::after {
+    content: "*";
+    color: #F04438;
+    margin-left: 4px;
+}
+
+
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .col-lg-2 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 991px) {
+    .col-lg-2 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Form Header */
+.form-section-header {
+    font-size: 1.125rem;
+    color: #101828;
+    font-weight: 600;
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #F2F4F7;
+}
+
+/* Input Focus States */
+.form-control:focus,
+.form-select:focus,
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: #323d89;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 0 0 4px rgba(46, 144, 250, 0.1);
+}
+
+/* Six columns per row layout */
+.col-12.col-sm-6.col-md-4.col-lg-2 {
+    flex: 0 0 calc(16.666667% - 12px);
+    max-width: calc(16.666667% - 12px);
+    padding: 0;
+    margin: 0;
+}
+
+.row.g-3 {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -8px;
+    gap: 12px;
+}
+
+.sticky-buttons {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 15px 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        margin-top: 20px;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-primary {
+        background: #323d89;;
+      
+    }
+    </style>
+</head>
+
+<body class="p-4">
+    <div class="container-fluid px-0">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Job Card Create</h2>
+            <a href="{% url 'Service_request:job_summary' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Summary
+            </a>
+        </div>
+
+        <form id="jobCardForm">
+            <a href="#" class="view-history">View History</a>
+            
+            <!-- Add form-container class -->
+            <div class="form-container">
+                <div class="row g-3" id="formFields"></div>
+            </div>
+        
+            <!-- Add sticky-buttons class -->
+            <div class="sticky-buttons">
+                <div class="container-fluid">
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-success">Assign Technician</button>
+                        <button type="button" class="btn btn-primary">View Chatter</button>
+                        <button type="button" class="btn btn-primary">Remarks</button>
+                        <!-- Replace the existing Create SR button with this -->
+<button type="button" class="btn btn-success" id="createUpdateSrBtn">Create SR</button>
+
+                        <button type="button" class="btn btn-primary">Print SR</button>
+                        <button type="button" class="btn btn-primary" id="createViewOpBtn">
+                            Create/View Operation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const formFields = [
+            {
+                fields: [
+                    { label: 'VIN', required: true, type: 'text' },
+                    { label: 'Mileage', required: true, type: 'text' },
+                    { label: 'Pre Job Card', required: true, type: 'text' }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Incident Type', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Service Advisor', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Mobile Number', required: true, type: 'text' }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Work Dept', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Service Location', type: 'select', options: ['- Select -'] },
+                    { label: 'Profile Summary', type: 'text' }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Resolution Summary', type: 'text' },
+                    { label: 'Outdoor Van number', type: 'text' },
+                    { label: 'Outdoor Location number', type: 'select', options: ['- Select -'] }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Registraion Number', type: 'text' },
+                    { label: 'Promised Time', type: 'text' },
+                    { label: 'Incident Status', required: true, type: 'select', options: ['Open'] }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Group', required: true, type: 'select', options: ['Ajman Service Advisor AYM'] },
+                    { label: 'Account number', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Customer Name', required: true, type: 'select', options: ['- Select -'] }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Ship to Account number', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Ship to Customer Name', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Bill to Account number', required: true, type: 'select', options: ['- Select -'] }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Bill to Customer Name', required: true, type: 'select', options: ['- Select -'] },
+                    { label: 'Model', type: 'text' },
+                    { label: 'Date of Sale', type: 'text' }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Related Job Card No.', type: 'text' },
+                    { label: 'Address', type: 'text' },
+                    { label: 'Incident Number', type: 'text' }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'LPO Amount', type: 'text' },
+                    { label: 'LPO Reference number', type: 'text' },
+                    { label: 'Service Provider', type: 'select', options: ['- Select -'] }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Item', type: 'select', options: ['- Select -'], required: true },
+                    { label: 'Item Description', type: 'text', readonly: true },  // Make sure this matches exactly
+                    { label: 'Context', required: true, type: 'select', options: ['Customer Visit Details'] }
+                ]
+            },
+
+
+            {
+                fields: [
+                    { label: 'Mobile Number', type: 'select', options: ['- Select -'] },
+                    { label: 'Created at', type: 'text' },
+                    { label: 'Closed at', type: 'text' }
+                ]
+            },
+            {
+                fields: [
+                    { label: 'Created By', type: 'text' },
+                    { label: 'Last Updated By', type: 'text' },
+                    { label: 'Category', type: 'text' }
+                ]
+            }
+        ];
+
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function setupVinLookup() {
+            const vinInput = document.querySelector('input[data-field="VIN"]');
+            vinInput.addEventListener('input', debounce(async (e) => {
+                const vinNumber = e.target.value;
+                if (vinNumber.length >= 3) {
+                    await fetchAndPopulateCustomerDetails(vinNumber);
+                } else if (vinNumber.length === 0) {
+                    clearFormFields();
+                }
+            }, 500));
+        }
+
+        async function fetchAndPopulateCustomerDetails(vinNumber) {
+            try {
+                const response = await fetch(`/api/servicerequest/customer-details?vin_number=${vinNumber}`);
+                if (!response.ok) {
+                    throw new Error('Customer details not found');
+                }
+                const data = await response.json();
+                console.log('API Response:', data);
+                populateFormFields(data);
+            } catch (error) {
+                console.error('Error fetching customer details:', error);
+            }
+        }
+
+        // function populateFormFields(data) {
+        //     const vinField = document.querySelector('input[data-field="VIN"]');
+
+        //     // Handle VIN field with customer name
+        //     if (vinField) {
+        //         const currentValue = vinField.value;
+        //         // If VIN doesn't have a customer name yet, add it
+        //         if (!currentValue.includes('|')) {
+        //             vinField.value = `${currentValue}|${data.customer_name}`;
+        //         }
+        //         // If VIN already has a customer name, keep it as is
+        //     }
+
+        //     const fieldMapping = {
+        //         'Customer Name': { selector: 'select[data-field="Customer Name"]', value: data.customer_name },
+        //         'Account number': { selector: 'select[data-field="Account number"]', value: data.account_number },
+        //         'Ship to Account number': { selector: 'select[data-field="Ship to Account number"]', value: data.ship_to_account_number },
+        //         'Ship to Customer Name': { selector: 'select[data-field="Ship to Customer Name"]', value: data.ship_to_customer_name },
+        //         'Bill to Account number': { selector: 'select[data-field="Bill to Account number"]', value: data.bill_to_account_number },
+        //         'Bill to Customer Name': { selector: 'select[data-field="Bill to Customer Name"]', value: data.bill_to_customer_name },
+        //         'Mobile Number': { selector: 'input[data-field="Mobile Number"]', value: data.mobile_number },
+        //         'Address': { selector: 'input[data-field="Address"]', value: data.address },
+        //         'Item': { selector: 'select[data-field="Item"]', value: data.item_code },
+        //         'Item Description': { selector: 'input[data-field="Item Description"]', value: data.item_description }  // Add this line
+        //     };
+
+        //     // Rest of the field population logic
+        //     Object.entries(fieldMapping).forEach(([fieldName, info]) => {
+        //         const element = document.querySelector(info.selector);
+        //         if (element) {
+        //             if (element.tagName === 'SELECT') {
+        //                 let option = Array.from(element.options).find(opt =>
+        //                     opt.value === info.value || opt.textContent === info.value
+        //                 );
+
+        //                 if (!option) {
+        //                     option = new Option(info.value, info.value);
+        //                     element.add(option);
+        //                 }
+        //                 element.value = option.value;
+        //             } else {
+        //                 element.value = info.value || '';
+        //             }
+        //         }
+        //     });
+        // }
+
+
+        function populateFormFields(data) {
+    const vinField = document.querySelector('input[data-field="VIN"]');
+
+    // Handle VIN field with customer name
+    if (vinField) {
+        const currentValue = vinField.value;
+        if (!currentValue.includes('|')) {
+            vinField.value = `${currentValue}|${data.customer_name}`;
+        }
+    }
+
+    const fieldMapping = {
+        'Customer Name': { selector: 'select[data-field="Customer Name"]', value: data.customer_name },
+        'Account number': { selector: 'select[data-field="Account number"]', value: data.account_number },
+        'Ship to Account number': { selector: 'select[data-field="Ship to Account number"]', value: data.ship_to_account_number },
+        'Ship to Customer Name': { selector: 'select[data-field="Ship to Customer Name"]', value: data.ship_to_customer_name },
+        'Bill to Account number': { selector: 'select[data-field="Bill to Account number"]', value: data.bill_to_account_number },
+        'Bill to Customer Name': { selector: 'select[data-field="Bill to Customer Name"]', value: data.bill_to_customer_name },
+        'Mobile Number': { selector: 'input[data-field="Mobile Number"]', value: data.mobile_number },
+        'Address': { selector: 'input[data-field="Address"]', value: data.address },
+        'Item': { selector: 'select[data-field="Item"]', value: data.item_code },
+        'Item Description': { selector: 'input[data-field="Item Description"]', value: data.item_description }
+    };
+
+    // Populate fields and disable dropdowns
+    Object.entries(fieldMapping).forEach(([fieldName, info]) => {
+        const element = document.querySelector(info.selector);
+        if (element) {
+            if (element.tagName === 'SELECT') {
+                let option = Array.from(element.options).find(opt =>
+                    opt.value === info.value || opt.textContent === info.value
+                );
+
+                if (!option) {
+                    option = new Option(info.value, info.value);
+                    element.add(option);
+                }
+                element.value = option.value;
+                
+                // Disable the dropdown
+                element.disabled = true;
+                $(element).trigger('change'); // Update Select2 UI
+            } else {
+                element.value = info.value || '';
+            }
+        }
+    });
+}
+
+function clearFormFields() {
+    const fieldsToClear = {
+        'Customer Name': 'select',
+        'Account number': 'select',
+        'Ship to Account number': 'select',
+        'Ship to Customer Name': 'select',
+        'Bill to Account number': 'select',
+        'Bill to Customer Name': 'select',
+        'Mobile Number': 'input',
+        'Address': 'input',
+        'Item': 'select'
+    };
+
+    Object.entries(fieldsToClear).forEach(([fieldName, elementType]) => {
+        const selector = `${elementType}[data-field="${fieldName}"]`;
+        const element = document.querySelector(selector);
+        if (element) {
+            element.value = '';
+            // Enable dropdowns when clearing
+            if (elementType === 'select') {
+                element.disabled = false;
+                $(element).trigger('change');
+            }
+    }
+    });
+}
+
+        async function fetchLookupValues(lookupType) {
+            try {
+                const lookupMapping = {
+                    'SERVICE_ADVISOR': 'SERVICE ADVISOR',
+                    'WORK_DEPT': 'WORK DEPT',
+                    'INCIDENT_STATUS': 'INCIDENT STATUS',  // Changed from STATUS to INCIDENT STATUS
+                    'GROUP': 'GROUP',
+                    'CONTEXT': 'CONTEXT',
+                    'INCIDENT_TYPE': 'INCIDENT TYPE',
+                    'SERVICE_LOCATION': 'SERVICE LOCATION'
+                };
+
+                const dbLookupType = lookupMapping[lookupType] || lookupType;
+                const encodedLookupType = encodeURIComponent(dbLookupType);
+                const response = await fetch(`/api/servicerequest/lookup-values/${encodedLookupType}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.map(item => ({
+                    value: item.id,
+                    label: item.value
+                }));
+            } catch (error) {
+                console.error(`Error fetching ${lookupType}:`, error);
+                return [];
+            }
+        }
+
+        async function createFormField(field) {
+            let options = field.options;
+
+            if (field.type === 'select') {
+                switch (field.label) {
+                    case 'Incident Type':
+                        options = await fetchLookupValues('INCIDENT_TYPE');
+                        break;
+                    case 'Service Advisor':
+                        options = await fetchLookupValues('SERVICE_ADVISOR');
+                        break;
+                    case 'Work Dept':
+                        options = await fetchLookupValues('WORK_DEPT');
+                        break;
+                    case 'Service Location':
+                        options = await fetchLookupValues('SERVICE_LOCATION');
+                        break;
+                    case 'Incident Status':
+                        options = await fetchLookupValues('INCIDENT_STATUS');  // Changed from STATUS to INCIDENT_STATUS
+                        break;
+                    case 'Group':
+                        options = await fetchLookupValues('GROUP');
+                        break;
+                    case 'Context':
+                        options = await fetchLookupValues('CONTEXT');
+                        break;
+                }
+            }
+
+            return `
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 mb-3">
+            <div class="form-group">
+                <label class="form-label ${field.required ? 'required' : ''}">${field.label}</label>
+                <div class="input-container">
+                    ${field.type === 'select'
+                        ? `<select class="form-select" data-field="${field.label}">
+                            <option value="">- Select -</option>
+                            ${options.map(opt => `<option value="${opt.label}">${opt.label}</option>`).join('')}
+                           </select>`
+                        : `<input type="text" class="form-control" data-field="${field.label}"
+                            ${field.readonly ? 'readonly' : ''}
+                            ${field.value ? `value="${field.value}"` : ''}>`
+                    }
+                </div>
+            </div>
+        </div>
+    `;
+}
+        async function initializeFormSelects() {
+  
+    $('select').select2({
+        width: '100%',
+        dropdownCssClass: 'select2-dropdown',
+        placeholder: '- Select -',
+        allowClear: true,
+        minimumResultsForSearch: 0, // Show search box always
+        searchInputPlaceholder: 'Search...', // Add placeholder to search box
+        dropdownParent: $('body'), // Ensure proper positioning
+        // Customize search matching
+        matcher: function(params, data) {
+            // If there is no search term, return all options
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            // Skip if there is no 'text' property
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            // `params.term` is the user's search term
+            // `data.text` is the text that is displayed for the option
+            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                return data;
+            }
+
+            // Return `null` if the term should not be displayed
+            return null;
+        }
+    });
+
+    // Enhanced styling
+    $('<style>')
+        .prop('type', 'text/css')
+        .html(`
+            .select2-container--default .select2-selection--single {
+                height: 44px;
+                padding: 8px;
+                border: 1px solid #ced4da;
+                border-radius: 3px;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 42px;
+            }
+            .select2-dropdown {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .select2-search--dropdown {
+                padding: 8px;
+            }
+            .select2-container--default .select2-search--dropdown .select2-search__field {
+                border: 1px solid #ced4da;
+                border-radius: 3px;
+                padding: 6px;
+            }
+            .select2-results__option {
+                padding: 8px;
+            }
+            .select2-container--default .select2-results__option--highlighted[aria-selected] {
+                background-color: #0d6efd;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 28px;
+            }
+        `)
+        .appendTo('head');
+}
+
+
+async function renderForm() {
+    const formContainer = document.getElementById('formFields');
+    const fieldsPerRow = 6;
+    let currentRow;
+    let fieldCount = 0;
+    
+    // Flatten the fields array
+    const allFields = formFields.reduce((acc, row) => [...acc, ...row.fields], []);
+    
+    for (const field of allFields) {
+        if (fieldCount % fieldsPerRow === 0) {
+            currentRow = document.createElement('div');
+            currentRow.className = 'row g-3';
+            formContainer.appendChild(currentRow);
+        }
+        
+        const fieldHtml = await createFormField(field);
+        currentRow.insertAdjacentHTML('beforeend', fieldHtml);
+        fieldCount++;
+    }
+
+    await initializeFormSelects();
+    setupVinLookup();
+}
+        async function loadServiceRequestData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const incidentNumber = urlParams.get('incident');
+
+            if (incidentNumber) {
+                try {
+                    const response = await fetch(`/api/servicerequest/service-requests/${incidentNumber}/`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        populateFormWithServiceRequest(data);
+                    }
+                } catch (error) {
+                    console.error('Error loading service request data:', error);
+                }
+            }
+        }
+
+        function populateFormWithServiceRequest(data) {
+    const fieldMapping = {
+        'VIN': data.vin,
+        'Mileage': data.mileage,
+        'Pre Job Card': data.pre_job_card,
+        'Incident Type': data.incident_type,
+        'Service Advisor': data.service_advisor,
+        'Mobile Number': data.mobile_number,
+        'Service Location': data.service_location,
+        'Work Dept': data.work_dept,
+        'Profile Summary': data.problem_summary,
+        'Resolution Summary': data.resolution_summary,
+        'Outdoor Van number': data.outdoor_van_number,
+        'Outdoor Location number': data.outdoor_location_name,
+        'Registraion Number': data.registration_number,
+        'Promised Time': data.promised_time,
+        'Incident Status': data.incident_status,
+        'Group': data.group,
+        'Account number': data.account_number,
+        'Customer Name': data.customer_name,
+        'Ship to Account number': data.ship_to_account_number,
+        'Ship to Customer Name': data.ship_to_customer_name,
+        'Bill to Account number': data.bill_to_account_number,
+        'Bill to Customer Name': data.bill_to_customer_name,
+        'Model': data.model,
+        'Date of Sale': data.date_of_sale,
+        'Related Job Card No.': data.related_job_card_no,
+        'Address': data.address,
+        'Incident Number': data.incident_number,
+        'LPO Amount': data.lpo_amount,
+        'LPO Reference number': data.lpo_reference_number,
+        'Service Provider': data.service_provider,
+        'Item': data.item,
+        'Item Description': data.description,
+        'Context': data.context,
+        'Created at': data.created_at,
+        'Closed at': data.closed_at,
+        'Created By': data.created_by,
+        'Last Updated By': data.last_updated_by,
+        'Category': data.category
+    };
+
+    Object.entries(fieldMapping).forEach(([fieldName, value]) => {
+        const element = document.querySelector(`[data-field="${fieldName}"]`);
+        if (element) {
+            if (element.tagName === 'SELECT') {
+                // Create new option if it doesn't exist
+                if (!$(element).find(`option[value="${value}"]`).length) {
+                    const newOption = new Option(value, value, true, true);
+                    $(element).append(newOption);
+                }
+                // Set value using Select2
+                $(element).val(value).trigger('change');
+            } else {
+                element.value = value || '';
+            }
+        }
+    });
+}
+
+let isSubmitting = false;
+function collectFormData() {
+    return {
+        vin: document.querySelector('input[data-field="VIN"]').value.split('|')[0].trim(),
+        mileage: parseInt(document.querySelector('input[data-field="Mileage"]').value),
+        pre_job_card: document.querySelector('input[data-field="Pre Job Card"]').value,
+        incident_type: document.querySelector('select[data-field="Incident Type"]').value,
+        service_advisor: document.querySelector('select[data-field="Service Advisor"]').value,
+        mobile_number: document.querySelector('input[data-field="Mobile Number"]').value,
+        service_location: document.querySelector('select[data-field="Service Location"]').value,
+        work_dept: document.querySelector('select[data-field="Work Dept"]').value,
+        problem_summary: document.querySelector('input[data-field="Profile Summary"]').value,
+        group: document.querySelector('select[data-field="Group"]').value,
+        customer_name: document.querySelector('select[data-field="Customer Name"]').value,
+        account_number: document.querySelector('select[data-field="Account number"]').value,
+        ship_to_account_number: document.querySelector('select[data-field="Ship to Account number"]').value,
+        ship_to_customer_name: document.querySelector('select[data-field="Ship to Customer Name"]').value,
+        bill_to_account_number: document.querySelector('select[data-field="Bill to Account number"]').value,
+        bill_to_customer_name: document.querySelector('select[data-field="Bill to Customer Name"]').value,
+        context: document.querySelector('select[data-field="Context"]').value,
+        item: document.querySelector('select[data-field="Item"]').value,
+        description: document.querySelector('input[data-field="Item Description"]').value
+    };
+}
+
+
+        async function createServiceRequest() {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            console.log('Starting service request creation...');
+
+            const formFields = {
+                vin: document.querySelector('input[data-field="VIN"]'),
+                mileage: document.querySelector('input[data-field="Mileage"]'),
+                pre_job_card: document.querySelector('input[data-field="Pre Job Card"]'),
+                incident_type: document.querySelector('select[data-field="Incident Type"]'),
+                service_advisor: document.querySelector('select[data-field="Service Advisor"]'),
+                mobile_number: document.querySelector('input[data-field="Mobile Number"]'),
+                service_location: document.querySelector('select[data-field="Service Location"]'),
+                work_dept: document.querySelector('select[data-field="Work Dept"]'),
+                problem_summary: document.querySelector('input[data-field="Profile Summary"]'),
+                group: document.querySelector('select[data-field="Group"]'),
+                customer_name: document.querySelector('select[data-field="Customer Name"]'),
+                account_number: document.querySelector('select[data-field="Account number"]'),
+                ship_to_account_number: document.querySelector('select[data-field="Ship to Account number"]'),
+                ship_to_customer_name: document.querySelector('select[data-field="Ship to Customer Name"]'),
+                bill_to_account_number: document.querySelector('select[data-field="Bill to Account number"]'),
+                bill_to_customer_name: document.querySelector('select[data-field="Bill to Customer Name"]'),
+                context: document.querySelector('select[data-field="Context"]'),
+                item: document.querySelector('select[data-field="Item"]'),
+                item_description: document.querySelector('input[data-field="Item Description"]')
+            };
+
+
+            const incidentInput = document.querySelector('input[data-field="Incident Number"]');
+            if (incidentInput && incidentInput.value) {
+                alert("Cannot create new SR while editing existing incident");
+                return;
+            }
+            
+            const nullFields = Object.entries(formFields)
+                .filter(([key, element]) => !element)
+                .map(([key]) => key);
+
+            if (nullFields.length > 0) {
+                console.error('Missing elements:', nullFields);
+                alert(`Cannot find form elements for: ${nullFields.join(', ')}`);
+                return;
+            }
+
+            const formData = collectFormData();
+            const requiredFields = [
+                'vin', 'mileage', 'pre_job_card', 'incident_type', 'service_advisor',
+                'mobile_number', 'work_dept', 'group', 'customer_name', 'account_number',
+                'ship_to_account_number', 'ship_to_customer_name', 'bill_to_account_number',
+                'bill_to_customer_name', 'context'
+            ];
+
+            
+
+            try {
+                console.log('Sending API request...');
+                const response = await fetch('/api/servicerequest/service-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                console.log('API Response:', result);
+
+                if (response.ok) {
+                alert(`Service request created successfully!\nIncident Number: ${result.incident_number}`);
+                window.location.replace(`${window.location.pathname}?incident=${result.incident_number}`);
+            }
+            } catch (error) {
+                console.error('API Error:', error);
+                //alert('Error creating service request: ' + error.message);
+            }finally {
+                isSubmitting = false;
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const incidentNumber = urlParams.get('incident');
+    const createUpdateBtn = document.getElementById('createUpdateSrBtn');
+
+    if (incidentNumber) {
+        createUpdateBtn.textContent = 'Update SR';
+        createUpdateBtn.onclick = (e) => {
+            e.preventDefault();
+            updateServiceRequest(incidentNumber); // सीधे अपडेट फंक्शन को कॉल करें
+        };
+    } else {
+        createUpdateBtn.textContent = 'Create SR';
+        createUpdateBtn.onclick = (e) => {
+            e.preventDefault();
+            createServiceRequest(); // सीधे क्रिएट फंक्शन को कॉल करें
+        };
+    }
+});
+
+
+async function updateServiceRequest(incidentNumber) {
+
+    if (isSubmitting) return;
+    isSubmitting = true;
+    // Get form data
+    const formData = {
+        vin: document.querySelector('input[data-field="VIN"]').value.split('|')[0].trim(),
+        mileage: parseInt(document.querySelector('input[data-field="Mileage"]').value),
+        pre_job_card: document.querySelector('input[data-field="Pre Job Card"]').value,
+        incident_type: document.querySelector('select[data-field="Incident Type"]').value,
+        service_advisor: document.querySelector('select[data-field="Service Advisor"]').value,
+        mobile_number: document.querySelector('input[data-field="Mobile Number"]').value,
+        service_location: document.querySelector('select[data-field="Service Location"]').value,
+        work_dept: document.querySelector('select[data-field="Work Dept"]').value,
+        problem_summary: document.querySelector('input[data-field="Profile Summary"]').value,
+        group: document.querySelector('select[data-field="Group"]').value,
+        customer_name: document.querySelector('select[data-field="Customer Name"]').value,
+        account_number: document.querySelector('select[data-field="Account number"]').value,
+        ship_to_account_number: document.querySelector('select[data-field="Ship to Account number"]').value,
+        ship_to_customer_name: document.querySelector('select[data-field="Ship to Customer Name"]').value,
+        bill_to_account_number: document.querySelector('select[data-field="Bill to Account number"]').value,
+        bill_to_customer_name: document.querySelector('select[data-field="Bill to Customer Name"]').value,
+        context: document.querySelector('select[data-field="Context"]').value,
+        item: document.querySelector('select[data-field="Item"]').value,
+        description: document.querySelector('input[data-field="Item Description"]').value
+    };
+
+    try {
+        const response = await fetch(`/api/servicerequest/service-request/${incidentNumber}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert(`Service request updated successfully!\nIncident Number: ${incidentNumber}`);
+            window.location.reload();
+        } else {
+            alert('Error updating service request: ' + (result.error || 'Unknown error occurred'));
+        }
+    } catch (error) {
+        console.error('API Error:', error);
+        alert('Error updating service request: ' + error.message);
+    }finally {
+        isSubmitting = false;
+    }
+}
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const createViewOpBtn = document.querySelector('#createViewOpBtn');
+            if (createViewOpBtn) {
+                createViewOpBtn.addEventListener('click', function () {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const incidentNumber = urlParams.get('incident');
+
+                    if (incidentNumber) {
+                        window.location.href = `/Service_request/operation/?service_request_id=${incidentNumber}`;
+                    } else {
+                        const incidentInput = document.querySelector('input[data-field="Incident Number"]');
+                        if (incidentInput && incidentInput.value) {
+                            window.location.href = `/Service_request/operation/?service_request_id=${incidentInput.value}`;
+                        } else {
+                           // alert('No incident number found. Please create a service request first.');
+                        }
+                    }
+                });
+            }
+        });
+
+
+       // Remove the duplicate event listener at the bottom
+       document.addEventListener('DOMContentLoaded', async () => {
+    await renderForm();
+    await new Promise(resolve => setTimeout(resolve, 100));
+    await loadServiceRequestData();
+    
+    // Reinitialize Select2 after loading data
+    await initializeFormSelects();
+    
+    $('select').each(function() {
+        if ($(this).data('select2')) {
+            $(this).select2('destroy');
+        }
+        $(this).select2({
+            width: '100%',
+            dropdownCssClass: 'select2-dropdown',
+            placeholder: '- Select -',
+            allowClear: true,
+            minimumResultsForSearch: 0
+        });
+    });
+    // Setup other event listeners
+    const createSRButton = document.querySelector('button.btn-success:nth-of-type(4)');
+    if (createSRButton) {
+        createSRButton.addEventListener('click', createServiceRequest);
+    }
+
+    const createViewOpBtn = document.getElementById('createViewOpBtn');
+    if (createViewOpBtn) {
+        createViewOpBtn.addEventListener('click', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const incidentNumber = urlParams.get('incident');
+            if (incidentNumber) {
+                window.location.href = `/Service_request/operation/?service_request_id=${incidentNumber}`;
+            } else {
+                //alert('Please create a service request first');
+            }
+        });
+    }
+});
+
+
+
+        // function clearFormFields() {
+        //     const fieldsToClear = {
+        //         'Customer Name': 'select',
+        //         'Account number': 'select',
+        //         'Ship to Account number': 'select',
+        //         'Ship to Customer Name': 'select',
+        //         'Bill to Account number': 'select',
+        //         'Bill to Customer Name': 'select',
+        //         'Mobile Number': 'input',
+        //         'Address': 'input',
+        //         'Item': 'select'
+        //     };
+
+        //     Object.entries(fieldsToClear).forEach(([fieldName, elementType]) => {
+        //         const selector = `${elementType}[data-field="${fieldName}"]`;
+        //         const element = document.querySelector(selector);
+        //         if (element) {
+        //             element.value = '';
+        //         }
+        //     });
+        // }
+
+        async function setupVinLookup() {
+            const vinInput = document.querySelector('input[data-field="VIN"]');
+            vinInput.addEventListener('input', debounce(async (e) => {
+                const vinNumber = e.target.value;
+                if (vinNumber.length >= 3) {
+                    await fetchAndPopulateCustomerDetails(vinNumber);
+                } else if (vinNumber.length === 0) {
+                    clearFormFields();
+                }
+            }, 500));
+        }
+
+
+        // Add this to your existing JavaScript
+        document.getElementById('createViewOpBtn').addEventListener('click', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const incidentNumber = urlParams.get('incident');
+
+            if (incidentNumber) {
+                window.location.href = `/Service_request/operation/?service_request_id=${incidentNumber}`;
+            } else {
+                alert('Please create a service request first');
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>

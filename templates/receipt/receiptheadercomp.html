@@ -1,0 +1,213 @@
+<template id="data_header_div">
+    <div id="header_div">
+        <nav class="navbar navbar-expand navbar-white navbar-light" >
+           <ul class="navbar-nav" >
+              <li class="nav-item"><a id="side_toggle"
+                 role="button" class="nav-link" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter"><i class="fa fa-filter"></i></a>
+                </li>
+              <li class="nav-item d-sm-inline-block">
+                 <select aria-label=".form-select-lg example"
+                    class="form-select form-select-lg mb-3 btn-secondary header-select"
+                    style="height: 88%; line-height: 100%; width: fit-content; padding: 3px;">
+                    <option selected="selected">[[header_meta.filter_label]]</option>
+                    <option value="1">Saved Filter 1</option>
+                    <option value="2">Saved Filter 2</option>
+                    <option value="3">Saved Filter 3</option>
+                 </select>
+              </li>
+           </ul>
+           
+           <ul class="navbar-nav overflow-hidden w-50 ml-3" role="tablist" >
+              <li class="nav-item w-100">
+               <input type="search" id="tabl_global_search" placeholder="Search"
+                             aria-label="Search" class="form-control form-control-navbar">
+              
+              </li>
+           </ul>
+           <ul class="navbar-nav ml-auto mr-3" >
+               {% comment %} v-show="header_meta.menu_access.full_access === true || header_meta.menu_access.create_access === true "  {% endcomment %}
+               <li class="nav-item" style="padding-right: 15px;
+                  ">
+                  <button type="button" class="btn btn-primary btn-sm"
+                  style="height: 88%; line-height: 100%; fit-content; padding: 3px;" @click='getOracleReceipts()'>
+                  Get Oracle Receipts
+                  </button>
+               </li>
+               <li class="nav-item" style="padding-right: 15px;
+                 "><button type="button" class="btn btn-primary btn-sm"
+                 style="height: 88%; line-height: 100%; fit-content; padding: 3px;" @click='addOpenIframePage()'>
+                 [[header_meta.add_label]]
+                 </button>
+              </li>
+              <li class="nav-item">
+               <div class="btn-group btn-lg"> <button type="button" class="btn btn-secondary btn-md waves-effect waves-light dropdown-toggle"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="ti-menu"></i>Action </button>
+                  <div class="dropdown-menu animated flipInY" style="">
+                        <a v-for="action in header_meta.bulk_action_dropdown"  class="dropdown-item cust_class" href="javascript:void(0)" onclick="action_function(this)" :data-value="action.value">[[ action.text ]]</a>
+                        
+                  </div>
+               </div>
+               
+              </li>
+           </ul>
+        </nav>
+
+        <div class="collapse" id="collapseFilter">
+            <div class="col-sm-12" id="filter_datalist">
+               <ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills "> 
+                  <li class="nav-item waves-effect waves-info shadow-sm" v-for="prop in filter_props">
+                     <a :data-value="prop.value" data-toggle="tab" role="tab" :class="`nav-link ${prop.active?'active':''}`" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                        <span class="hidden-xs-down h5">[[prop.status]]</span> 
+                        <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">[[prop.count]]</span>
+                     </a>
+                  </li> 
+               <li class="nav-item waves-effect waves-info shadow-sm"> <input class="gl_picker flatpickr-input form-control" type="text" placeholder="Select Accouting Date" data-id="range"> </li>
+               </ul>            
+            </div>
+          </div>
+     </div>
+</template>
+
+<viewrowsidebarcomp :view_meta='view_meta'>  </viewrowsidebarcomp>
+  
+<script type="application/javascript">
+   var csrf_token ="{{ csrf_token }}"
+    Vue.component('datatableheadercomp', {
+        template: '#data_header_div',
+        delimiters: ['[[', ']]'],
+        props: ['header_meta','filter_status'],
+        data: function () {
+            return {
+               filter_props: this.header_meta.filter_props,
+            }
+      },
+        methods: {
+            openAddPopup() {
+               data = ''
+               EventBus.$emit("view_sidebar", data);
+            },
+            addOpenIframePage(){
+               var data = ['createTab', this.header_meta.add_title , this.header_meta.add_link , this.header_meta.add_unique_name , true ]
+               var event = new CustomEvent('addOpenIframePage', { detail: data })
+               window.parent.document.dispatchEvent(event)
+            },
+            change_bucket_count(data){
+                  d = get_params
+                  var data = function (d) {
+                     $.extend(d, params());
+                  }
+                  post_data = {
+                     "tab_status": $("#transfersTabs li a.active").data('value'),
+                     "gl_date_val" : ($(".gl_picker").val()!='' ? $(".gl_picker").val() : '' )
+                  }
+                  console.log('data====000----<',data)
+                  self = this
+                  var url = '/receipt/header_buckets';
+                  const headers = {
+                     'X-CSRFTOKEN': csrf_token,
+                  }
+
+                  axios.post(url,post_data,{
+                     headers: headers
+                  }).then(response => {
+                     data = response.data
+                     console.log('filter props----->',data.filter_props)
+                     self.filter_props = data.filter_props
+                     
+                  })
+                  .catch(e => {
+                     console.log(e)
+                  });
+            },
+            formatDate(date) {
+               var d = new Date(date),
+                   month = '' + (d.getMonth() + 1),
+                   day = '' + d.getDate(),
+                   year = d.getFullYear();
+           
+               if (month.length < 2) 
+                   month = '0' + month;
+               if (day.length < 2) 
+                   day = '0' + day;
+           
+               return [day,month,year ].join('-');
+           },
+           getOracleReceipts(){
+            ShowLoading([
+                  "Fetching receipts"
+               ])
+               var url = '/receipt/check_for_oracle_receipts';
+               const headers = {
+                  'X-CSRFTOKEN': csrf_token,
+               }
+               console.log('headers--->',headers)
+               axios.get(url,{
+                  headers: headers
+               }).then(response => {
+                  data = response.data
+                  HideLoading()
+                  message = 'Fetched Receipts from Oracle'
+                  if((data.oracle_receipts).length>0){
+                        message = 'Fetched '+(data.oracle_receipts).length+' Receipts from Oracle'
+                  }
+                  toastr.success(message)
+                  self.change_bucket_count();
+                  table.draw();
+                  
+               })
+               .catch(e => {
+                  console.log(e)
+                  toastr.error('Failed to fetch receipts from oracle')
+                  HideLoading()
+               });
+           }
+        },
+        mounted(){
+            $("#side_toggle").trigger('click')
+            self = this
+            var filter_props = self.filter_props;
+
+            console.log('1111111111111111')
+
+             {% comment %} $('#filter_datalist').empty().append(
+                `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills ">
+                       ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                        <a data-value="${prop.value}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                            <span class="hidden-xs-down h5">${prop.status}</span> 
+                            <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                        </a>
+                    </li> `).join("")} 
+                    <li class="nav-item waves-effect waves-info shadow-sm"> <input class="gl_picker flatpickr-input form-control" type="text" placeholder="Select Accouting Date" data-id="range"> </li>
+                    
+                </ul>`
+            ); {% endcomment %}
+
+            
+            var d = new Date();
+            $(".gl_picker").val(moment().format('DD-MMM-YYYY'))
+
+            //self.change_bucket_count()
+            setTimeout(function(scope) {
+               self = this
+               $('.gl_picker').flatpickr({
+                  dateFormat: 'd-M-Y',
+                  allowInput: true,
+                  mode: "range",
+                  onClose: function(selectedDates, dateStr, instance) {
+                    // dateSearch(dateStr,selectedDates)
+                    self.change_bucket_count();
+                    info = table.draw();
+                    //self.change_bucket_count();
+                 },
+            });
+
+            }.bind(this), 2)
+
+
+           
+
+        }
+    });
+</script>
+
+

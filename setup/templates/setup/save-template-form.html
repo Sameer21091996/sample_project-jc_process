@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+   .dt-buttons.btn-group.flex-wrap {
+   float: right;
+   }
+</style>
+{% endblock %}
+{% block content %}
+
+<div >
+    <div class="border rounded m-3 p-5">
+        <h2>Create new Template</h2>
+        <form onsubmit="saveTemplate(event)" class="border rounded p-3" id="template-form">
+            <div class="form-group">
+                <label>Template Name</label>
+                <input class="form-control" name="template_name" required/>
+            </div>
+            <div class="form-group">
+                <input name="has_lines" type="checkbox" id="has-lines-checkbox" class="mr-2"> 
+                <label for="has-lines-checkbox">Does template have lines?</label>
+            </div>
+            <div class="form-group">
+                <label>No of lines sections</label>
+                <input class="form-control col-md-1" type="number" value="1" name="no_of_lines_sections" required/>
+            </div>
+            <div class="form-group">
+                <input name="has_header_logo" type="checkbox" id="has_header-checkbox" class="mr-2"> 
+                <label for="has_header-checkbox">Does template have a header logo?</label>
+            </div>
+            <div class="form-group">
+                <input name="has_footer_logo" type="checkbox" id="has_footer-checkbox" class="mr-2"> 
+                <label for="has_footer-checkbox">Does template have a footer logo?</label>
+            </div>
+            <div class="form-group d-flex align-items-center pl-0">
+                <div class="custom-file col-md-3">
+                    <input type="file" id="inputGroupFile01" class="custom-file-input"> 
+                    <label for="inputGroupFile01" class="custom-file-label">Upload</label>
+                </div> 
+                <label class="ml-3">Optionally upload a copy of template word file for future references</label>
+            </div>
+            <div class="form-group">
+                <label>Paste your template here</label>
+                <div contenteditable id="html-contentt" style="height: auto;" class="mb-3 border form-control"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Template</button>
+            <button class="btn btn-danger" onclick="document.getElementById('html-contentt').innerHTML=''">Reset template</button>
+            <!-- <a href="{% url 'setup:template-list' %}" class="btn btn-link">View All</a> -->
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %}
+
+{% include 'components/datatableheadercomp.html' %}
+{% include 'components/datatablecomp.html' %}
+{% include 'components/viewrowsidebarcomp.html' %}
+{% include 'components/editviewcomponent.html' %}
+{% include 'components/selectaccountcomp.html' %}
+{% include 'components/columnsettingcomp.html' %}
+
+<script>
+    
+    const saveTemplate = async(event) => {
+        event.preventDefault()
+        const form = document.querySelector('#template-form');
+        const formData = new FormData();
+        for (let i = 0; i < form.elements.length; i++) {
+            const element = form.elements[i];
+            if (element.type !== 'submit') {
+                if (element.type === 'checkbox'){
+                    const myCheckbox = document.getElementById(element.id);
+                    formData.append(element.name, Boolean(myCheckbox.checked));
+                }
+                else{
+                    formData.append(element.name, element.value);
+             }
+            }
+        }
+        const htmlContent = document.getElementById('html-contentt').innerHTML;
+        if (htmlContent === ''){
+            toastr.error('Please paste template content')
+            return false
+        }
+        formData.append('html_content', htmlContent);
+
+        var fileInput = $('#inputGroupFile01')[0];
+        if (fileInput.files.length > 0) {
+            formData.append('template_file', $('#inputGroupFile01')[0].files[0]);
+        }
+        console.log('formData', formData);
+        
+        try {
+            const {data: resData} = await axios.post("{% url 'setup:template-save-api' %}", formData)
+            toastr.success('Saved');
+        } catch (error) {
+            Object.keys(error.response.data).forEach(e=>{
+                toastr.error(error.response.data[e])
+            })
+        }
+        return false
+    }
+</script>
+
+{% endblock %}
+

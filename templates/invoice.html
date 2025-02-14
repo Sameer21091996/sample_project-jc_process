@@ -1,0 +1,897 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice Print  ||    {{ohid|safe}}  </title>
+    
+    
+    <link rel="stylesheet" href="{% static 'css/jquery.loadingModal.css' %}">
+       
+    <link rel="stylesheet" href="{% static 'css/invoice.css' %}">
+ 
+<script src="{% static 'js/axios.min.js' %}"></script>
+<script src="{% static 'js/vue.min.js' %}"></script>
+</head>
+
+<body>
+ 
+    <div class="invoice-box" id="v-invoice" >
+    <template v-if="invs.length" >
+        <header  id="header"  class="page-header">
+
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <!-- <td style="width: 16%;">
+                        <img    v-if="invs[0].logo_path_special"  :src="base_url+'/'+invs[0].logo_path_special"    v-if="invs[0].org_id == '94'"    style="    padding-top: 1%;width:100%;float: left;">
+                    </td> -->
+                    <td style="text-align: center;">
+                        <!-- <img   v-if="invs[0].logo_path"  :src="base_url+'/'+invs[0].logo_path"  style="    width: 60%;" > -->
+                        <br>
+                        <br>
+                       
+                    </td>
+                </tr>   
+                <tr>
+
+                    <td  colspan="2" class="t_c" style="    text-align: center;"> 
+                        [[ invs[0].organization_name ]] ,          [[invs[0].inv_loc_address]] ,   [[invs[0].ae_emirate]]    , [[invs[0].country]] 
+                          <br>
+                    </td>
+                </tr> 
+                
+            </table> <br>
+    </header>
+
+
+
+
+
+ <div id="content"  class="page">
+    <div class="page-header-space"></div>   
+            <table border="1">
+                <tbody>
+                  
+                    </tr>
+                        <tr>
+
+                            <td class="top_border" colspan="2">
+        
+        
+                                <h3  v-if="invs[0].line_category_code!='RETURN'"  style="text-align: center;">
+        
+                                        [[ invs[0].order_type_o ]]       
+        
+                                </h3>
+        
+                               <h3  v-if="invs[0].line_category_code=='RETURN'"   style="text-align: center;">
+        
+                                        [[invs[0].order_type_o]]
+        
+                               </h3> 
+        
+                            </td>
+                           
+                            <td class="top_border"  colspan="4">
+        
+                                <h3  v-if="invs[0].line_category_code=='RETURN'"    style="text-align: center;" >
+                                    [[(invs[0].sales_type_new).toUpperCase()]]                  
+                               </h3>    
+                               <h3  v-if="invs[0].line_category_code!='RETURN'"  style="text-align: center;">
+                                [[(invs[0].sales_type_new).toUpperCase()]]
+                             </h3>
+        
+                            </td>
+
+
+                        </tr>
+
+
+                    <tr>
+                        <td class="pr-3 text-nowrap top_border"><strong>Bill To </strong></td>
+                        <td class="top_border">[[invs[0].bill_to_customer]] <br>([[invs[0].bill_to_customer_no]])</td>
+                        <td class="top_border"><strong>Customer Purchase Ref</strong></td>
+                        <td class="top_border">[[invs[0].lpo_number]]</td>
+                        
+                        <td class="top_border"><strong>Invoice Date</td>
+                        <td class="top_border">[[invs[0].ordered_date]]</td>
+                    </tr>
+                   
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Address</strong></td>
+                        <td>[[invs[0].bill_to_customer_add]]</td>
+                        <td><strong>Payment terms</strong></td>
+                        <td>[[invs[0].payment_term]]</td>
+                        <td><strong>Tax Invoice No.</td>
+                        <td>[[invs[0].order_number]]</td>
+                    </tr>
+
+                     
+                    <tr>
+                        <td  style="    padding-left: 0px;                        padding-right: 0px;" >
+                            <table >
+                                <tr> 
+                                    <td><strong>TRN</strong></td>  
+                                  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"><strong>Tel No</strong></td>
+                                </tr>
+                            </table>
+
+
+                        </td>
+                        <td  style="    padding-left: 0px;                        padding-right: 0px;" >
+                            <table >
+                                <tr> 
+                                    <td style="    height: 18px;"> <strong>[[invs[0].cust_vat_num]]    </strong></td>  
+                                  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"><strong>[[invs[0].bill_to_customer_phone]]</strong></td>
+                                </tr>
+                            </table>
+
+
+                        </td>
+                        <td class="top_border"><strong>Remarks</strong></td>
+                        <td class="top_border">[[invs[0].order_note]]</td>
+                        <td colspan="1" class="p-0" style="    padding-left: 0px;                        padding-right: 0px;">
+                            <table  class="p-0 w-100 h-100">
+                                <tr> 
+                                    <td><strong>TRN</strong></td>  
+                                  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"><strong>Date of Supply</strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td colspan="1" class="p-0"  style="    padding-left: 0px;                        padding-right: 0px;">
+                            <table  class="p-0 w-100 h-100">
+                                <tr> 
+                                    <td><strong>    [[invs[0].cf_vat_num]]  </strong></td>  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"> [[invs[0].ordered_date]]   </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong> </strong></td>
+                        <td ></td>
+                        <td style="border: none !important;"></td>
+                        <td  style="border: none !important;" ></td>
+                        <td><strong>Order Type</strong></td>
+                        <td>[[invs[0].order_type]]</td>
+                    </tr>
+
+                    
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Ship To
+                            </strong></td>
+                        <td>[[invs[0].party_name]] ([[invs[0].party_num]])</td>
+                        <td style="border: none !important;"></td>
+                        <td style="border: none !important;"></td>
+                        <td><strong>Location</strong></td>
+                        <td>[[invs[0].order_location]]</td>
+                    </tr>
+
+                   
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Address
+                            </strong></td>
+                        <td>[[invs[0].ship_to_address]]</td>
+                        <td style="border: none !important;"></td>
+                        <td style="border: none !important;"></td>
+                        <td><strong>Due Date</strong></td>
+                        <td>[[invs[0].ordered_date]] </td>
+                    </tr>
+
+                     
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Tel
+                            </strong></td>
+                        <td>[[invs[0].ship_to_phone]]</td>
+                        <td style="border: none !important;"></td>
+                        <td style="border: none !important;"></td>
+                        <td><strong>Original Order</strong></td>
+                        <td>[[invs[0].reference]]   </td>
+                    </tr>
+                </tbody>
+            </table>
+        
+        
+            <br>
+      
+                    <table border="1"   >
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="    width: 56px;">Sr.No</th>
+                                <th>Description of Goods</th>
+                                <th class="text-right">Unit Price ([[invs[0].currency_code]])</th>
+                                <th class="text-right">&nbsp; Qty &nbsp;&nbsp;</th>
+                                <th class="text-right">Gross Amount <br> ([[invs[0].currency_code]])</th>
+                                <th class="text-right">Discount  ([[invs[0].currency_code]])</th>
+                                <th class="text-right">Total Price<br>Excl.VAT  ([[invs[0].currency_code]])</th>
+                                <th class="text-right">VAT %</th>
+                                <th class="text-right">VAT <br>  ([[invs[0].currency_code]])</th>
+                                <th class="text-right">Total Price<br>Incl.VAT  ([[invs[0].currency_code]])</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <template v-for="(inv,index) in invs">
+                                <tr>
+                                    <td class="text-center">[[index+1]]</td>
+                                  
+                                    <td>
+                                         [[inv.mfg]]<br> 
+                                        [[inv.ordered_item]]<br>
+                                        [[inv.description]]<br>  
+                                    </td>
+                                     <td class="text-right">[[
+                                        formatCalculation(inv.selling_price.toFixed(2).toLocaleString())
+                                        ]]</td>
+                                       
+                                    <td class="text-right">[[inv.shipped_quantity]]</td>
+                                    <td class="text-right">[[
+                                        formatCalculation((inv.gross_amount).toFixed(2).toLocaleString())
+                                        ]]  </td>
+
+                                         
+                                    <td class="text-right">
+                                        [[
+                                        formatCalculation(parseFloat(inv.discount).toFixed(2).toLocaleString())
+                                        ]]
+                                    
+                                    </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(parseFloat(inv.line_total_excel_vat).toFixed(2).toLocaleString())
+                                        ]] </td>
+                                    <td class="text-right">[[ inv.vat ]] </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(parseFloat(inv.vat_amount_line).toFixed(2).toLocaleString())
+                                        ]]</td>
+                                    <td class="text-right">[[ 
+                                        formatCalculation(inv.total_amount_including_vat)
+                                        ]]</td> 
+                                </tr>
+                            </template>
+                           
+                                <tr>
+                                    <td class="text-center"></td>
+                                    <td>INVOICE VALUE</td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].sum_selling_price)
+                                        ]]</td>
+                                    <td class="text-right">[[
+                                        invs[0].sum_shipped_quantity
+                                        ]]</td>
+                                    <td class="text-right">[[
+                                       formatCalculation(invs[0].sum_gross_amount)
+                                        ]]  </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].sum_discount)
+                                        ]]</td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].invoice_total_excl_tax)
+                                         ]]   </td>
+                                    <td class="text-right"> </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].vat_amount_line_total)
+                                        ]]</td>
+                                    <td class="text-right">[[ 
+                                        formatCalculation(invs[0].invoice_total)
+                                        ]]</td>
+                                </tr>
+    
+    
+    
+                        </tbody>
+                    </table>
+               
+                    <br>
+                    <table border="1"       v-if="drafts[0]"    v-if="drafts[0].receipt_number">
+                        <thead >
+                            <tr>
+                                <th class="text-center"  style="    width: 56px;">Sr.No</th>
+                                <th>Particulars</th>
+                                <th class="text-right">Receipt No</th>
+                                <th class="text-right">Lpo No</th>
+                                <th class="text-right">RCD Loan No</th>
+                                <th class="text-right">PDC Batch No</th>
+                                <th class="text-right">Gv Voucher<br>No</th>
+                                <th class="text-right">Original <br>Amount</th>
+                                <th class="text-right">Available<br>Balance</th>
+                                <th class="text-right">Amount Assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-for="(draft,i) in drafts">                                            
+                                <tr >                                        
+                                    <td class="text-center">[[draft.seq_order]]</td>                                  
+                                    <td> [[draft.particulars]] </td>
+                                 
+                                    <td>  [[draft.receipt_number]]</td>
+                                 
+                                    <td>  [[draft.lpo_number]]</td>
+                                    <td>  [[draft.rcd_loan_number]]</td>
+                                   
+                                    <td>   [[draft.pdc_batch_number]]</td>                                               
+                                 
+                                    <td class="text-right">  [[draft.gv_voucher_num]] </td>    
+    
+                                    <td class="text-right"> [[formatCalculation(draft.original_amount) ]]  </td>        
+                                    <td class="text-right">  [[formatCalculation(draft.loc_available_amount)]] </td>        
+                                    <td class="text-right">  [[formatCalculation(draft.amount_assigned)]] </td>  
+                                </tr>                                       
+                            </template>  
+                        </tbody>
+                    </table>
+
+                    
+    
+    
+    
+    
+      
+            <br>
+            
+                    <table border="1"  v-if="drafts[0].receipt_number1"   v-if="drafts[0]"       > 
+                        <thead   >
+                            <tr>
+                                <th class="text-center"  style="    width: 56px;">Sr.No</th>
+                                <th>Particulars</th>
+                                <th class="text-right">Receipt No</th>
+                                <th class="text-right">Date</th>
+                                <th class="text-right">Ref No</th>
+                                <th class="text-right">Tax Invoice No.<br>(Advance)</th>
+                                <th class="text-right">Amount Collected</th>
+                                <th class="text-right">Advance <br> Available<br>for<br>Adjustment</th>
+                                <th class="text-right">Advance<br>Adjusted</th>
+                            </tr>
+                        </thead>
+                        <tbody  v-if="drafts[0].receipt_number1">
+                            <template v-for="(draft,i) in drafts" >  
+                                <tr> 
+                                    <td class="text-center"> [[draft.seq_order]] </td>   
+                                    <td> Advance Received </td>           
+                                    <td rowspan="2"> [[draft.receipt_number]] </td>   
+                                
+                                    <td  class="text-right"> [[draft.amount_collected]] </td>
+                                    <td   class="text-right"> [[ draft.loc_available_amount ]] </td>    
+                                    <td class="text-right">  [[ formatCalculation(draft.adv_adj_amt_wo_vat)]] </td> 
+                                </tr>
+    
+                                <tr>
+                                    <td class="text-center"></td>                                                                                      
+                                    <td>  
+                                       Tax Advance Invoice  
+                                    </td>
+                                    <td></td>   
+                                    <td></td>   
+                                    <td class="text-right">  [[ formatCalculation(draft.vat_amount)]] </td>                                        
+                                       
+                                </tr>                                      
+                            </template>  
+    
+    
+                        </tbody>
+                    </table>
+            
+                    <br><br>
+
+                    
+             
+                    <table border="1"    style=" width: 35%;  float: right;">                               
+                        <tbody >
+                            <tr>
+                                <td class="text-center">Total excl. VAT(AED)</td>                                       
+                                <td class="text-right">[[ formatCalculation(invs[0].cf_base)]]
+                                </td>                                        
+                            </tr>   
+                            <tr>
+                                <td class="text-center" > VAT</td>
+    
+                                
+                                <td class="text-right" > 
+                                    <span v-if="invs[0].cf_expinvformula !='X'" >
+    
+                                        <span >
+    
+                                            [[ formatCalculation(invs[0].cf_tot_vat)]] 
+    
+                                        </span>  
+    
+    
+                                    </span>
+    
+                                   
+                                    </td>                                        
+                            </tr>   
+                            <tr>
+                                <td class="text-center">Balance Due</td>                                       
+                                <td class="text-right">
+    
+                                  
+    
+                                    <span>
+    
+                                        [[ formatCalculation(invs[0].cf_final_bal)]] 
+    
+                                    </span>  
+                                </td>                                        
+                            </tr>   
+    
+    
+                        </tbody>
+                        
+                        
+                        </table>
+
+
+     <br>
+            <br>
+                    <table border='1' >                               
+                        <tbody>                                     
+                            <tr>
+                                <td class="text-left">Amount in Words</td>                                       
+                                <td class="text-left">
+    
+                                   
+                                    <span  v-if="invs[0].cf_mg_promotion_checkformula !=''">
+                                        [[ invs[0].amt_in_words]] 
+                                    </span>       
+                                    
+                                </td>                                        
+                            </tr>                                   
+    
+                            <br>
+                            <br>
+                            <br>
+                        </tbody></table>
+    <br>
+     <div class="page-footer-space"></div>
+
+</div> 
+
+   <footer id="footer"  class="page-footer">
+    <table class="table ">                               
+        <tbody> 
+            <template v-if="invs.filter(x=>x.terms_conditions == 'X').length">
+                <tr><td colspan="3" contenteditable="">
+                    Bluetooth Warranty Terms &amp; conditions:- 1 year* from the purchase date, condition apply as below.&nbsp;
+    <br><div><div>&nbsp; &nbsp;•<span style="white-space:pre">	</span>Bluetooth unit- 1 year&nbsp;</div><div>&nbsp; &nbsp;•<span style="white-space:pre">	</span>Speaker and Mic- 1 Year&nbsp;</div><div>&nbsp; &nbsp;•<span style="white-space:pre">	</span>Battery-6 Months</div><div>&nbsp; &nbsp;•<span style="white-space:pre">	</span>Other accessories like adaptor, charging cable- 6 Months&nbsp;</div><div>&nbsp; &nbsp;•<span style="white-space:pre">	</span>Warranty does not cover abnormal wear and tear, negligence, improper use or care, accident, or unusual exposure, or water damage.&nbsp;&nbsp;</div></div></td></tr>
+            </template>
+
+
+            <tr>
+            <td colspan="3">
+                Products purchased within a period of 7 days from the invoice date are eligible for EXCHANGE ONLY, items should be in original packing and unused condition with Original invoice.
+No Return/ Exchange / Warranty on items above 30% discounts.
+<br>
+              </td>
+
+
+            </tr>
+            <tr>
+
+                <td colspan="3" style="text-align:right;">
+                    االمنتجات التي تم شرائها خلال سبعة أيام من تاريخ الفاتورة يمكن استبدالها فقط, ويجب أن تكون بالمغلّف الأصلي و غير مستعملة ويجب ابراز الفاتوره الاصلية.لا يمكن ارجاع أو استبدال أو ضمان المنتجات المخفّضة أكثر من %30. 
+            <br><br></td>
+                
+                
+                            </tr>
+
+            <tr>
+                <td>
+                    CUSTOMER SIGNATURE:
+                </td>
+                <td  id="signature_id">
+                    <div v-html="signature"></div>
+                </td>
+
+                <td>
+                    COMPANY REPRESENTATIVE:  
+                </td>
+                <td>
+                    [[ invs[0].salesrep_name]] 
+                </td>                
+            </tr>
+
+            <tr>
+                <td>
+                    Report Printed by:  
+                </td>
+                <td>
+                     
+                    [[ invs[0].printed_by]] 
+                   
+                </td>
+                <td>
+                Printed Date & time :
+                </td>
+                <td> {% now "SHORT_DATETIME_FORMAT" %}
+                </td>                
+            </tr>
+
+            </tbody>
+            </table>
+                    <br>
+                
+                            <div v-if="invs[0].org_id == '94'" class="col-md-12">
+                                <table style="    width: 100%;" border="1">
+                                    <tr>                            
+                                        <td class="border_td">
+                                        Dubai
+                                        </td>
+                                        <td class="border_td">
+                                        Abu Dhabi
+                                        </td>
+                                        <td class="border_td" >
+                                        Ajman
+                                        </td>
+                                        <td class="border_td" >
+                                        Fujairah
+                                        </td>
+                                        <td class="border_td" >
+                                        Ras Al Khaimah
+                                        </td>  
+                                    </tr>
+                                    <tr>                            
+                                        <td class="border_td">
+                                        04-5094013
+                                        </td>
+                                        <td class="border_td">
+                                        02-5588890
+                                        </td>
+                                        <td class="border_td">
+                                        06-7116000
+                                        </td>
+                                        <td class="border_td">
+                                        09-2221188
+                                        </td >
+                                        <td class="border_td">
+                                        07-2356900
+                                        </td>  
+                                    </tr>		
+                                    <tr>	
+                                        <td colspan="5" style="text-align: center;" class="border_td">			
+                                        Website: www.aym.ae
+                                        </td>
+                                    </tr>	
+
+
+                            </table>
+                            </div>
+                    
+                    
+                            <div v-if="invs[0].org_id == '97'" class="col-md-12">
+                                <table style="width: 100%;" border="1">
+                                    <tr>                            
+                                    <td class="border_td">
+                                    Auto Sports Deira 
+                                    </td>
+                                    <td class="border_td">                    
+                                    Sharjah	
+                                    </td>                        
+                                    <td class="border_td">
+                                    RAK	Al Ain
+                                    </td>
+
+                                    <td class="border_td"> </td>
+                                    <td class="border_td"> </td>
+
+                                    <td class="border_td">	Musaffah
+                                    </td>
+                                    <td class="border_td">	Mina
+                                    </td>	
+                                    <td class="border_td">
+                                    UAQ	Dibba
+                                    </td>   
+
+                                    </tr>
+                                    <tr>                            
+                                             <td class="border_td"> 04-2214336</td>
+                                            <td class="border_td"></td>	06-5321117</td>
+                                            <td class="border_td"></td>	07-2223369</td>
+                                            <td class="border_td"></td>	03-7212172</td>
+                                            <td class="border_td"></td>	02-5552283</td>
+                                            <td class="border_td"></td>	02-6733886</td>
+                                            <td class="border_td"></td>	06-7653737</td>
+                                            <td class="border_td"></td>	09-2432578</td>                            
+                                    </tr>		
+                                    <tr>	
+                                        <td colspan="8" style="text-align: center;" class="border_td">			
+                                        Website: www.aym.ae
+                                        </td>
+                                    </tr>	 
+                                    
+
+
+                            </table>
+
+
+
+                            </div>
+                            <button type="button" style="
+                            position: fixed; 
+                            bottom: 20px;
+                            right: 30px; 
+                            z-index: 99;
+                            border: none;
+                            outline: none;
+                            background-color: gray;
+                            color: white; 
+                            cursor: pointer;
+                            padding: 15px;
+                            border-radius: 10px;
+                            font-size: 18px;"  class="btn btn-success waves-effect" onclick="window.print()">Print</button>
+     </footer>        
+   
+   
+ 
+    </template>
+  
+    </div>
+</body>
+
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'custom_js/jquery.loadingModal.js' %}"></script>
+<script src="{% static 'js/html2canvas.js' %}"></script>
+
+<script src="{% static 'js/html2pdf.bundle.min.js' %}"></script>
+<script>
+
+function addScript(url) {
+     var script = document.createElement('script');
+     script.type = 'application/javascript';
+     script.src = url;
+     document.head.appendChild(script);
+ }
+ addScript("{% static 'js/html2pdf.bundle.js' %}");
+
+
+
+
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+       axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+       axios.defaults.withCredentials = true;
+
+var vInv = new Vue({
+   el:'#v-invoice',
+   delimiters:["[[","]]"],
+   methods:{
+       formatCalculation(d){
+           if(d=="" || d==null || d==" ")
+           {
+               d=0
+           }
+           return parseFloat(d).toLocaleString(undefined,{minimumFractionDigits: 2,
+                                                           maximumFractionDigits: 2});
+       },
+   },
+   mounted(){
+    //showloader();
+    // alert()
+      
+           this.base_url = window.location.origin;
+           console.log(this.base_url)
+           axios.post("get-sales-inv-api",{
+               ohid:"{{ohid|safe}}",              
+           })
+           .then(function (res) 
+           {
+            console.log("herre;llo")   
+            console.log(res.data)
+            
+
+               vInv.invs = res.data.invs;
+               vInv.drafts = res.data.drafts;
+               vInv.signature = res.data.signature;
+
+                setTimeout(function(){
+
+                        //alert("Hello"); 
+                        oracel_order_number = vInv.invs[0].order_number;
+                        sendmailtosupp(oracel_order_number);
+
+                }, 10);
+
+               
+
+               
+           })
+           .catch(function () 
+           {
+
+                //hideloader()
+                alert('No Invoice Record found');
+           })
+   },
+   data:{
+       html:'',
+       invs: [],
+       base_url:'',
+       drafts: [],
+       draft_line_number:0,
+       draft_line_number_2:0,
+       signature:'',
+       
+   }
+});
+
+ function sendmailtosupp(oracel_order_number)
+{
+	  
+    var today = new Date();
+	  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+	  var dateTime = date+' '+time;		 	 
+	  var element = document.getElementById('v-invoice'); 
+	  
+	  var opt = {
+	    margin:       [0,0,0,0],
+	    filename:     oracel_order_number+".pdf",
+	    image:        { type: 'jpeg', quality:0.98},
+	    html2canvas: 
+        {
+            scale: 2.5,
+	        //   scale:2.5,
+	        useCORS: true,
+	        
+	        },
+	  	 
+	       
+         jsPDF:{  unit: 'in', format: [9.26772, 16.2669], orientation: 'portrait'  },	   
+         	   
+	  };  
+	  
+	 html2pdf().from(element).set(opt).outputPdf().then(function(pdf)
+     {	       
+
+             var ht=document.getElementById('v-invoice').innerHTML
+             var   globalpdftoemail=b2a(pdf);
+             //console.log(globalpdftoemail)
+           axios.post("invoice_save_in_table",
+           {
+               po : globalpdftoemail,   
+               oracel_order_number:oracel_order_number   ,
+               document_type:'PDF',
+               invoice_html:ht,
+               type:'invoice',     
+               'signature':''      
+           })
+           .then(function (res) 
+           {
+               
+                       // console.log(res);
+                        
+                       // document.getElementById('v-invoice').innerHTML='<object data="'+res.data.invoice_path+'" type="application/pdf" width="100%" height="100%"><p>link <a href="'+res.data.invoice_path+'">to the PDF!</a></p></object>'
+                        
+                        
+                 //  window.location.href = res.data.invoice_path;
+                        
+                        
+                        
+                        //<embed src="'+res.data.invoice_path+'" type="application/pdf" width="100%" height="100%" />'
+
+
+
+           })
+           .catch(function () 
+           {
+                
+               // alert('No Invoice Record found');
+
+               //window.close();
+           })
+        	
+		 
+		    
+	}).save() 
+	
+	
+}
+function b2a(a) {
+	  var c, d, e, f, g, h, i, j, o, b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", k = 0, l = 0, m = "", n = [];
+	  if (!a) return a;
+	  do c = a.charCodeAt(k++), d = a.charCodeAt(k++), e = a.charCodeAt(k++), j = c << 16 | d << 8 | e, 
+	  f = 63 & j >> 18, g = 63 & j >> 12, h = 63 & j >> 6, i = 63 & j, n[l++] = b.charAt(f) + b.charAt(g) + b.charAt(h) + b.charAt(i); while (k < a.length);
+	  return m = n.join(""), o = a.length % 3, (o ? m.slice(0, o - 3) :m) + "===".slice(o || 3);
+	}
+
+
+function sendemailtooo()
+{
+	
+	var email= document.getElementById('supplieremail').value;  
+	if(email!=null)
+	{
+		 var username=document.getElementById('username1').value;
+	     var textmsg= document.getElementById('commentstosupp').value;  	
+	 	
+	 var fd = new FormData();
+	fd.append('username',username);
+	fd.append('supname',supname);
+	fd.append('po_number',globalpooooooo);
+	fd.append('email',email);
+	fd.append('textmsg', textmsg);
+	fd.append('po', globalpdftoemail);
+	$.ajax({
+	    type: 'POST',
+	    url: webservice_url+'email/cpd_test.php',
+	    data: fd,
+	    processData: false,
+	    contentType: false
+	}).done(function(data) 
+	{
+	     //  console.log(data);
+	});
+	
+	 alert('Successfully send to supplier')
+	 
+	 $('#sendemailtosup').modal("hide");
+	 getallpoapprove();
+	  customreload();
+	 
+	} 
+	 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function hideloader()
+{
+  $('body').loadingModal('hide');
+  $('body').loadingModal('destroy');
+}
+
+function showloader(a='Please Wait We are Fetching Results...')
+ {
+        $('body').loadingModal({text: a});
+        var delay = function(ms){ return new Promise(function(r) { setTimeout(r, ms) }) };
+        var time = 2000;
+
+        delay(time)
+                .then(function() { $('body').loadingModal('animation', 'rotatingPlane').loadingModal('backgroundColor', 'gray'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'wave'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'wanderingCubes').loadingModal('backgroundColor', 'gray'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'spinner'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'chasingDots').loadingModal('backgroundColor', 'darkblue'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'threeBounce'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'circle').loadingModal('backgroundColor', 'black'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'cubeGrid'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'fadingCircle').loadingModal('backgroundColor', 'darkgray'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'foldingCube'); return delay(time); } )
+                .then(function() { $('body').loadingModal('color', 'black').loadingModal('text', 'Done :-)').loadingModal('backgroundColor', 'darkyellow');  return delay(time); } )
+                // .then(function() { $('body').loadingModal('hide'); return delay(time); } )
+                
+                // .then(function() { $('body').loadingModal('destroy')
+                
+                
+                // ;}
+                
+                
+                // );   
+              
+              }
+
+</script>
+
+
+</html>

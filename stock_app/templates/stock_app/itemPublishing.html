@@ -1,0 +1,642 @@
+{% extends 'base.html' %} {% load static %} {% load humanize %}
+{% block content_app %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Count Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <style>
+        .container-fluid{
+            padding: 20px 10px 0 10px;
+        }
+        .stock-table th {
+            background-color: #323d89;
+            color: white;
+                /* padding: 10px 20px; */
+            font-weight: bold;
+            border-right: 1px solid #ffffff30;
+            white-space: nowrap;
+        }
+        .color-button{
+            background-color: #323d89;
+        }
+
+        .table th {
+            padding: 0.3rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .table td{
+            padding: 0.0rem;
+            padding-left: 0.4rem;
+            vertical-align: middle;
+            font-size: 14px;
+            font-weight:500;
+        }
+        
+        .stock-table td {
+            border-right: 1px solid #eee;
+        }
+        
+        .stock-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            
+        }
+        .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+        
+        .sort-controls {
+            display: flex;
+            flex-direction: column;
+            margin-left: 8px;
+        }
+
+        .sort-icon {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            line-height: 8px;
+        }
+
+        .sort-icon.active {
+            color: white;
+        }
+
+        .search-row input {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .search-row td {
+            background: #f8f9fa;
+            padding: 2px;
+        }
+
+        .scrollable-container {
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            position: relative;
+        }
+
+        .pagination-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .status-btn {
+            padding: 5px;
+            border: 1px solid black;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+
+        .status-btn.active {
+            background-color: #323d89;
+            color: white;
+        }
+
+        .view-button {
+            background-color: #323d89;
+            color: white;
+            padding: 2px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            background: #f8f9fa;
+        }
+        .count-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        table tr td:nth-child(1) {
+            width: 1%;
+            padding: 0.2%;
+        }
+        table tr td:nth-child(2) {
+            width: 1%;
+        }
+        table tr td:nth-child(3) {
+            width: 10%;
+        }
+        table tr td:nth-child(4) {
+            width: 8%;
+        }
+        table tr td:nth-child(5) {
+            width: 5%;
+        }
+        table tr td:nth-child(6) {
+            width: 10%;
+            white-space: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        table tr td:nth-child(7) {
+            width: 10%;
+        }
+        table tr td:nth-child(8) {
+            width: 10%;
+            white-space: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        table tr td:nth-child(9) {
+            width: 10%;
+        }
+      
+
+        /* Hide scrollbar for Chrome/Safari/Opera */
+        .stock-table td:nth-child(6)::-webkit-scrollbar,
+        .stock-table td:nth-child(8)::-webkit-scrollbar {
+            display: none;
+        }
+
+
+        .page-link {
+            position: relative;
+            display: block;
+            padding: .5rem .75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: #323d89;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+        }
+                
+
+     .btn-secondary {
+    color: #fff;
+    background-color: #323d89;
+    border-color: #323d89;
+    box-shadow: none;
+}
+
+
+    </style>
+</head>
+<body>
+    <template id="sortIcons">
+        <div class="sort-controls">
+            <i class="fas fa-sort-up sort-icon"></i>
+            <i class="fas fa-sort-down sort-icon"></i>
+        </div>
+    </template>
+    <div class="container-fluid">
+        <div class="header-controls">
+            <h1>Item Publishing Dashboard</h1>
+            <button class="btn btn-primary color-button" id="addStockBtn">Add Stock Items</button>
+        </div>
+
+        <div class="status-filters mb-3">
+            <button class="status-btn active" data-status="all">All <span class="count-badge" id="count-all">0</span></button>
+            <button class="status-btn" data-status="draft">Draft <span class="count-badge" id="count-draft">0</span></button>
+            <!-- <button class="status-btn" data-status="in-progress">In Progress <span class="count-badge" id="count-progress">0</span></button> -->
+            <button class="status-btn" data-status="completed">Completed <span class="count-badge" id="count-completed">0</span></button>
+        </div>
+        <div class="date-filter mb-3">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <!-- <span class="input-group-text">Date Range</span> -->
+                        </div>
+                        <input type="text" id="dateRangePicker" class="form-control" placeholder="Select date range...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary" id="clearDateRange">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="scrollable-container">
+            <table class="table stock-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-field="action">Action</th>
+                        <th class="sortable" data-field="id">ID</th>
+                        <th class="sortable" data-field="upload_type_value">Upload Type Value</th>
+                        <th class="sortable" data-field="title">Title</th>
+                        <th class="sortable" data-field="status">Status</th>
+                        <th class="sortable" data-field="creation_by">Creation By</th>
+                        <th class="sortable" data-field="creation_date">Creation Date</th>
+                        <th class="sortable" data-field="updated_by">Last Updated By</th>
+                        <th class="sortable" data-field="update_date">Last Update Date</th>
+                    </tr>
+           
+                    <tr class="search-row">
+                        <td><input type="text" class="column-search" data-field="action" placeholder="Search action..."></td>
+                        <td><input type="text" class="column-search" data-field="id" placeholder="Search ID..."></td>
+                        <td><input type="text" class="column-search" data-field="upload_type_value" placeholder="Search Upload Type..."></td>
+                        <td><input type="text" class="column-search" data-field="title" placeholder="Search title..."></td>
+                        <td><input type="text" class="column-search" data-field="status" placeholder="Search status..."></td>
+                        <td><input type="text" class="column-search" data-field="creation_by" placeholder="Search creator..."></td>
+                        <td><input type="date" class="column-search" data-field="creation_date"></td>
+                        <td><input type="text" class="column-search" data-field="updated_by" placeholder="Search updater..."></td>
+                        <td><input type="date" class="column-search" data-field="update_date"></td>
+                    </tr>
+                </thead>
+                <tbody id="dataTable">
+                    <!-- Data rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-container color-button">
+            <div class="pagination-info">
+                Showing <span id="showingStart">0</span> to <span id="showingEnd">0</span> of <span id="totalEntries">0</span> entries
+            </div>
+            <nav>
+                <ul class="pagination mb-0">
+                    <li class="page-item"><a class="page-link " href="#" id="prevPage">Previous</a></li>
+                    <li class="page-item">
+                        <select id="pageSize" class="form-control">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </li>
+                    <li class="page-item"><span class="page-link" id="pageInfo">Page 1 of 1</span></li>
+                    <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('addStockBtn').addEventListener('click', function() {
+            window.location.href = "{% url 'stock_app:Form' %}";
+        });
+        let currentPage = 1;
+        let pageSize = 10;
+        let totalData = [];
+
+        class TableSorter {
+            constructor(tableSelector) {
+                this.table = document.querySelector(tableSelector);
+                this.sortState = {
+                    field: null,
+                    direction: 'asc'
+                };
+                this.initializeSorting();
+            }
+
+            initializeSorting() {
+                const headers = this.table.querySelectorAll('th.sortable');
+                headers.forEach(header => {
+                    header.addEventListener('click', () => this.handleSort(header));
+                });
+            }
+
+            handleSort(header) {
+                const field = header.dataset.field;
+                if (this.sortState.field === field) {
+                    this.sortState.direction = this.sortState.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortState.field = field;
+                    this.sortState.direction = 'asc';
+                }
+                this.updateSortUI(header);
+                this.sortData();
+            }
+
+            updateSortUI(activeHeader) {
+                this.table.querySelectorAll('th.sortable').forEach(header => {
+                    header.classList.remove('asc', 'desc');
+                });
+                activeHeader.classList.add(this.sortState.direction);
+            }
+
+            sortData() {
+                const tbody = this.table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                rows.sort((a, b) => {
+                    const aValue = this.getCellValue(a, this.sortState.field);
+                    const bValue = this.getCellValue(b, this.sortState.field);
+                    return this.compare(aValue, bValue);
+                });
+
+                if (this.sortState.direction === 'desc') {
+                    rows.reverse();
+                }
+
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+            }
+
+            getCellValue(row, field) {
+                const index = Array.from(this.table.querySelectorAll('th'))
+                    .findIndex(th => th.dataset.field === field);
+                return row.cells[index].textContent.trim();
+            }
+
+            compare(a, b) {
+                if (this.isDate(a) && this.isDate(b)) {
+                    return new Date(a) - new Date(b);
+                }
+                return a.localeCompare(b);
+            }
+
+            isDate(value) {
+                return !isNaN(Date.parse(value));
+            }
+        }
+
+        class TableSearchManager {
+            constructor(tableSelector) {
+                this.table = document.querySelector(tableSelector);
+                this.initializeSearch();
+            }
+
+            initializeSearch() {
+                const searchInputs = this.table.querySelectorAll('.column-search');
+                searchInputs.forEach(input => {
+                    input.addEventListener('input', () => this.handleSearch());
+                });
+            }
+
+            handleSearch() {
+                const searchValues = this.getSearchValues();
+                const rows = this.table.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const visible = this.rowMatchesSearch(row, searchValues);
+                    row.style.display = visible ? '' : 'none';
+                });
+
+                this.updateStatusCounts();
+            }
+
+            getSearchValues() {
+                const values = {};
+                this.table.querySelectorAll('.column-search').forEach(input => {
+                    const value = input.value.trim();
+                    if (value) {
+                        values[input.dataset.field] = value.toLowerCase();
+                    }
+                });
+                return values;
+            }
+
+            rowMatchesSearch(row, searchValues) {
+                return Object.entries(searchValues).every(([field, value]) => {
+                    const cellValue = this.getCellValue(row, field).toLowerCase();
+                    return cellValue.includes(value);
+                });
+            }
+
+            getCellValue(row, field) {
+                const index = Array.from(this.table.querySelectorAll('th'))
+                    .findIndex(th => th.dataset.field === field);
+                return row.cells[index].textContent.trim();
+            }
+
+        
+        }
+
+        // Initialize components
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableSorter = new TableSorter('.stock-table');
+            const tableSearch = new TableSearchManager('.stock-table');
+            
+            // Initialize status filters
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const status = btn.dataset.status;
+                    filterByStatus(status);
+                });
+            });
+
+            // Load initial data
+            loadStockData();
+        });
+
+        function filterByStatus(status) {
+            const rows = document.querySelectorAll('#dataTable tr');
+            rows.forEach(row => {
+                if (status === 'all' || row.querySelector('td:nth-child(5)').textContent.toLowerCase() === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        async function loadStockData() {
+            try {
+                const response = await fetch('/api/stock/list/item-publishing');
+                const data = await response.json();
+                console.log('Received data:', data);
+                totalData = data;
+                updateStatusCounts(data);
+                updatePagination();
+            } catch (error) {
+                console.error('Error loading stock data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load stock data'
+                });
+            }
+        }
+
+        function updateStatusCounts(data) {
+            const counts = {
+                all: data.length,
+                draft: data.filter(item => item.status.toLowerCase() === 'draft').length,
+                'in-progress': data.filter(item => item.status.toLowerCase() === 'in-progress').length,
+                completed: data.filter(item => item.status.toLowerCase() === 'completed').length
+            };
+
+            document.getElementById('count-all').textContent = counts.all;
+            document.getElementById('count-draft').textContent = counts.draft;
+            // document.getElementById('count-progress').textContent = counts['in-progress'];
+            document.getElementById('count-completed').textContent = counts.completed;
+        }
+
+        function updateTable(data) {
+            const tbody = document.querySelector('#dataTable');
+            console.log('Updating table with data:', data);
+            tbody.innerHTML = data.map(item => `
+                <tr data-status="${item.status.toLowerCase()}">
+                    <td><button class="view-button" onclick="window.location.href='{% url 'stock_app:view' %}?update_type=' + encodeURIComponent('${item.upload_type_value}') + '&header_id=' + ${item.id}">View</button></td>
+
+                    <td>${item.id}</td>
+                    <td>${item.upload_type_value }</td>
+                    <td>${item.title}</td>
+                    <td>${item.status}</td>
+                    <td>${item.creation_by}</td>
+                    <td>${formatDate(item.creation_date)}</td>
+                    <td>${item.last_updated_by}</td>
+                    <td>${formatDate(item.last_update_date)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+        function initializeSortHeaders() {
+            const sortIcons = document.getElementById('sortIcons').content;
+            document.querySelectorAll('th.sortable').forEach(header => {
+                const headerContent = document.createElement('div');
+                headerContent.className = 'header-content';
+                headerContent.innerHTML = `
+                    <span>${header.textContent}</span>
+                    ${sortIcons.cloneNode(true).querySelector('.sort-controls').outerHTML}
+                `;
+                header.textContent = '';
+                header.appendChild(headerContent);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSortHeaders();
+            loadStockData();
+        });
+        function updatePagination() {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = Math.min(startIndex + pageSize, totalData.length);
+    const paginatedData = totalData.slice(startIndex, endIndex);
+    
+    // Update table with paginated data
+    updateTable(paginatedData);
+    
+    // Update pagination info
+    document.getElementById('showingStart').textContent = totalData.length ? startIndex + 1 : 0;
+    document.getElementById('showingEnd').textContent = endIndex;
+    document.getElementById('totalEntries').textContent = totalData.length;
+    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${Math.ceil(totalData.length / pageSize)}`;
+    
+    // Update button states
+    document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
+    document.getElementById('nextPage').classList.toggle('disabled', endIndex >= totalData.length);
+}
+
+// Add event listeners
+document.getElementById('prevPage').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentPage > 1) {
+        currentPage--;
+        updatePagination();
+    }
+});
+
+document.getElementById('nextPage').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentPage * pageSize < totalData.length) {
+        currentPage++;
+        updatePagination();
+    }
+});
+
+document.getElementById('pageSize').addEventListener('change', (e) => {
+    pageSize = parseInt(e.target.value);
+    currentPage = 1;
+    updatePagination();
+});
+
+
+function initializeDateRangePicker() {
+            const dateRangePicker = flatpickr("#dateRangePicker", {
+                mode: "range",
+                dateFormat: "d-M-Y",  // This will show dates as 11-JAN-2025
+                altFormat: "d-M-Y",
+                altInput: true,
+                onChange: function(selectedDates) {
+                    if (selectedDates.length === 2) {
+                        const startDate = selectedDates[0];
+                        const endDate = selectedDates[1];
+                        
+                        const filteredData = totalData.filter(item => {
+                            const itemDate = new Date(item.creation_date);
+                            endDate.setHours(23, 59, 59, 999);
+                            return itemDate >= startDate && itemDate <= endDate;
+                        });
+                        
+                        updateTable(filteredData);
+                        updateStatusCounts(filteredData);
+                    }
+                }
+            });
+
+            document.getElementById('clearDateRange').addEventListener('click', () => {
+                dateRangePicker.clear();
+                updateTable(totalData);
+                updateStatusCounts(totalData);
+            });
+        }
+
+
+        // Add this to your existing DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSortHeaders();
+            loadStockData();
+            initializeDateRangePicker(); // Add this line
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

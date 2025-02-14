@@ -1,0 +1,41 @@
+<template id="modal-div">
+    <div class="modal fade action_modal" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:140%">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> [[modal_info.title]] </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body modal-lg">
+                    <template v-if="component">                        
+                        <component v-bind:is="component"  v-bind:component_info="component_data"/>
+                    </template>
+                </div>
+                
+                {% comment %} <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" :class="modal_info.display_class" >Save changes</button>
+                </div> {% endcomment %}
+            </div>
+        </div>
+    </div>
+</template>
+
+<script type="application/javascript">
+
+    let edit_data = {
+        'account': {},
+        'enquiry': {}
+    };
+
+    Vue.component('modelcomp', {
+        template: '#modal-div',
+        delimiters:['[[',']]'],
+        props:[ 'modal_info','component','component_data' ]
+    })
+
+</script>
+

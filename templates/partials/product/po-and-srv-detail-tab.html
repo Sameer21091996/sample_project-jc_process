@@ -1,0 +1,38 @@
+<div class="card card-default">
+  <div class="card-body">
+    <ul class="nav nav-pills mb-2">
+      <li class="nav-item">
+        <a href="#po-details-tab" data-toggle="tab" class="nav-link active"
+          >PO Details</a
+        >
+      </li>
+      <li class="nav-item">
+        <a href="#srv-details-tab" data-toggle="tab" class="nav-link"
+          >SRV Details</a
+        >
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div
+        class="table-responsive tab-pane active"
+        id="po-details-tab"
+        style="max-height: 800px"
+      >
+        <table
+        id="product-po-orders-history-table"
+          class="table table-bordered container text-nowrap table-sm table-head-fixed"
+        ></table>
+      </div>
+      <div
+        id="srv-details-tab"
+        class="tab-pane table-responsive"
+        style="max-height: 800px"
+      >
+        <table
+        id="product-srv-orders-history-table"
+          class="table table-bordered w-100 container text-nowrap table-sm table-head-fixed"
+        ></table>
+      </div>
+    </div>
+  </div>
+</div>

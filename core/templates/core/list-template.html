@@ -1,0 +1,121 @@
+{% extends 'base.html' %} {% load static %} {% block css_files %}
+<style>
+  .dt-buttons.btn-group.flex-wrap {
+    float: right;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<div class="border rounded m-5 px-5 py-2">
+  <div class="">
+    <h2>All templates</h2>
+    <table class="table border table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Has lines</th>
+          <th scope="col">Active</th>
+          <th scope="col">View</th>
+          <th scope="col">Load</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for line in lines %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{line.template_name}}</td>
+          <td>{{line.has_lines|yesno:"yeah,no"}}</td>
+          <td>{{line.active|yesno:"yeah,no"}}</td>
+          <td>
+            <a
+              href="{% url 'core:template-view' %}?template_name={{line.template_name}}"
+              >view</a
+            >
+          </td>
+          <td>
+            <button
+              class="btn btn-info"
+              onclick='loadTemplate("{{line.template_name}}")'
+            >
+              Load
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div
+    class="border rounded p-2 mt-3 d-flex justify-content-center"
+    style="display: none !important"
+    id="view-template-container"
+  >
+    <div id="print-div" style="width: auto; height: auto"></div>
+  </div>
+</div>
+
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %} 
+{% include 'components/datatableheadercomp.html' %} 
+{% include 'components/datatablecomp.html' %} 
+{% include 'components/viewrowsidebarcomp.html' %} 
+{% include 'components/editviewcomponent.html' %} 
+{% include 'components/selectaccountcomp.html' %} 
+{% include 'components/columnsettingcomp.html' %}
+
+<script>
+  const loadTemplate = (templateName) => {
+    axios
+      .post(`{% url 'core:template-api' %}`, {
+        template_name: templateName,
+        header_context: {
+          'dept': 'neeenwnww222222',
+          'numb': 33,
+          'date': '23/111',
+          'cust_name': 'Tabish new n2222',
+          'cust_code': '123',
+          'tel': 808729,
+          'addr': 'pune',
+          'total_aed': 11000000,
+          'from': 'Tabish',
+          'sum_aed': 10100101,
+          },
+          data_list: [
+            {
+              'serial': 1,
+              'bank': 'SBI',
+              'cheque': 101,
+              'due_date': '10/10',
+              'invoice': 1001,
+              'amount': 101,
+          },
+          {
+              'serial': 2,
+              'bank': 'SBI2',
+              'cheque': 102,
+              'due_date': '11/11',
+              'invoice': 1002,
+              'amount': 102,
+          },
+          {
+              'serial': 3,
+              'bank': 'SBI3',
+              'cheque': 103,
+              'due_date': '12/12',
+              'invoice': 1003,
+              'amount': 103,
+          }
+          ]})
+      .then((response) => {
+        $('#print-div').html(response.data.html)
+        $('#view-template-container').css('display', 'block');
+        })
+      .catch((err) => {
+        console.log(err.message, err);
+      });
+  };
+</script>
+
+{% endblock %}

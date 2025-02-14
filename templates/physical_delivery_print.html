@@ -1,0 +1,448 @@
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice Print  ||    {{ohid|safe}}  </title>
+    
+    <style>
+        .text-right{
+
+            text-align: right;
+
+        }
+       
+        .table-bordered > thead >tr >th {
+
+            text-align: center;
+            /* border: 1px solid; */
+            /* border-right: 0;
+            border-bottom: 0; */
+
+        }
+        /* .table:nth-child(2) > tbody > tr:nth-child(n) > td:nth-child(6)
+        {
+            border-right: 1px solid;
+        }
+        
+        .table:nth-child(2) > tbody > tr:nth-child(7) > td:nth-child(n)
+        {
+            border-bottom: 1px solid;
+        }
+
+        .table:nth-child(4) > tbody > tr:nth-child(n) > td:nth-child(10)
+        {
+            border-right: 1px solid;
+        }
+
+        .table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(n)
+        {
+            border-bottom: 1px solid;
+        }
+
+
+        #content > table:nth-child(7) > thead > tr > td,#content > table:nth-child(4) > thead > tr > th:nth-child(10)
+        {
+
+            border-right: 1px solid;
+        }
+
+        #content > table:nth-child(7) > thead > tr > th:nth-child(9)
+        {
+            border-right: 1px solid;
+        }
+        #content > table:nth-child(7) > tbody > tr:nth-child(n) > td:nth-child(9)
+        {
+            border-right: 1px solid;
+        } */
+
+
+        .t_r{
+
+                text-align: right;
+            }
+        .t_c{
+
+            text-align: center;
+        }
+
+
+    .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+        font-size: 12px;
+        line-height: 18px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        /* color: #555; */
+        color: #000;
+    }
+    
+    .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+        border-spacing: 0;
+        border-collapse: collapse;
+        border-color: #0000008a;
+    }
+    
+    .invoice-box table td {
+        padding: 5px;
+        vertical-align: top;
+    }
+    
+  
+    .invoice-box table tr.top table td {
+        padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.top table td.title {
+        font-size: 45px;
+        line-height: 45px;
+        color: #333;
+    }
+    
+    .invoice-box table tr.information table td {
+        padding-bottom: 40px;
+    }
+    
+    .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+    
+    .invoice-box table tr.details td {
+        padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.item td{
+        border-bottom: 1px solid #eee;
+    }
+    
+    .invoice-box table tr.item.last td {
+        border-bottom: none;
+    }
+    
+    .invoice-box table tr.total td:nth-child(2) {
+        border-top: 2px solid #eee;
+        font-weight: bold;
+    }
+    
+    @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+        
+        .invoice-box table tr.information table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
+    
+    /** RTL **/
+    .rtl {
+        direction: rtl;
+        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+    
+    .rtl table {
+        text-align: right;
+    }
+    
+    .rtl table tr td:nth-child(2) {
+        text-align: left;
+    }
+
+
+
+
+
+
+
+
+/* Styles go here */
+
+@page 
+{
+  margin: 10mm
+}
+
+@media print {
+   /* thead {display: table-header-group;} 
+   tfoot {display: table-footer-group;}    */
+   button {display: none;}   
+   body {margin: 0;  }
+
+
+
+  .invoice-box {
+        max-width: 100%;
+        margin: auto;
+        padding: 0px;
+        border: none;
+        box-shadow: none;
+        font-size: 10px;
+        line-height: 18px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #000;
+       
+    } 
+   
+.page-header, .page-header-space {
+    height: 130px;
+    background: white;
+}
+
+.page-footer, .page-footer-space {
+    height: 180px;
+    background: white;
+
+}
+#content{
+     margin-top: 130px;
+    /* margin-bottom: 180px;  */
+
+    }
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%; 
+ 
+}
+
+.page-header {
+  position: fixed;
+  top: 0mm;
+  width: 100%;
+  
+}
+.page 
+{
+  page-break-after: always;
+}
+   
+   
+   
+   
+   }
+
+
+
+
+    </style>
+
+<script src="{% static 'js/axios.min.js' %}"></script>
+<script src="{% static 'js/vue.min.js' %}"></script>
+</head>
+
+<body>
+    <div class="invoice-box" id="v-invoice">
+    <template>
+
+        <header  id="header"  class="page-header">
+
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td style="
+                    font-size: 18px;
+                    text-align: center;
+                    font-weight: bold;" >
+
+                        Al Yousuf Motors
+                     </td>
+                   
+                </tr>   
+                <tr>                
+
+                    <td class="t_c" style="text-align: center;font-weight: bold;"> 
+                        <h3 >   [[invs[0].HEADER_LOCATION]]   </h3>
+                    </td>
+                </tr> 
+                <tr>
+                    <td class="t_r" style="text-align: center;">
+                        <h3 >
+                            Delivery Order                   
+                       </h3> 
+                     
+                    </td>                 
+                </tr>    
+            </table>  
+            <br>
+            <br>
+                 
+    </header>
+
+
+
+
+
+<div id="content">
+    <!-- <div class="page-header-space"></div> -->
+    <br>
+    <br>
+    <table>
+        <tbody>
+            <tr> <td   style="       width: 150px"  class="pr-3 text-nowrap"><strong>Doc No	       </strong></td><td>:	[[invs[0].DELIVERY_NAME]]    </td>   <td class="pr-3 text-nowrap"><strong>DocDate       </strong></td><td>:	[[invs[0].DELIVERY_DATE]]    </td></tr>        
+            <tr> <td class="pr-3 text-nowrap"><strong>Customer	   </strong></td><td>:	[[invs[0].PARTY_NAME]]           </td> </tr>          
+            <tr> <td class="pr-3 text-nowrap"><strong>Address	   </strong></td><td>:	[[invs[0].SHIP_TO_ADDRESS]]           </td> </tr>             
+            <tr> <td class="pr-3 text-nowrap"><strong>Invoice No	   </strong></td><td>:	[[invs[0].ORDER_NUMBER]]         </td><td class="pr-3 text-nowrap"><strong>Invoice Date  </strong></td><td>:	[[invs[0].ORDERED_DATE]]          </td> </tr>
+                
+        </tbody>    
+    </table>        
+    
+    
+
+
+    <br>
+    <br>
+    <br>
+     <h3>Vehicle Details</h3>
+    <br>
+    <table >
+        <tbody>
+            <tr> <td class="pr-3 text-nowrap" style="       width: 150px;"><strong>CarLine	       </strong></td><td>:	[[invs[0].ORDERED_ITEM]]    </td>  </tr>        
+            <tr> <td class="pr-3 text-nowrap"><strong>Item Description	   </strong></td><td>:	[[invs[0].ITEM_DESCRIPTION]]           </td> </tr>          
+            <tr> <td class="pr-3 text-nowrap"><strong>Model Year	   </strong></td><td>:	[[invs[0].MODEL]]           </td> </tr>             
+            <tr> <td class="pr-3 text-nowrap"><strong>Chassis No	   </strong></td><td>:	[[invs[0].SERIAL_NUMBER]]         </td></tr>
+
+            <tr> <td class="pr-3 text-nowrap"><strong>Engine No	   </strong></td><td>:	[[invs[0].ENGINE]]           </td> </tr>          
+            <tr> <td class="pr-3 text-nowrap"><strong>Color	   </strong></td><td>:	[[invs[0].COLOR]]           </td> </tr>             
+            <tr> <td class="pr-3 text-nowrap"><strong>Registrationo	   </strong></td><td>:	----------------------------------------        </td></tr>
+             
+                
+        </tbody>    
+    </table>        
+    <br>
+    <br>
+    <br>
+
+    <div class="page-footer-space"></div>
+
+</div>
+
+
+  <footer id="footer"  class="page-footer">
+   
+                
+                            <div  class="col-md-12">
+                                
+                                <table style="    width: 100%;" >
+                                    <tr>                            
+                                        <td class="border_td">
+                                       
+                                            Manager’s Signature:			
+
+
+                                        </td>
+                                        <td class="border_td">
+                                      --------------------------------------------------
+                                        </td>
+                                        <td class="border_td" >
+                                            Receiver’s Signature:
+                                        </td>
+                                        <td class="border_td" >
+                                       -------------------------------------------------
+                                        </td>                                      
+                                    </tr>  
+                                    <tr>                            
+                                        <td class="border_td">
+                                       
+                                            Name			
+
+
+                                        </td>
+                                        <td class="border_td">
+                                      -------------------------------------------------
+                                        </td>
+                                        <td class="border_td" >
+                                            Name
+                                        </td>
+                                        <td class="border_td" >
+                                       -----------------------------------------------
+                                        </td>                                      
+                                    </tr>    
+                                    
+                                    
+                                    <tr>                            
+                                        <td class="border_td">
+                                       
+                                            Date			
+
+
+                                        </td>
+                                        <td class="border_td">
+                                      ----------------------------------------------
+                                        </td>
+                                        <td class="border_td" >
+                                            Date	
+                                        </td>
+                                        <td class="border_td" >
+                                       ---------------------------------------------
+                                        </td>                                      
+                                    </tr>   
+
+
+
+                            </table>
+                            </div>
+                    
+                        </footer>                
+
+
+  
+    </template>
+  
+    </div>
+</body>
+<script>
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+       axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+       axios.defaults.withCredentials = true;
+
+var vInv = new Vue({
+   el:'#v-invoice',
+   delimiters:["[[","]]"],
+   methods:{
+       formatCalculation(d){
+           return parseFloat(d).toLocaleString(undefined,{minimumFractionDigits: 2,
+                                                           maximumFractionDigits: 2});
+       },
+   },
+   mounted(){
+           this.base_url = window.location.origin;
+           axios.post("{% url 'print_del_note' %}",{
+               ohid:"{{ohid|safe}}",
+               physical_del_num:"{{physical_del_num|safe}}"             
+               //oid:"{{oid|safe}}"
+           })
+           .then(function (res) 
+           {
+               console.log(res.data)
+               vInv.invs = res.data.data;
+            //    vInv.drafts = res.data.drafts;
+           })
+           .catch(function () 
+           {
+
+           })
+   },
+   data:{
+       html:'',
+       invs: [],
+       base_url:'',
+       drafts: [],
+       draft_line_number:0,
+       draft_line_number_2:0,
+       
+   }
+});
+</script>
+</html>

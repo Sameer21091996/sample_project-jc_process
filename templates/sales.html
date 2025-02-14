@@ -1,0 +1,1555 @@
+{% extends "base_sale.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+.select2-results__option[aria-selected] {
+   
+    background: #c1c1c1; 
+}
+
+select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #909090;
+    color: white;
+}
+
+/* .select2-results{
+
+    width: 226%;
+    float: right;
+
+} */
+
+.total{
+    font-weight: bold;
+}
+
+#search-tbl_filter > label{
+
+    font-weight: bold;
+}
+
+table#datagrid td:nth-child(8) {
+   display: none;
+}
+table#datagrid th:nth-child(8) {
+   display: none;
+}
+
+table#datagrid td:nth-child(9) {
+   display: none;
+}
+table#datagrid th:nth-child(9) {
+   display: none;
+}
+
+table#datagrid td:nth-child(10) {
+   display: none;
+}
+table#datagrid th:nth-child(10) {
+   display: none;
+}
+
+table#datagrid td:nth-child(11) {
+   display: none;
+}
+table#datagrid th:nth-child(11) {
+   display: none;
+}
+
+table#datagrid td:nth-child(12) {
+   display: none;
+}
+table#datagrid th:nth-child(12) {
+   display: none;
+}
+
+table#datagrid td:nth-child(14) {
+   display: none;
+}
+table#datagrid th:nth-child(14) {
+   display: none;
+}
+
+@-webkit-keyframes blink {
+    50% {
+        color: darkred;
+        background: white
+    }
+}
+@-moz-keyframes blink {
+    50% {
+        color:darkred;
+        background: white
+    }
+}
+@keyframes blink {
+    50% {
+        color: darkred;
+        background: white
+    }
+}
+.blink {
+    -webkit-animation-direction: normal;
+    -webkit-animation-duration: 5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: blink;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-direction: normal;
+    -moz-animation-duration: 5s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-name: blink;
+    -moz-animation-timing-function: linear;
+    animation-direction: normal;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-name: blink;
+    animation-timing-function: linear;
+}
+
+
+
+
+
+
+
+
+
+
+
+#show-cart td, .table-sm th {
+   
+    border: 1px solid #17a2b861;
+}
+
+#show-cart > thead > tr > td{
+
+font-weight: bold;
+
+}
+#dept_line{
+        display: none;
+        
+        }
+.badge{
+    padding: 4px;
+
+}
+   .dt-button {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: none;
+    }
+#products_wrapper > div:nth-child(2) > div
+{
+    overflow: hidden;
+    overflow-y: scroll !important;
+    height: 150px !important;
+}
+#search-tbl > tfoot > tr > th > input[type=text]
+{
+
+    width: 100%;
+
+}
+.tbl_font
+{
+    font-size:12px;
+}
+
+.dataframe{
+  
+    width: 100%;
+
+}
+/* @-webkit-keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: rgb(197, 80, 80); }
+    100% { background-color: #fff; }
+  } */
+  /* @-moz-keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: #a29c9c; }
+    100% { background-color: #fff; }
+  } */
+  @keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: #a29c9c;  }
+    100% { background-color: #fff; }
+  }
+  .forty_eight
+{
+  -webkit-animation: argh-my-eyes 1s infinite;
+  -moz-animation:    argh-my-eyes 1s infinite;
+  animation:         argh-my-eyes 5s infinite;
+  /*background-color: #ffdddd !important*/
+}
+.tw_four
+{
+    /* background-color: #ca2424 !important */
+    color: red;
+}
+tfoot 
+{
+    display: table-header-group;
+}
+
+</style>
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="initiate_payment_modal">
+    <div class="modal-dialog" role="document" style="    max-width: 65%;">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h4 class="modal-title">Initiate Advance Payment</h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+         <div class="table-sm table-responsive" id="initiate_payment_modal_data">
+                
+         </div>
+         
+         
+
+        </div>
+        
+        <div class="modal-footer"    id="initiate_payment_modal_data_footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  
+
+
+  <div class="modal" tabindex="-1" role="dialog" id="reservation_modal">
+    <div class="modal-dialog" role="document" style="    max-width: 65%;">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h4 class="modal-title">Extend Reservation <span id="res_number"></span></h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <label> Remarks :</label> 
+           </div>
+
+           <div class="col-sm-6">
+                        <textarea   style="    width: 100%;" placeholder="Please write here"   id="remarks"></textarea>
+           </div>
+        </div><br>
+           <div class="row">
+
+            <div class="col-sm-2">
+
+                <label>Days :</label> 
+
+            </div>
+            <div class="col-sm-6">
+                  <input  style="width:100%;"  type="text" id="days" value="7" />
+
+            </div>
+        </div>
+
+
+
+
+         
+         
+
+        </div>
+        
+        <div class="modal-footer"    id="initiate_payment_modal_data_footer">
+          <button type="button" class="btn btn-secondary" onclick="extend_reser()"  >Update</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+<style>
+	.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+	.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+.initSelc2  + .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 36px;
+}
+
+.initSelc2  + .select2-container .select2-selection--single 
+{
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 50px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.select2-container .select2-selection--single {
+   
+    height: 100% ; 
+    padding: 6px;
+    
+}
+</style>
+
+
+<div class="row" id="counts_row">
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="info-box" onclick="onDashClick(this)" style="background-color:#a0a0a0">
+        <span class="info-box-icon bg-info elevation-1"><i class="ion ion-cube"></i></span>
+
+        <div class="info-box-content">
+          <span class="info-box-text">Create Reservation</span>
+          <span class="info-box-number">
+            
+            <small></small>
+          </span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="info-box mb-3" onclick="onDashClick(this)">
+        <span class="info-box-icon bg-danger elevation-1"><i class="ion ion-refresh"></i></span>
+
+        <div class="info-box-content">
+          <!-- <span class="info-box-text">Confirmed Reservations</span> -->
+          <!-- <span class="info-box-text">On Order Stock</span> -->
+          <span class="info-box-text">Temporary Reservations</span>
+          <span class="info-box-number">[[data.reserved_stock]]</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+
+    <!-- fix for small devices only -->
+    <div class="clearfix hidden-md-up"></div>
+
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="info-box mb-3" onclick="onDashClick(this)">
+        <span class="info-box-icon bg-success elevation-1"><i class="ion ion-android-archive"></i></span>
+
+        <div class="info-box-content">
+          <!-- <span class="info-box-text">On Order Stock</span> -->
+          <span class="info-box-text">Confirmed Reservations</span>
+          <span class="info-box-number">[[data.on_order]]</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="info-box mb-3" onclick="onDashClick(this)">
+        <span class="info-box-icon bg-warning elevation-1"><i class="ion ion-filing"></i></span>
+
+        <div class="info-box-content">
+          <span class="info-box-text">All Reservations</span>
+          <span class="info-box-number">[[data.all_on_order]]</span>
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+  </div>
+
+
+<div class=" common_area_cls" id="avlable_stock" >
+
+
+<div class="accordion" id="accordionExample">
+      
+    <div class="card">
+        <div class="card-header" id="headingTwo_1">
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"> 1. Fill Customer Details</button>
+               
+               <span id="sel_cust" style="float: right;font-size: 16px;color: green;padding-top: 12px;">
+    
+              </span>
+            
+            </h2>
+           
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingTwo_1" data-parent="#accordionExample">
+            <div class="card-body">
+          
+                <div class="row"  id="cart_area">
+                <div class="col-sm-4">
+                
+                
+                    <div class="card">
+	  
+                    <div class="card-header">
+                      <h3 class="card-title">                      
+                        Main Customer                      
+                      </h3>
+                      <div class="card-tools">		
+                      
+                        <!-- <span class="badge badge-primary">
+                         -->
+                        <a target_='blank' id="new_customer_url" href='#' target='_blank' style="float: right;">New Customer : <i class="fa fa-plus-square" aria-hidden="true" style="float: right;margin-top: 2px; margin-left: 6px;font-size: 19px;"></i></a> 
+                        
+                        <!-- </span> -->
+                        
+                      </div>
+                    </div>  
+                  
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <!-- <label for="name">Customer</label> -->
+                                    <!-- <input class="form-control" id="name" type="text" placeholder="Enter your name"> -->
+                                   
+                                    <select name="" id="searchCust" style="width: 100% ; ">
+                                        <option></option>
+                                    </select>
+
+
+                                    <input type="hidden" id="main_cust" />
+
+                                    <input type="hidden" id="main_customer_number" />
+
+                                    <input type="hidden" id="main_customer_id" />
+
+                                    <div class="form-group row col-lg-12" style="display: none;">
+                                        <label  class="col-sm-4 col-form-label">Search By :</label>
+                                        
+                                        <div class="col-sm-8" style="margin-top: 7px;">
+                                            <select name="" class="form-control-plaintext"  id="serach_based_on_type" style="width: 100% ; ">                          
+                                            </select>
+                                        <!-- <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com"> -->
+                                        </div>
+            
+                                  </div> 
+
+
+                                </div>
+
+
+                                <div    id="customer_infoo">
+                      
+                                </div>                                 
+                            </div>
+                        </div>
+                    
+
+                   
+
+                     
+                    
+                    
+                      
+                      
+                      
+                      
+                    </div>
+                    <div class="card-footer">
+                      
+                    </div>
+                    
+                  </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+                <!-- <div class="row"  id="cart_area">
+                
+                   <div id="demo" class="col-sm-12">
+                       <div class="row">    -->
+
+                        
+
+                        <div class="col-sm-4">
+
+                            <div class="card">
+	  
+                                <div class="card-header">
+                                  <h3 class="card-title">                      
+                                    Ship To Customer                      
+                                  </h3>
+                                  <div class="card-tools">		
+                                  
+                                    <!-- <span class="badge badge-primary">
+                                     -->
+                                    <!-- <a target_='blank' id="new_customer_url" href='#' target='_blank' style="float: right;">New Customer : <i class="fa fa-plus-square" aria-hidden="true" style="float: right;margin-top: 2px; margin-left: 6px;font-size: 19px;"></i></a> 
+                                     -->
+                                    <!-- </span> -->
+                                    
+                                  </div>
+                                </div>  
+                              
+                                <div class="card-body">
+            
+                                    <div class="row">
+                                        <div class="col-sm-12">
+
+
+                                            <div class="form-group">                                              
+                                                     <select name=""  class="col-sm-4"   id="customer" style="width: 100% ; "></select>
+                                            </div>
+
+                                            <!-- <div class="row"> 
+                                                
+                                                <label for="name" class="col-sm-4">Number :</label>
+
+                                                <span class="col-sm-8">
+                                                    <select disabled name="" class="form-control  form-control-sm "  id="number" style="width: 100%;"></select>
+                                                </span>
+                                            
+                                            </div> -->
+
+                                            <div id="ship_to_customer_infoo">
+
+                                                
+                                            </div>
+<!-- 
+
+                                            <div class="row"> 
+                                                
+                                                <label for="name" class="col-sm-4">Address :</label>
+                                                                                                
+                                                <span class="col-sm-8">
+                                                    <input type="text"    style="    border: none;    width: 100%;"  id="address"  placeholder="" readonly>
+                                               
+                                                </span>
+                                            
+                                            </div>
+
+
+                                            <div class="row"> 
+                                                
+                                                <label for="name" class="col-sm-4"></label>
+                                                                                                
+                                                <span class="col-sm-8">
+                                                    <input type="text"   style="    border: none;    width: 100%;"    id="address_2"  placeholder="" readonly>
+                                               
+                                                </span>
+                                            
+                                            </div>
+
+                                            <div class="row"> 
+                                                
+                                                <label for="name" class="col-sm-4"></label>
+                                                                                                
+                                                <span class="col-sm-8">
+                                                    <input type="text"  style="    border: none;    width: 100%;"  id="address_3"  placeholder="" readonly>                                                       
+                                               
+                                                </span>
+                                            
+                                            </div>
+                                            <div class="form-group">
+
+                                                 <label for="name">Customer</label>
+
+
+                                            </div>
+
+
+                                            <div class="row"> 
+                                                
+                                                <label for="name" class="col-sm-4"></label>
+                                                                                                
+                                                <span class="col-sm-8">
+
+                                                    <input type="text"  style="    border: none;    width: 100%;"   id="area"  placeholder="" readonly>
+                                                  
+                                                 
+                                                </span>
+                                            
+                                            </div>
+
+
+                                            <div class="row"> 
+                                                
+                                                <label for="name" class="col-sm-4"></label>
+                                                                                                
+                                                <span class="col-sm-8">
+                                                    <input type="text"   style="    border: none;    width: 100%;"    id="country"  placeholder="" readonly>
+                                                    <input type="text"  style="    border: none;    width: 100%;"  id="address_3"  placeholder="" readonly>                                                       
+                                               
+                                                </span>
+                                            
+                                            </div> -->
+
+                                   
+                                    <!-- <form>
+                                                <fieldset>
+                                                    <h3 >Ship To:</h3> 
+                                                    <table style="width:100%" id="ship_to_tbl">
+                                                     <tr style="display: none;">
+                                                         <th>Location</th>
+                                                        <td>
+                                                            <input type="text" class="form-control  form-control-sm " id="location"  placeholder="" readonly></input>                                                   
+                                                        </td>
+                                                    </tr>                                                -->
+                                                    <!-- <tr>
+                                                         <th>Customer</th>
+                                                         <td>
+                                                          
+                                                         </td>    
+                                                       </tr>  -->
+             
+                                                   
+             
+                                                    <!-- <tr>
+                                                        <th>Number</th>
+             
+                                                         <td>  
+                                                                <select disabled name="" class="form-control  form-control-sm "  id="number" style="width: 100%;"></select>
+                                                        </td>
+                                                    </tr> -->
+                                               
+             
+                                                <!-- <tr>
+                                                    <th>Address</th>
+             
+                                                    <td> 
+                                                         <input type="text" class="form-control  form-control-sm " id="address"  placeholder="" readonly>
+                                                 
+                                                    </td>                                             
+                                                </tr> -->
+             
+                                           
+             
+                                                    <!-- <div class="m-1 row" style="display:none ;">
+                                                            <label for="address_2"
+                                                                class="col-sm-3 col-form-label"></label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control  form-control-sm " id="address_2"  placeholder="" readonly>
+                                                            </div>
+                                                    </div> -->
+             
+                                                    <!-- <div class="m-1 row "  style="display:none;">
+                                                            <label for="address_3"
+                                                                class="col-sm-3 col-form-label"></label>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control  form-control-sm " id="address_3"  placeholder="" readonly>
+                                                            </div>
+                                                    </div> -->
+             
+                                                  
+                                                  <!-- <tr>
+                                                    <th></th>
+                                                    <td>
+                                                                <input type="text" class="form-control  form-control-sm " id="area"  placeholder="" readonly>
+                                                    </td>
+                                                    </tr>  -->
+                                                    
+                                                    <!-- <tr>
+             
+                                                    <th></th>
+             
+                                                    <td>
+                                                        <input type="text" class="form-control  form-control-sm " id="country"  placeholder="" readonly>
+                                                    </td>
+             
+                                                    </tr> -->
+             
+                                                    <!-- <tr><th>Contact</th>
+                                                        <td>
+                                                           
+                                                                <input type="text" class="form-control  form-control-sm " id="contact"  placeholder="" readonly>
+                                                            </td>
+                                                        </tr> -->
+                                                    <!-- </table>
+                                
+                                
+                                                         </fieldset>
+                                                                        </form>
+              -->
+<!--                                     
+                                            <hr>
+                                   -->
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="card-footer">
+                      
+                                </div>
+                                    
+                             
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                           <div class="col-sm-4">
+
+
+
+                            <div class="card">
+	  
+                                <div class="card-header">
+                                  <h3 class="card-title">                      
+                                    Bill To Customer                      
+                                  </h3>
+                                  <div class="card-tools">		
+                                  
+                                    <!-- <span class="badge badge-primary">
+                                     -->
+                                    <!-- <a target_='blank' id="new_customer_url" href='#' target='_blank' style="float: right;">New Customer : <i class="fa fa-plus-square" aria-hidden="true" style="float: right;margin-top: 2px; margin-left: 6px;font-size: 19px;"></i></a> 
+                                     -->
+                                    <!-- </span> -->
+                                    
+                                  </div>
+                                </div>  
+                              
+                                <div class="card-body">
+            
+                                    <div class="row">
+                                        <div class="col-sm-12">
+
+
+                                            <div class="form-group">                                              
+                                                <select name=""   id="customer_bill" style="width: 100% ; "></select>
+                                            
+                                            </div>
+                                            
+
+                                            <div id="bill_to_customer_infoo">
+
+                                                
+                                            </div>
+
+                                
+                                     
+                
+<!--                                        
+                              
+                                       <form>
+                                           <fieldset>
+                                               <h3 style="max-width: 30%;">Bill To:</h3>
+                
+                
+                                               <table style="width:100%" id="ship_to_tbl">
+                                                   <tr  style="display: none;">
+                                                       <th>
+                                                           Location</th>
+                
+                                                  <td>
+                                                       
+                                                       <input type="text" class="form-control  form-control-sm " id="location_bill"  placeholder="" readonly>
+                                               
+                                                   </td>
+                                                   </tr>
+                
+                                                   <tr><th>Customer</th>
+                                                       <td>
+                                                      
+                                                       <select name="" class="form-control  form-control-sm "  id="customer_bill" style="width: 100% ; "></select>
+                                                   </td>    
+                                                   </tr>
+                
+                                               
+                                               <tr>
+                                                   <th>Number</th>
+                                               
+                                                   <td>
+                                                         <select disabled  class="form-control  form-control-sm " id="number_bill"  style="width: 100% ; "></select>
+                                                   </td>
+                                               
+                                               </tr>
+                
+                                                   <tr>
+                                                       <th>Address</th>
+                                                       <td>
+                                                           <input type="text" class="form-control  form-control-sm " id="address_bill"  placeholder="" readonly>
+                                                       </td>
+                                                   </tr>
+                
+                                               <div class="m-1 row " style="display:none;">
+                                                       <label for="address_2"
+                                                           class="col-sm-3 col-form-label"></label>
+                                                       <div class="col-sm-8">
+                                                           <input type="text" class="form-control  form-control-sm " id="address_2_bill"  placeholder="" readonly>
+                                                       </div>
+                                               </div>
+                
+                                               <div class="m-1 row" style="display:none;">
+                                                       <label for="address_3"
+                                                           class="col-sm-3 col-form-label"></label>
+                                                       <div class="col-sm-8">
+                                                           <input type="text" class="form-control  form-control-sm " id="address_3_bill"  placeholder="" readonly>
+                                                       </div>
+                                               </div>
+                                               <tr><th> </th><td>
+                                                           <input type="text" class="form-control  form-control-sm " id="area_bill"  placeholder="" readonly>
+                                               </td></tr>
+                
+                                               <tr><th> </th><td>
+                                                           <input type="text" class="form-control  form-control-sm " id="country_bill"  placeholder="" readonly>
+                                               </td></tr>
+                
+                                               <tr>
+                                                   <th> Contact 
+                
+                                                   </th>                                            
+                                                   <td> 
+                                                        <input type="text" class="form-control  form-control-sm " id="contact_bill"  placeholder="" readonly>
+                                                  
+                                                   </td>
+                                                 
+                                               </tr>
+                                               </table>
+                
+                
+                
+                                           </fieldset>
+                                       </form>
+                 -->
+                
+                                       
+                                   </div>
+                               </div>
+                           </div>
+
+                           <div class="card-footer">
+                      
+                        </div>
+                         
+                      
+                        </div>
+                       
+                    
+                    </div>
+                
+                
+                
+                
+              </div>          
+                
+                           
+                
+                
+                
+                
+                
+                 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                           
+                           
+                
+                       <!-- </div>
+                       
+                   </div>
+                </div> -->
+                
+    
+                
+            </div>
+        </div>
+    </div>
+
+
+
+
+<div class="card">
+           
+    <div class="card-header" id="headingOne">
+         <h2 class="mb-0">
+             <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne">2. Search Stock</button>									
+        
+             <span id="selected_item" style="float: right;font-size: 16px;color: green;padding-top: 12px;"></span>
+            </h2>
+     </div>
+<div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordionExample">
+<div class="card-body">
+
+<!-- <p>HTML stands for HyperText Markup Language. HTML is the standard markup language for describing the structure of web pages. <a href="https://www.tutorialrepublic.com/html-tutorial/" target="_blank">Learn more.</a></p> -->
+
+
+
+<div class="block-finder__title text-dark" style="    font-size: 20px;
+font-weight: bold; display: none;">ITEM DETAILS</div>
+<!-- <br> -->
+<!-- <select class="initSelc2 " >
+<option></option>
+</select> -->
+
+<button  type="button" class="add-to-cart pull-right btn btn-sm btn-info" style="display: none;" onclick="" >Add To Cart <i style="color: white;" class="fa fa-cart-plus fa-1x "  aria-hidden="true"></i></button> 
+<!-- <br><br> -->
+<style>
+
+table.dataTable thead>tr>th
+{
+
+/* font-size: 14px; */
+}
+table.table-bordered.dataTable tbody td
+{
+
+/* font-size: 14px; */
+}
+</style>
+
+<div class="table-responsive" style="display: none;">
+
+<table class="table table-bordered table-hover w-100 table-hover tbl_font table-sm "   style="    white-space: nowrap;"  id="pre_filter"></table>
+
+</div>
+
+
+<!-- <div id="vProductTbl"> -->
+<!-- <div class="products-view__list products-list products-list--grid--4" data-layout="table"
+ data-with-features="false"> -->
+
+ <div class="table-responsive " >
+     
+     <table id="search-tbl" class="tbl_font table table-sm" style="white-space: nowrap; width: 100%;">
+         
+     </table>
+
+ <!-- </div> -->
+
+<!-- </div> -->
+</div>
+
+
+
+<style>
+
+
+
+.lbl_qty_count{
+
+
+text-align: right;
+color: #007bff;
+}
+
+</style>
+
+
+
+
+<div class="table-responsive" style="    border: 1px solid;" > 
+<!-- <table class="    table table-bordered table-hover w-100 table-hover tbl_font table-sm"  style="    white-space: nowrap;"  id="products"></table> -->
+<p id="sum"></p>
+<table class="table tbl_font table-hover table-sm dataTable"  style="white-space:nowrap;"  id="products"></table>
+</div>
+
+
+
+
+
+</div>
+</div>
+ </div>
+
+
+ <div class="card">
+    <div class="card-header" id="headingTwo">
+        <h2 class="mb-0">
+            <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" onclick="Preview_Order()"> 3. Preview Reservation </button>
+        </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+      
+
+
+            <div class="row"  id="cart_area">
+            
+                <div class="col-sm-12" id="stock_view" style="text-align: left;">
+                       <div class="card">
+                           <div class="card-header bg-info" style="display: none;">
+                               <h5 class="m-b-0 text-white">Cart
+                                   <i style="color: white;    float: right;" id="full_screen"   onclick="fullscreen(this.id)"  class="fa fa-plus fa-1x "  aria-hidden="true"></i>
+                               </h5>
+                              
+                           </div>
+                           <div >
+                               
+                       <!--<a  class="btn btn-default btn-sm  waves-effect waves-light" data-toggle="collapse" href="#collapseExample" id="cart_number" role="button" aria-expanded="false" aria-controls="collapseExample">
+                               <i class="mdi mdi-cart"></i>    Cart
+                       -->
+            
+                       <a type="button" style="display: none;"   id="btn_cart" data-toggle="collapse" href="#collapseExample" aria-controls="collapseExample" class="btn btn-sm waves-effect waves-light cart-btn btn-primary collapsed" aria-expanded="false"><i class="mdi mdi-cart"></i>Cart (<span class="total-count">0</span>)</a>
+                              
+                       <a type="button" style="display: none;"  id="btn_cart_1"  href="{% url 'checkout_page' %}"  class="btn btn-sm waves-effect waves-light cart-btn btn-primary " aria-expanded="false">
+                               <i class=" mdi-open-in-new mdi mdi-cart"></i> checkout
+                       </a>
+                     
+            
+            
+              <div class="collapse" id="collapseExample">
+               <div class="card ">
+                      <!-- <table class="table table-sm  no-wrap table table-sm table-bordered text-center show-cart" id="show-cart">
+            
+                       </table>
+                                          -->           
+            
+               </div>
+               <button id="clear-cart" class="btn btn-default btn-sm">Clear Cart</button>
+               </div>
+               
+               <ul class="nav nav-tabs" id="myTab" role="tablist">
+                   <li class="nav-item"    style="display: none;">
+                     <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="flase">Units Stock</a>
+                   </li>
+                   <li class="nav-item" style="    display: none;">
+                     <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true" onclick="get_order_type_lov()">Shopping Cart</a>
+                   </li>
+                   <!-- <li class="nav-item">
+                     <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Accessories Stock</a>
+                   </li> -->
+                 </ul>
+            
+                 <div class="tab-content" id="myTabContent">
+                   <div class="tab-pane fade show active" id="home" role="tabpanel" style="display: none;" aria-labelledby="home-tab">
+            
+                           <div class="row">
+                               <!-- column -->
+                               <div class=" col-md-12">
+                                   <div class="card">
+                                       
+                                       
+                                       <div class="table-responsive" style="margin-top: 11px;">
+            <!-- 
+                                           <button  type="button" class="add-to-cart pull-right btn btn-sm btn-info" onclick="" >Add To Cart <i style="color: white;" class="fa fa-cart-plus fa-1x "  aria-hidden="true"></i></button> 
+            
+                                           <table  class="table w-100 table-sm table-responsive table-bordered table-striped no-wrap"     id="products"></table>
+            -->
+                                       </div>
+                                   </div>
+                               </div>
+                               
+                           </div>
+            
+            
+            
+            
+                   </div>
+            
+            
+                   <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                           <!--tydeaitls here-->
+            
+                           
+            
+            
+            
+            
+                           
+            
+            
+            
+            
+            
+            
+            
+            
+                           
+                           <div class="card">  
+                              
+                            <!-- <div class="card-body" id="invoice_total_v">   -->
+                                <div id="invoice_total_v" style="    padding: 14px;">  
+                                <form action='#'> 
+                                    {% csrf_token %} 
+                                    <div class="form-row">  
+                                        <div class="col-md-6">  
+                                            <label>Order Type: <span style="color: red;"> *</span></label>  
+                                            <select style="width: 100%;"  class="select2-input"    id="order_type_lov_item_page" onchange="order_header_change(this)">                            
+                                             </select>  
+                                        </div>  
+                                        <div class="col-md-6">  
+                                            <label>Sub Total :</label>  
+                                            <input type="text"  readonly  id="subtotal" :value="Number(t).toFixed(2)" class="form-control" />  
+                                        </div>  
+                                    </div>  
+                                    <div class="form-row">  
+                                        <div class="col-md-6">  
+                                            <label>Customer LPO:</label>  
+                                            <input type="text" id="customer_po"  class="form-control" />  
+                                        </div>  
+                                        <div class="col-md-6">  
+                                            <label>Tax (<span id="vat_percent">[[vat_p]]</span>%) :</label>  
+                                            <input  readonly   id="tax" :value="Number(tv).toFixed(2)"   type="text" class="form-control" />  
+                                        </div>  
+                                    </div>   
+                                       <div class="form-row">  
+                                           <div class="col-md-6">  
+                                               <label>Order Note :</label>  
+                                               <textarea  style="    height:178px;" type="text" class="form-control" id="order_remarks"></textarea>
+                                           </div>  
+            
+                                           <div class="col-md-6">  
+                                           <div class="col-md-12">  
+                                               <label>Discount / Surcharge :</label>  
+                                               <input readonly type="text" id="discount"  :value="Number(td).toFixed(2)"  placeholder="Enter Mobile Number" class="form-control" />  
+                                           </div> 
+                                           
+                                           <div class="col-md-12">  
+                                            <label>Grand Total :</label>  
+                                            <input readonly  type="text"  :value="Number(gt).toFixed(2)"  placeholder="" class="form-control" />  
+                                        </div> 
+                                        
+                                        <div class="col-md-12">  
+                                            <label>Deposit Required :</label>  
+            
+                                        <input readonly  type="text"  id='dep_amt'     abc     placeholder="00.0" class="form-control" />  
+                                        </div> 
+                                        
+            
+                                    </div>
+            
+                                       </div>  
+                                       <div class="form-row">  
+                                           <div class="col-md-6">  
+                                                
+                                           </div>  
+                                            
+                                       </div>  
+                                       <div style="margin-top:15px;    text-align: right;">  
+                                           <button type="button"  id="clear-cart"  class="btn btn-danger rounded-0">Clear Cart</button>  
+                                           <button type="button"  id="btn_order" onclick="submit_order(this)"  class="btn btn-primary rounded-0">Create Reservation</button>  
+                                       </div>  
+                                   </form>  
+                               </div>  
+                           </div> 
+            
+            
+            
+            
+            
+            
+            
+                           
+            
+            
+            
+            
+            
+            
+                           <div class="">
+                            <!-- <div class="row">
+                               
+                                <div class="col-6">
+                                
+                                                      
+            
+                                     
+            
+                                </div>    
+                        
+                                <div class="col-0 text-right">-->
+                                   <!-- <button id="clear-cart" class="btn btn-default btn-xs">Clear Cart</button>  
+                                   
+                                   <br>
+                                 </div>
+                             
+            
+            
+                            </div> -->
+            
+                            <!-- <div class="row pt-3">
+            
+            
+                               <div class="col-12 text-right">
+                                      -->
+                                   <!-- <button id="daft_lines" class="btn waves-effect waves-light btn-info btn-sm" >Save Item</button> 
+                                    <button id="clear-cart" class="btn btn-default btn-sm">  Clear Cart &nbsp;&nbsp; <i class="fa fa-times" aria-hidden="true"></i> </button> 
+                                    <button type="submit" id="btn_order" onclick="submit_order(this)" class="btn btn-default btn-sm">  Create sales order &nbsp;&nbsp; <i class="fa fa-usd" aria-hidden="true"></i> </button>
+                                    
+                                    </div>
+            
+            
+                            </div> -->
+            
+            
+                        
+                                 <div style="overflow-x: scroll;">
+            
+                                    <div class="card-header bg-info">
+                                        <h5 class="m-b-0 text-white">Confirmed Reservations</h5>
+                                    </div>
+                                
+                                <table class="table tbl_font  table-sm show-cart" id="show-cart" >
+                        
+                                </table>
+            
+                               
+            
+                             
+            
+            
+            
+            
+            
+            
+            
+            
+                            </div>
+                              
+                                 
+                        
+                            </div>
+                        
+                           
+                        
+                          
+            
+            
+            
+                   </div>
+            
+                   <!-- <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Accessories Stock</div> -->
+            
+                 </div>
+            
+                           </div>
+                       </div>
+            
+               </div>
+              
+     
+        
+        
+        
+        
+        
+        
+        
+            </div>
+            
+
+            
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+<div id="reserved_stock" class="common_area_cls table-responsive" >
+
+   
+    <table   class="table table-bordered table-hover table-hover tbl_font table-sm"  style="    white-space: nowrap;"     id="tbl_reserved_stock"></table>
+
+</div>
+
+
+
+
+
+<style>
+    .pull-left{float:left!important;
+        width: 75%;
+        margin-bottom: 40px;
+    }
+    .pull-right{float:right!important;}
+    #search-tbl_filter{
+    
+        width: 90%;
+    }
+    #search-tbl{
+        border: 1px solid;
+    
+    }
+    #search-tbl_filter label
+    {
+            width: 100%;
+    }
+    #search-tbl_filter label input
+    {
+            width: 97%;
+            height: 47px;
+            font-size: 20px;
+    }
+    #search-tbl_length > label > select
+    {
+        height: 47px;
+        font-size: 20px;
+            
+    }
+
+
+    
+#search-tbl > tbody > tr:hover{
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF;
+}
+#search-tbl > tbody > tr.selected 
+{
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF;
+}
+
+#serach_based_on_type+span span span{
+
+    font-size: 12px;
+    padding: 0px;
+    padding-left: 6px;
+}
+    </style>
+
+
+{% endblock %}
+{% block script_block %}
+
+
+<script>
+
+var counts_row=new Vue({
+      el: '#counts_row',    
+      delimiters:['[[',']]'], 
+      data:
+      {
+        data: {{counts|safe}}   
+      },
+      methods: 
+      {
+      },  
+  });
+ 
+
+
+
+
+
+  var table_1;
+  localStorage.setItem('defs','{{defs|safe}}')
+
+  
+
+  $(function()
+  {
+      try
+      {
+        var a=JSON.parse(localStorage.getItem('defs'))
+        $('#dep_amt').val(a.reservation_amount)
+     }
+     catch(error)
+     {
+
+
+     }
+
+        //reservation_amount
+        showloader()
+
+		axios.get("/sales/sd"+window.location.search)
+        .then(function(res)
+        {
+			console.log(res);
+            hideloader();
+			// vProductTbl.columns = res.data.columns;
+			//initDT(res.data)
+			$('#search-tbl').append(buildTheadTfoot(res.data.columns));
+			var columnsMeta =res.data.columns.map(x=>x.data);
+			table_1=$('#search-tbl').DataTable({
+				"processing": true,
+                "serverSide": true,
+                "dom": '<"pull-left"f><"pull-right"l>tip',
+				colReorder: true,
+               // "pageLength": 10,
+                "oLanguage":
+                {
+                    "sSearch": "Serach:"
+                },
+                columnDefs:[
+                    {
+                        targets:res.data.hidenIndexes,
+                        visible:false
+                    }
+                ],
+				"ajax":{
+					type:"POST",
+					url:"sd",
+					headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    'beforeSend': function (request) {
+                        showloader()
+                    },
+					data : {
+						's':'{{s}}',
+                        columnsMeta:JSON.stringify(columnsMeta),
+                        'defs':localStorage.getItem('defs')
+					},
+				},
+				drawCallback:function(){
+                    hideloader();
+
+					// alert($('#search-tbl_filter input').val());
+					var sT= getCurUrlGETObj().s;				
+                    if (sT != $('#search-tbl_filter input').val())
+                    {
+						var toFind= $('#search-tbl_filter input').val().toLowerCase();						
+                    } else
+                    {
+						$('#search-tbl_filter input').val("{{s}}");
+						var toFind= "{{s}}".toLowerCase();
+					}
+					$('#search-tbl td').each(function(){
+						// alert();
+						if ($(this).text().toLowerCase().indexOf(toFind) > -1){
+
+							var s= $(this).text().toLowerCase();
+							var start = s.indexOf(toFind);
+							var end = start + toFind.length;
+							var html = $(this).text().slice(0,start)+'<span class="font-weight-bold" >'+$(this).text().slice(start,end)+'</span>'+ $(this).text().slice(end);
+							// alert(html)
+							$(this).html(html)
+						}
+					})
+				},
+				initComplete: function () {
+                     this.api().columns().every( function () 
+                    {
+						var that = this;		
+                        $( 'input', this.footer()).on( 'keyup change clear', function () 
+                        {                            
+                            if ( that.search() !== this.value ) 
+                            {
+								that.search(this.value).draw();
+							}
+						});
+                    });
+                    
+				}				
+			})
+        }).catch(function(){
+            hideloader();
+
+        });    
+
+        var temp1; $('#search-tbl').on( 'click', 'tr', function (e) 
+        {
+            console.log('#')
+            console.log( table_1.row( this ).data());
+            $('#search-tbl > tbody > tr').children('td').css('color','black');
+            $('#search-tbl > tbody > tr').children('td').css('background-color','transparent');         
+            $(e.currentTarget).children('td').css('background-color','rgba(41, 103, 182, 0.89)');
+            $(e.currentTarget).children('td').css('color','white');
+            console.log('#')
+            temp1=table_1.row( this ).data()        
+            update_datatable(temp1[0])           
+                           
+        }); 
+    });
+    
+
+
+
+$(document).ready(function()
+{ 
+    shoppingCart.clearCart();
+}) 
+</script>
+
+<script src="{% static 'custom_js/sales.js' %}"></script>
+<script src="{% static 'custom_js/cart.js' %}"></script>
+
+<script src="{% static 'custom_js/sum().js' %}"></script>
+
+{% endblock %}

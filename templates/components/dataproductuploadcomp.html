@@ -1,0 +1,109 @@
+<template id="upload_comp">
+    <div>
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Upload product</h3>
+            </div>
+            <form id="uploadProductForm" ref="formRef">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Select type</label>
+                        <select id="input-data-type-select">
+                            <option value="items" selected>Items</option>
+                            <option value="pricelist">Price List</option>
+                            <option value="on_hand_data">on_hand_data</option>
+                            <option value="on_hand_subinv_data">on_hand_subinv_data</option>
+                            <option value="on_hand_default_subinv_data">on_hand_default_subinv_data</option>
+                            <option value="ITEM_RELATIONS_DATA">ITEM_RELATIONS_DATA</option>
+                            <option value="RELATED_ITEM_STOCK_DATA">RELATED_ITEM_STOCK_DATA</option>
+                            <option value="PENDING_ORDERS_PO_DATA">PENDING_ORDERS_PO_DATA</option>
+                            <option value="PENDING_ORDERS_SRV_DATA">PENDING_ORDERS_SRV_DATA</option>
+                            <option value="PO_ORDER_HIST_DATA">PO_ORDER_HIST_DATA</option>
+                            <option value="PO_SRV_HIST_DATA">PO_SRV_HIST_DATA</option>
+                            <option value="SALES_HIST_WITH_SUPER_DATA">SALES_HIST_WITH_SUPER_DATA</option>
+                            <option value="SALES_HIST_WO_SUPER_DATA">SALES_HIST_WO_SUPER_DATA</option>
+                            <option value="TRANSACTIONS_DATA">TRANSACTIONS_DATA</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputFile">Choose file</label>
+                        <input type="file" class="form-control" name="file" id="inputFile">
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="button" onclick="uploadExcelFile()" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div> 
+    </div>
+</template>
+
+<script>
+
+function uploadExcelFile(file) {
+    const url =  `{% url 'product:upload_excel'%}`;
+    const formData = new FormData();
+    const inputFile = document.getElementById('inputFile');
+
+    formData.append('file', inputFile.files[0]);
+    formData.append('type', $('#input-data-type-select').val() || 'items');
+    
+    return axios.post(url, formData, {
+        headers: {
+        'Content-Type': 'multipart/form-data'
+        }
+    })
+    .then(response => {
+        console.log(response.data);
+        // Handle success response
+    })
+    .catch(error => {
+        console.log(error);
+        // Handle error response
+    });
+    }
+
+var formComp = Vue.component('productuploadcomponent', {
+    template    : '#upload_comp',
+    delimiters  : ['[[',']]'],
+    props       : ['view_meta'],
+    data        : function () {
+        return { 
+            formValues: {},
+            schema : [],
+            custom_data:[]                              
+            }
+    },
+    mounted(){
+        console.log("Hello")
+         
+    },
+    methods : {
+        submitForm(){
+            var formData = new FormData();
+            var imagefile = document.querySelector('#inputFile');
+            formData.append("file", imagefile.files[0]);
+            axios.post('importitem', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-CSRFTOKEN': '{{ csrf_token }}',
+                }
+            }).then(response => { console.log(response);
+                      var data = [response.data.list_src.slice(0,-1) , response.data.list_tab ]
+                      console.log(data);
+                      var event = new CustomEvent('refresTabPage', { detail: data })
+                      window.parent.document.dispatchEvent(event)
+                      alert('Product imported');
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+                this.$refs.formRef.reset(); // This will clear that form
+        }
+    },
+ 
+});
+
+
+
+</script>

@@ -1,0 +1,846 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" style="height: auto;">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AlYousuf | AY-Connect</title>
+
+    <link rel="stylesheet" href="/static/adminlte/css">
+
+    <link rel="stylesheet" href="/static/adminlte/all.min.css">
+
+    <link rel="stylesheet" href="/static/adminlte/adminlte.min.css">
+
+    <link rel="stylesheet" href="/static/adminlte/OverlayScrollbars.min.css">
+
+<!-- Select2 CSS -->
+<link rel="stylesheet" href="/static/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="/static/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+<style>
+#select2-loc_dropdown-container{
+    line-height:16px;
+}
+
+
+.content-wrapper.iframe-mode .btn-iframe-close {
+    color: white !important;
+    width: 14px !important;
+    font-size: 13px !important;
+    background-color: #757575 !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+    text-align: center !important;
+    visibility: unset !important;
+}
+</style>
+</head>
+
+
+
+
+
+
+
+<body class="hold-transition sidebar-mini layout-fixed" data-panel-auto-height-mode="height">
+    <div class="wrapper">
+        <nav class="main-header navbar navbar-expand navbar-dark" style="height: 38px;">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                        <i class="fas fa-bars"></i>
+                    </a>
+                </li>
+                <!-- <li class="nav-item d-none d-sm-inline-block">
+                    <a href="index3.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="#" class="nav-link">Contact</a>
+                </li> -->
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item d-none">
+                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    <div class="navbar-search-block">
+                        <form class="form-inline">
+                            <div class="input-group input-group-sm">
+                                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                                <div class="input-group-append">
+                                    <button class="btn btn-navbar" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+                <li class="nav-item dropdown d-none">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fa-comments"></i>
+                        <span class="badge badge-danger navbar-badge">3</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <a href="#" class="dropdown-item">
+                            <div class="media">
+                                <img src="/static/adminlte/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                                <div class="media-body">
+                                    <h3 class="dropdown-item-title">
+                                        Brad Diesel
+
+                                        <span class="float-right text-sm text-danger">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </h3>
+                                    <p class="text-sm">Call me whenever you can...</p>
+                                    <p class="text-sm text-muted">
+                                        <i class="far fa-clock mr-1"></i>
+                                        4 Hours Ago
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <div class="media">
+                                <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                                <div class="media-body">
+                                    <h3 class="dropdown-item-title">
+                                        John Pierce
+
+                                        <span class="float-right text-sm text-muted">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </h3>
+                                    <p class="text-sm">I got your message bro</p>
+                                    <p class="text-sm text-muted">
+                                        <i class="far fa-clock mr-1"></i>
+                                        4 Hours Ago
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <div class="media">
+                                <img src="dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                                <div class="media-body">
+                                    <h3 class="dropdown-item-title">
+                                        Nora Silvester
+
+                                        <span class="float-right text-sm text-warning">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </h3>
+                                    <p class="text-sm">The subject goes here</p>
+                                    <p class="text-sm text-muted">
+                                        <i class="far fa-clock mr-1"></i>
+                                        4 Hours Ago
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown d-none">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fa-bell"></i>
+                        <span class="badge badge-warning navbar-badge">15</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <span class="dropdown-item dropdown-header">15 Notifications</span>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-envelope mr-2"></i>
+                            4 new messages
+<span class="float-right text-muted text-sm">3 mins</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-users mr-2"></i>
+                            8 friend requests
+<span class="float-right text-muted text-sm">12 hours</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-file mr-2"></i>
+                            3 new reports
+<span class="float-right text-muted text-sm">2 days</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                    </div>
+                </li>
+                <li class="nav-item" style="margin-top: 8px;">
+                    {% comment %} {% if request.session.tenant_disabled == '1' %}disabled="disabled"{% endif %} {% endcomment %}
+                    <select class="form-control loc_dropdown" onchange="inventorySelect(this)" name="loc_dropdown" id="loc_dropdown" style="height: 30px;width: 350px; padding: 0px;margin: 0px;margin-top: 5px;">
+                        {% for inv in user_inv_array %}
+                            <option data-org_id="{{inv.org_id}}" data-org_code="{{inv.loc_code}}" data-org_type="{{inv.inv_org_type}}" value="{{inv.inv_id}}" {% if inv.inv_id|floatformat == request.session.tenant or inv.inv_id == request.session.location %}selected="selected"{% endif %} >{{inv.inv_name}}</option>
+                        {% endfor %}
+                    </select>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+                        <i class="fas fa-th-large"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="window.location.href='/logout'" role="button">
+                        Logout
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="#" class="brand-link">
+                <!-- <img src="https://media.licdn.com/dms/image/C4D0BAQF-_7PWozukVw/company-logo_200_200/0/1651209397374?e=2147483647&v=beta&t=YVE8uy7828Cp2NQSErwwr7ljZQO9WqX8-V7DaIZw1wc"
+                    style="opacity: .8; width:10%;"> -->
+                <span class="brand-text font-weight-light">Sample Proj</span>
+            </a>
+            <div class="sidebar">
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <!-- <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image"> -->
+                    </div>
+                    <div class="info">
+                        <a href="#"
+                            class="d-block">{% if request.user.first_name or request.user.last_name %}{{request.user.first_name}}
+                            {{request.user.last_name}}{% elif username %}{{ username }}{% endif %}</a>
+                    </div>
+                </div>
+                <div class="form-inline">
+                    <div class="input-group" data-widget="sidebar-search">
+                        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-sidebar">
+                                <i class="fas fa-search fa-fw"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <nav class="mt-2">
+                    <ul id="left-main-menu" class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                        data-accordion="false">
+
+                        {% for item in menu.main_menu %}
+                            {% if  item.id in user_menus %}
+                            <li class="nav-item" id="{{item.id}}"  data-filter_type="{{item.filter_type}}" data-org={{item.org_id_required}} data-roles_list="{{item.emp_roles}}">
+                                <a href="{{item.href}}" class="nav-link">
+                                {% comment %} <a href="{{item.get_menu_href}}" class="nav-link"> {% endcomment %}
+                                    <i class="nav-icon ion  "><ion-icon name="{{item.icon_class}}"></ion-icon></i>
+                                    <p> {{item.name}} 
+                                        {% if  item.url == '' %}
+                                        <i class="right fas fa-angle-left"></i>
+                                        {% endif %} 
+                                    </p>
+                                </a>
+                                
+                                {% if  item.url == '' %}
+                                <ul class="nav nav-treeview">
+                                    {% for key, values in menu.child_menu.items %}
+                                        {% if item.id == key %}
+                                            {% for child_item in values %}
+                                                {% if  child_item.id in user_menus %}
+                                                <li class="nav-item"  id="{{child_item.id}}" data-filter_type="{{child_item.filter_type}}" data-org={{child_item.org_id_required}} data-roles_list="{{child_item.emp_roles}}">
+                                                    <a class="nav-link" href="{{child_item.href}}">
+                                                        {% comment %} <a class="nav-link" href="{{child_item.get_menu_href}}"> {% endcomment %}
+
+                                                        <i class="nav-icon ion  "><ion-icon name="{{child_item.icon_class}}"></ion-icon></i>
+                                                        <p>
+                                                            {{child_item.name}}
+                                                        </p>
+                                                    </a>
+                                                </li>
+                                                {% endif %} 
+                                            {% endfor %}
+                                        {% endif %} 
+                                    {% endfor %}
+                                </ul>
+                                {% endif %} 
+                            </li>
+                            {% endif %} 
+                        {% endfor %} 
+                </nav>
+            </div>
+        </aside>
+        <div class="content-wrapper iframe-mode" data-widget="iframe" data-loading-screen="750">
+            <div id="iframe-tabs-horizontal" class="nav navbar navbar-expand navbar-white navbar-light border-bottom p-0">
+                <div class="nav-item dropdown">
+                    <a class="nav-link bg-danger dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Close</a>
+                    <div class="dropdown-menu mt-0">
+                        <a class="dropdown-item" href="#" data-widget="iframe-close" data-type="all" id="closeall">Close All</a>
+                        <a class="dropdown-item" href="#" data-widget="iframe-close" data-type="all-other">Close All Other</a>
+                    </div>
+                </div>
+                <a class="nav-link bg-light" href="#" data-widget="iframe-scrollleft">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+                <ul class="navbar-nav overflow-hidden" role="tablist" id="iframe-tabs"></ul>
+                <a class="nav-link bg-light" href="#" data-widget="iframe-scrollright">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+                <a class="nav-link bg-light" href="#" data-widget="iframe-fullscreen">
+                    <i class="fas fa-expand"></i>
+                </a>
+            </div>
+            <div class="tab-content">
+                <div class="tab-empty">
+                    <h2 class="display-4">No tab selected!</h2>
+                </div>
+                <div class="tab-loading">
+                    <div>
+                        <h2 class="display-4">
+                            Loading... <i class="fa fa-sync fa-spin"></i>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="main-footer d-none">
+            <strong>
+                Copyright &copy;2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>
+                .
+            </strong>
+            All rights reserved.
+
+            <div class="float-right d-none d-sm-inline-block">
+                <b>Version</b>
+                3.2.0
+
+            </div>
+        </footer>
+        <aside class="control-sidebar control-sidebar-dark"></aside>
+    </div>
+
+    
+    <script src="/static/adminlte/jquery.min.js.download"></script>
+
+    <script src="/static/adminlte/jquery-ui.min.js.download"></script>
+
+    <script>
+        $.widget.bridge('uibutton', $.ui.button)
+    </script>
+
+    <script src="/static/adminlte/bootstrap.bundle.min.js.download"></script>
+
+    <script src="/static/adminlte/jquery.overlayScrollbars.min.js.download"></script>
+
+    <script src="/static/adminlte/adminlte.js.download"></script>
+
+    <script src="/static/adminlte/demo.js.download"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <!-- Select2 JS -->
+    <script src='/static/plugins/select2/js/select2.full.min.js'></script>
+    <script
+    type="module"
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+  ></script>
+  <script
+    nomodule
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+  ></script>
+
+
+  <script>
+
+    if (location.protocol !== 'https:' && window.location.href.indexOf("127.0.0.1") == -1) {
+        location.replace(`https:${location.href.substring(location.protocol.length)}`);
+    }
+
+  </script>
+
+  <script src="{% static 'appVersion.js' %}?v={{APP_VERSION}}" data-version="{{APP_VERSION}}" id="app_version_scr" ></script>
+    <script>
+        $('.loc_dropdown').select2({
+            placeholder:"",
+            allowClear:true,
+        })
+        {% comment %} $(document).ready(function() {
+            $(window).focus(function() {
+                alert('tab switched')
+            });
+        }); {% endcomment %}
+        var selectedOrgOption;
+        function inventorySelect(el){
+                // alert();
+                var inv_id = el.options[el.selectedIndex].value;
+
+                selectedOrgOption = $('#loc_dropdown').find('option:selected');
+            //if(isNaN(inv_id)){
+
+                if ($('#iframe-tabs .nav-item').length == 0){
+                    let url = 'change_user_inventory/'+inv_id
+
+                    axios.get(url)
+                    .then(response => {
+                        //el.setAttribute("disabled", "disabled");
+                        localStorage.setItem('defs',JSON.stringify(response.data.defs));
+
+
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+
+
+                    $('li[data-org="True"] a').each(function() {
+                            
+                        const filerType = $(this).closest('li.nav-item')?.[0]?.dataset.filter_type
+                        if (filerType){
+                            const arr = [].slice.call( $('select#loc_dropdown option:selected').map((i,x) => Object.assign({organization_id:x.value,},x.dataset))).filter(item=>item.org_type==filerType)
+            
+                            if (arr.filter(x=>x.org_type == filerType).length){
+                                const currentHref = $(this).attr('href');
+                                let urlIC = currentHref.split('ic=')
+                                if(typeof urlIC[1]!='undefined')
+                                {
+                                        let newHrefIC = urlIC[0]+urlIC[1].split('&').slice(1).join('&') + `&ic=${arr[0].org_id}`
+                
+                                        let url = newHrefIC.split('oid=')
+                                        let newHref = url[0]+url[1].split('&').slice(1).join('&') + `&oid=${arr[0].organization_id}`
+                
+                                        $(this).attr('href', newHref);
+                                }
+                            }
+                        }
+                    });
+                    return;
+                }
+
+
+                
+                if (confirm('This will close all the opened pages. Can I proceed ?')) {
+                    $("#closeall").trigger('click');
+                    
+                    $('li[data-org="True"] a').each(function() {
+                            
+                        const filerType = $(this).closest('li.nav-item')?.[0]?.dataset.filter_type
+                        if (filerType){
+                            const arr = [].slice.call( $('select#loc_dropdown option').map((i,x) => Object.assign({org_id:x.value},x.dataset)))
+            
+                            if (arr.filter(x=>x.org_type == filerType).length){
+            
+                                const newValue = $('#loc_dropdown').val()
+                                const currentHref = $(this).attr('href');
+                                const oldValue = currentHref.split('oid=')?.[1]?.split('&')?.[0]
+                                if (oldValue && newValue){
+                                    const newHref = currentHref.replace(oldValue, newValue);
+                                    $(this).attr('href', newHref);
+                                }
+                            }
+                        }
+                    });
+
+
+      
+
+
+                    let url = 'change_user_inventory/'+inv_id
+                    axios.get(url)
+                    .then(response => {
+                        //el.setAttribute("disabled", "disabled");
+                        localStorage.setItem('defs',JSON.stringify(response.data.defs));
+
+                        
+
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+                }else{
+                    //Do nothing
+                }
+            //}
+        }
+        // $('.nav-item').on('click',function(){
+        //     $(this).toggleClass("menu-is-opening menu-open")      
+        // });
+
+        window.document.addEventListener('addOpenIframePage', handleEvent, false)
+
+        function handleEvent(e) {
+            console.log(e.detail) // outputs: {foo: 'bar'}
+            $('.content-wrapper').IFrame(
+                e.detail[0],
+                e.detail[1],
+                e.detail[2],
+                e.detail[3],
+                e.detail[4],
+            )
+        }
+
+        window.document.addEventListener('refresTabPage', refresTabPage, false)
+
+        function refresTabPage(e) {
+            // outputs: {foo: 'bar'}
+            $("iframe[src='" + e.detail[0]  + "']").attr('src', '').attr('src', e.detail[0]);
+            $("a#tab--" + e.detail[1]).trigger('click');
+        }
+
+
+
+        var detachedInvs = [];
+
+
+
+        $(document).on('click','#iframe-tabs li.nav-item a.nav-link' ,function(){ 
+            // alert();
+            var tabTargetHREF =  $(this).prop('href');
+
+            var targetTabID = '#' + tabTargetHREF.split('#')[1];
+
+            var iframe= $(targetTabID).find('iframe')[0];
+            var iframeSrc= $(targetTabID).find('iframe').prop('src');
+
+
+            var refresh_page = ['/sales/aye','/sales/aye_'].filter(x=> iframeSrc.includes(x)).length;
+            // debugger;
+            if (refresh_page){
+                iframe.contentDocument.body.outerHTML = ""
+                var url = iframe.src;
+                iframe.src = url+" ";
+                iframe.src = url;
+            }
+
+            
+            
+            
+        });
+
+
+
+
+        
+
+        var detachedInvs = [];
+
+
+        $('#left-main-menu li.nav-item').click(function(e){
+            let cur_filter_type = $('#loc_dropdown').find('option:selected').data('org_type')
+            let filter_type = $(this).data('filter_type')
+            
+            var clickedMenu = null;
+            if(cur_filter_type!=filter_type && filter_type!=''){
+                e.stopPropagation();
+                e.preventDefault();
+                clickedMenu = this;
+            }
+            let selected_location = $('#loc_dropdown').find('option:selected').val()
+
+            if ($(this).find('li.nav-item').length){
+                return;
+            }
+
+            if (detachedInvs.length){
+                $('#loc_dropdown').append(detachedInvs);
+                detachedInvs = [];
+            }
+            
+            var roles_list = $(this).data('roles_list');
+
+            localStorage.setItem('roles_list',roles_list);
+
+
+            
+            if (filter_type == ''){
+                
+                $('#loc_dropdown').append(detachedInvs);
+                detachedInvs = [];
+                return;
+            }
+
+
+            if (['RETAIL','POWERRETAIL','AYE'].includes(filter_type)){
+                if (confirm('This will close all the opened pages. Can I proceed ?')) {
+                    $("#closeall").trigger('click');
+
+
+                } else {
+
+                }
+            }
+
+
+            
+
+            var detached = $('#loc_dropdown').find('option').not('[data-org_type="'+ filter_type  + '"]').detach();
+            detachedInvs = detachedInvs.concat(detached);
+            
+
+            if($('#loc_dropdown option[value="' + selected_location + '"]').length > 0){
+                $('#loc_dropdown').val(selected_location)
+            }else{
+                selected_location = $('#loc_dropdown').find('option:selected').val()
+            }
+            $('#loc_dropdown').val(selected_location).trigger('change');
+            let url = 'change_user_inventory/'+selected_location;
+
+            axios.get(url)
+            .then(response => {
+                localStorage.setItem('defs',JSON.stringify(response.data.defs));
+                if(clickedMenu != null){
+                    $(clickedMenu).find('a').trigger('click');
+                }
+            })
+            .catch(e => {
+                console.log(e)
+            });
+            
+        })
+
+        // $(document).on('click','a.nav-link',function(){
+        //     if (detachedInvs.length){
+        //         $('#loc_dropdown').append(detachedInvs);
+        //         detachedInvs = [];
+        //     }
+            
+        //     if (this.id == 'tab--invoice-'){
+        //         refresTabPage({'detail':['/invoice/']});
+        //     }
+        //     if (this.id == 'tab--sales-units'){
+        //         refresTabPage({'detail':['/sales/units']});
+        //     }
+        // })
+
+        window.document.addEventListener('switchTab', switchTab, false);
+
+        function switchTab(e) {
+            $("a#tab--" + e ).trigger('click');
+        }
+
+        window.document.addEventListener('closeTab', closeTab, false)
+        function closeTab(e){
+            console.log(e);
+            tab_unique_id = e.detail[0]
+            $("#tab-"+tab_unique_id).siblings('.btn-iframe-close').trigger('click')
+            if(typeof e.detail[1] !== undefined ) {
+                    ne = {'detail' : e.detail[1]}
+                    refresTabPage(ne)
+            }
+        }
+
+        window.document.addEventListener('closeTabFromURL', closeTabFromURL, false)
+        function closeTabFromURL(e){
+            var url = e.detail[0];
+            var tabID = $('iframe[src*="'+url+'"]').closest('div').prop('id');
+            $('[href="#'+tabID+'"]').siblings('.btn-iframe-close').trigger('click');
+
+
+        }
+
+
+
+        window.document.addEventListener('renameTab', renameTab, false)
+        function renameTab(e){
+            var detail = e.detail;
+            // debugger;
+            $('#tab-'+detail.targetTabKey).text(detail.text);
+        }
+
+
+        window.document.addEventListener('openInNewTab', openInNewTab, false)
+        function openInNewTab(e){
+            var detail = e.detail;
+            window.open(detail[0], '_blank').focus();
+        }
+
+
+        $(document).ready(function(){
+            if (window.location.search.includes("?open=")){
+
+                let url = 'change_user_inventory/'+$('#loc_dropdown').find('option:selected').val()
+                axios.get(url)
+                .then(response => {
+                    //el.setAttribute("disabled", "disabled");
+                    localStorage.setItem('defs',JSON.stringify(response.data.defs));
+                    var openTabLink = window.location.search.split("?open=")[1];
+                    var target = 'a.nav-link[href="'+openTabLink+'"]';
+                    // alert(target);
+                    
+                    setTimeout(function(){
+                        $(target).click();
+                        if (window.history.replaceState) {
+                            window.history.pushState({}, null, window.location.href.split("?open=")[0]);
+                        }
+                        
+                    },150);
+                })
+                .catch(e => {
+                    console.log(e)
+                });
+
+
+            }
+
+            $('li[data-org="True"] a').each(function() {
+                            
+                const filerType = $(this).closest('li.nav-item')?.[0]?.dataset.filter_type
+                if (filerType){
+                    const arr = [].slice.call( $('select#loc_dropdown option').map((i,x) => Object.assign({organization_id:x.value,},x.dataset))).filter(item=>item.org_type==filerType)
+    
+                    if (arr.filter(x=>x.org_type == filerType).length){
+                        const currentHref = $(this).attr('href');
+                        let urlIC = currentHref.split('ic=')
+                        if(typeof urlIC[1]!='undefined')
+                        {
+                            let newHrefIC = urlIC[0]+urlIC[1].split('&').slice(1).join('&') + `&ic=${arr[0].org_id}`
+
+                            let url = newHrefIC.split('oid=')
+                            let newHref = url[0]+url[1].split('&').slice(1).join('&') + `&oid=${arr[0].organization_id}`
+                            $(this).attr('href', newHref);
+                        }
+                    }
+                }
+            });
+
+
+        });
+
+        function appendFilteredInvs(filter_type){
+                $('#loc_dropdown').append(detachedInvs);
+                var detached = $('#loc_dropdown').find('option').not('[data-org_type="'+ filter_type  + '"]').detach();
+                detachedInvs = detachedInvs.concat(detached);
+        }
+
+        $(document).on('click','#iframe-tabs li.nav-item' ,function(){
+            if (typeof(this.dataset.selected_loc) == 'undefined') return;
+
+            if (this.dataset.selected_loc_text.length){
+                //set selected tab location                
+                appendFilteredInvs(this.dataset.selected_org_type)
+                $('#loc_dropdown').val(this.dataset.selected_loc);
+
+                $('#select2-loc_dropdown-container').prop('title',this.dataset.selected_loc_text);
+                $('#select2-loc_dropdown-container').contents().last().replaceWith(this.dataset.selected_loc_text);
+                let url = 'change_user_inventory/'+this.dataset.selected_loc;
+                axios.get(url)
+                .then(response => {
+    
+                })
+            }
+        });
+
+        
+    </script>
+
+    <script>
+        //preventing multiple tabs
+        // Check if the flag is already set
+        if (localStorage.getItem('websiteOpenFlag')) {
+            // Website is already open, redirect or take appropriate action
+            alert('You cannot open multiple tabs of Sample Proj.');
+            window.open('/close_page', '_self').close();
+        } else {
+            // Set the flag indicating the website is open
+            localStorage.setItem('websiteOpenFlag', 'true');
+            // Optionally, remove the flag when the user closes the tab or window
+            window.addEventListener('beforeunload', function () {
+            localStorage.removeItem('websiteOpenFlag');
+            });
+        }
+    </script>
+    <script>
+    (function() {
+    
+        const idleDurationSecs = 3600;    // X number of seconds
+        const redirectUrl = '/logout';  // Redirect idle users to this URL
+        let idleTimeout; // variable to hold the timeout, do not modify
+    
+        const resetIdleTimeout = function() {
+    
+            // Clears the existing timeout
+            if(idleTimeout) clearTimeout(idleTimeout);
+    
+            // Set a new idle timeout to load the redirectUrl after idleDurationSecs
+            idleTimeout = setTimeout(() => {
+                alert('Session Timeout! Please login again !');
+                location.href = redirectUrl
+            }, idleDurationSecs * 1000);
+        };
+    
+        // Init on page load
+        resetIdleTimeout();
+    
+        // Reset the idle timeout on any of the events listed below
+        ['click', 'touchstart', 'mousemove'].forEach(evt => 
+            document.addEventListener(evt, resetIdleTimeout, false)
+        );
+    
+    })();
+    </script>
+
+    <script>
+    setInterval(function(){
+        const frame = $('iframe:visible')[0];
+        var data = JSON.parse('{{ roles_json|escapejs }}');
+        frame.contentWindow.postMessage(data, $('iframe:visible')[0].src);
+    
+    }, 5000)
+    
+    function set_loc_name(elm,loc_id){
+        let selected_location_code = $('#loc_dropdown').find('option:selected').data('org_code')
+        let selected_location_val = $('#loc_dropdown').find('option:selected').val()
+        let selected_loc_text = $('#loc_dropdown').find('option:selected').text()
+        let selected_org_type = $('#loc_dropdown').find('option:selected').data('org_type')
+        //console.log('$(elm)-------->',$(elm))
+        if (typeof(selected_location_val) == 'undefined'){
+            selected_location_code = "";
+            selected_location_val = "";
+            selected_loc_text = "";
+            selected_org_type = "";
+            return;
+        }
+        $(elm).attr('data-selected_loc',selected_location_val);
+        $(elm).attr('data-selected_loc_text',selected_loc_text);
+        $(elm).attr('data-selected_org_type',selected_org_type);
+        let new_tab_title = $(elm).find('a:eq(1)').text().trim()+' ('+selected_location_code+')';
+        console.log('new_tab_title--->',new_tab_title)
+        $(elm).find('a:eq(1)').text(new_tab_title)
+    }
+
+    setInterval(function() {
+        [... $('#iframe-tabs li ')].map(x=>{
+            if (typeof(x.dataset.selected_loc) == 'undefined'){
+                console.log(x.dataset.selected_loc );
+                return set_loc_name(x,x.dataset.selected_loc)
+            }
+          
+        });
+    }, 500);
+    </script>
+
+
+
+    <script>
+        window.addEventListener('message', event => {
+            if (typeof event.data === "string") {
+                messageArea.innerText = event.data;
+            }
+            // IMPORTANT: check the origin of the data!
+                console.log(event.data);
+
+
+            var eventData = event.data;
+
+        });
+    </script>
+
+</body>
+
+
+</html>

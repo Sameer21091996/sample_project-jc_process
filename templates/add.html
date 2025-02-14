@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+   .dt-buttons.btn-group.flex-wrap {
+   float: right;
+   }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="card-body">
+     <editviewcomponent :view_meta = 'defaultProp.view_meta'>  </editviewcomponent>
+</div>
+
+
+{% endblock %}
+
+
+<!-- Custom Javascript of page -->
+{% block js_files %}
+
+{% if view_meta.custom_script_file != '' %}
+<script src="{% static view_meta.custom_script_file %}"></script>
+{% endif %}
+
+
+{% include 'components/editviewcomponent.html' %}
+
+<!-- include custom component files -->
+
+{% for component in custom_components %}
+{% include component %}
+{% endfor %}
+
+{% endblock %}

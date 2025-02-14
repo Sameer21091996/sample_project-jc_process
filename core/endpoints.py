@@ -1,0 +1,4 @@
+OIC_ENDPOINTS = {
+
+}
+

@@ -1,0 +1,71 @@
+<div class="card card-default">
+  <div class="card-body">
+    <div class="row" id="transaction-filters-container">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Transaction Date from</label>
+          <div class="d-flex">
+            <input
+              type="datetime-local"
+              name="trans_date_from"
+              id="trans_date_from"
+              class="form-control"
+            />
+            <button class="btn btn-danger ml-2" onclick="javascript:trans_date_from.value=''">X</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>To</label>
+          <div class="d-flex">
+            <input
+              type="datetime-local"
+              name="trans_date_to"
+              id="trans_date_to"
+              class="form-control"
+            />
+            <button class="btn btn-danger ml-2" onclick="javascript:trans_date_to.value=''">X</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Source Type</label>
+          <input name="source_code" class="form-control" />
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>Branch From</label>
+          <input name="source_org" class="form-control" />
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <label>To</label>
+          <input name="transfer_org" class="form-control" />
+        </div>
+      </div>
+      <div class="col-md-4 form-group d-flex align-items-end">
+        {% comment %}
+        <button
+          class="btn btn-secondary"
+          onclick="clearTransactionFilterForm()"
+        >
+          Clear filters
+        </button>
+        {% endcomment %}
+        <button class="btn btn-primary" onclick="getTransactionsWithFilters()">
+          Find Transaction Details
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive" style="max-height: 400px">
+      <table
+        id="product-transactions-table"
+        class="table table-bordered container text-nowrap table-sm table-head-fixed"
+      ></table>
+    </div>
+  </div>
+</div>

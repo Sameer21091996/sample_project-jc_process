@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #323d89 0%, #252d66 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 40px 30px;
+            background-color: #ffffff;
+        }
+        .share-section {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .share-link {
+            color: #323d89;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border-bottom: 2px solid #323d89;
+            padding-bottom: 2px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Stock Count Details</h2>
+        </div>
+        <div class="content">
+            <p>Dear User,</p>
+            <p>Here are the stock count details for: <strong>{{ header_title }}</strong></p>
+            
+            <div class="share-section">
+                <p><strong>Access your stock count here:</strong></p>
+                <a href="{{ share_url }}" class="share-link">View Stock Count Details</a>
+                <p class="expiry-note">⚠️ This link will expire in 7 days.</p>
+            </div>
+            
+            <div class="signature">
+                <p>Best regards,<br>
+                <strong>Stock Count System</strong></p>
+            </div>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>

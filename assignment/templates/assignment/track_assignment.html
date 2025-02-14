@@ -1,0 +1,841 @@
+{% extends 'base.html' %} {% load static %} {% load humanize %}
+{% block content_app %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Follow-Up</title>
+    <!-- Add in the head section -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Add in head section -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+
+
+        .assignment-table th {
+            background-color: #0b7adc;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-right: 1px solid #ffffff30;
+        }
+
+
+        .assignment-table td {
+            border-right: 1px solid #eee;
+        }
+
+        .assignment-table tr:hover {
+            background-color: #f5f5f5;
+            text-align: right;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .close-button {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            float: right;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            background-color: darkred;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            height: 100vh;
+            background-size: cover;
+            background-color: white;
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 5px;
+
+        }
+
+        .assignment-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .assignment-table th,
+        .assignment-table td {
+
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            white-space: normal;
+            word-wrap: break-word;
+            /* 
+            padding: 15px 25px; */
+            min-width: 150px;
+            max-width: 250px;
+            height: 40px;
+            vertical-align: middle;
+        }
+
+        .assignment-table td:nth-child(2) {
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .assignment-table td:nth-child(13) {
+            min-width: 180px;
+            max-width: 280px;
+        }
+
+
+        .cell-content {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        .assignment-table {
+            width: 100%;
+            border-collapse: collapse;
+
+        }
+
+
+        select {
+            appearance: none;
+            background-color: transparent;
+            border: none;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            border-bottom: 2px solid #0b7adc;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            background-color: #f8f9fa;
+        }
+
+        select:focus {
+            outline: none;
+            border-bottom-color: #005bb7;
+        }
+
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 12px;
+            color: #0b7adc;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .table-header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .assignment-table {
+            border-spacing: 0;
+            min-width: 100%;
+        }
+
+        .assignment-table tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        @media screen and (max-width: 1200px) {
+            .container {
+                padding: 10px;
+            }
+
+
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 5px;
+            }
+
+            .table-container {
+                border-radius: 3px;
+            }
+
+
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+
+        }
+
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-filter input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .nav-button {
+            background-color: #0b7adc;
+            color: white;
+            padding: 8px 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .nav-button:hover {
+            background-color: #5a6268;
+        }
+
+        .date-cell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-icon {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .date-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+        }
+
+
+        .date-popup label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .date-popup input[type="date"] {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 150px;
+        }
+
+        .save-date-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 100%;
+            height: 38px;
+        }
+
+        .save-date-btn:hover {
+            background: #0056b3;
+        }
+
+        .datetime-cell {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .time-icon {
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 5px;
+        }
+
+        .datetime-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+        }
+
+        .datetime-popup input {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 150px;
+        }
+
+        .datetime-popup label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: auto;
+            min-width: 200px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+        }
+
+        .popup-selector {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .data-position {
+            display: flex;
+            flex-wrap: initial;
+            justify-content: left;
+            align-items: center;
+        }
+
+        .pending-end-time {
+            background-color: #f30d0d;
+        }
+
+        .status-ongoing {
+            color: #ff6600;
+            font-weight: bold;
+        }
+
+        .status-filters {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-btn {
+            padding: 8px 15px;
+            border: 1px solid black;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+
+        .status-btn.active {
+            background-color: #0b7adc;
+            color: white;
+        }
+
+        #count-all,
+        #count-draft,
+        #count-schedule,
+        #count-ongoing,
+        #count-completed {
+            background-color: #28a745;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .status-filters {
+            margin: 20px 0;
+            gap: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-btn {
+            padding: 5px;
+
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .sort-controls {
+            display: flex;
+            flex-direction: column;
+            margin-left: 8px;
+        }
+
+        .sort-icon {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            line-height: 8px;
+        }
+
+        .sort-icon.active {
+            color: white;
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+
+        .search-row input {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .search-row td {
+            background: #f8f9fa;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            background: #f8f9fa;
+        }
+
+
+        .pagination-container {
+            margin-top: 20px;
+            margin-right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 10px;
+            border-top: 1px solid #dee2e6;
+         
+            z-index: 10;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+        }
+
+        .pagination select {
+            width: 80px;
+            margin: 0 10px;
+            height: 100%;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .page-link {
+            color: #0b7adc;
+            cursor: pointer;
+        }
+
+        .page-item.disabled .page-link {
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .page-item.active .page-link {
+            background-color: #0b7adc;
+            border-color: #0b7adc;
+        }
+
+        hr.solid {
+            border-top: 3px solid #bbb;
+        }
+
+        .scrollable-container {
+            max-height: calc(100vh - 250px);
+         
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            position: relative;
+        }
+
+      
+
+
+        .scrollable-container {
+            scroll-behavior: smooth;
+        }
+
+        .scrollable-container::-webkit-scrollbar {
+            width: 2px;
+        }
+
+        .scrollable-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .scrollable-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Target NUM columns in header */
+.assignment-table th:nth-child(even) {
+    /* width: 20px !important; */
+    /* min-width: 20px !important; */
+    /* max-width: 20px !important; */
+    padding: 5px !important;
+    font-size: 14px;
+}
+
+/* Target NUM columns in body */
+.assignment-table td:nth-child(even) {
+    width: 20px !important;
+    min-width: 20px !important;
+    max-width: 20px !important;
+    padding: 5px !important;
+}
+
+
+.assignment-table td {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+}
+
+/* Add this to your existing style section */
+#dateFilter {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100px;
+}
+
+/* Or if you want to keep a subtle bottom border only */
+#dateFilter {
+    border: none;
+    /* border-bottom: 1px solid #ddd; */
+    outline: none;
+    background: transparent;
+}
+
+
+
+        
+    </style>
+</head>
+
+<body>
+    <template id="sortableHeader">
+        <div class="header-content">
+            <span class="header-text"></span>
+            <div class="sort-controls">
+                <i class="fas fa-sort-up sort-icon"></i>
+                <i class="fas fa-sort-down sort-icon"></i>
+            </div>
+        </div>
+    </template>
+    <div class="container">
+        <div class="table-container ">
+            <div class="header-controls">
+                <h4>Track Assignment</h4>
+                
+            </div>
+          
+            <hr class="solid">
+            <div class="header-controls">
+                <div class="date-filter">
+                    <button class="nav-button" id="prevDate">&lt; Previous</button>
+                    <input type="date" id="dateFilter">
+                    <button class="nav-button" id="nextDate">Next &gt;</button>
+                </div>
+            </div>
+            
+                <table class="assignment-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">TASKS</th>
+                            <div id="headerRow"></div>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+                
+        <script>
+           
+// Header creation
+document.addEventListener('DOMContentLoaded', function() {
+    const dateFilter = document.getElementById('dateFilter');
+    
+    // Initialize Flatpickr
+    const fp = flatpickr(dateFilter, {
+    defaultDate: new Date(),
+    dateFormat: "d-M-Y",
+    formatDate: function(date, format) {
+        let monthName = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        let day = String(date.getDate()).padStart(2, '0'); 
+        let year = date.getFullYear();
+        return `${day}-${monthName}-${year}`;
+    },
+    onChange: function(selectedDates) {
+        loadTasksForDate(selectedDates[0]);
+    }
+});
+
+
+    fetch('/assignment/tech-team/')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Tech team data:', data);
+            if (data.status === 'success') {
+                const headerRow = document.querySelector('tr');
+                data.data.forEach(meaning => {
+                    const th = document.createElement('th');
+                    th.textContent = meaning;
+                    th.style.textAlign = 'center';
+                    th.colSpan = "2"; 
+                    headerRow.appendChild(th);
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+
+    document.getElementById('prevDate').addEventListener('click', function() {
+        const currentDate = fp.selectedDates[0];
+        currentDate.setDate(currentDate.getDate() - 1);
+        fp.setDate(currentDate);
+        loadTasksForDate(currentDate);
+    });
+
+    document.getElementById('nextDate').addEventListener('click', function() {
+        const currentDate = fp.selectedDates[0];
+        currentDate.setDate(currentDate.getDate() + 1);
+        fp.setDate(currentDate);
+        loadTasksForDate(currentDate);
+    });
+
+    loadTasksForDate(new Date());
+});
+
+function loadTasksForDate(date) {
+    const selectedDate = new Date(date);
+    selectedDate.setMinutes(selectedDate.getMinutes() - selectedDate.getTimezoneOffset());
+    const formattedDate = selectedDate.toISOString().split('T')[0];
+    
+    fetch(`/assignment/get-assignment-data/?date=${formattedDate}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Assignment data:', formattedDate, data);
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (data.tasks && data.tasks.length > 0) {
+                const techTeams = Array.from(document.querySelectorAll('th'))
+                    .filter(th => th.textContent !== 'TASKS')
+                    .map(th => th.textContent.trim().toLowerCase());
+
+                // Organize tasks by team
+                const teamTasks = {};
+                techTeams.forEach(team => {
+                    teamTasks[team] = [];
+                    data.tasks.forEach(task => {
+                        if (task[team]) {
+                            teamTasks[team].push(task[team]);
+                        }
+                    });
+                });
+
+                // Create task rows
+                data.tasks.forEach((taskObj, index) => {
+                    const row = document.createElement('tr');
+                    
+                    // Task column
+                    const taskCell = document.createElement('td');
+                    taskCell.textContent = taskObj.task;
+                    taskCell.style.textAlign = 'left';
+                    row.appendChild(taskCell);
+
+                    // Tech team columns with numbers
+                    techTeams.forEach(team => {
+                        // Number cell
+                        const numCell = document.createElement('td');
+                        numCell.style.textAlign = 'center';
+                        numCell.style.width = '20px';
+                        numCell.textContent = index + 1;
+                        row.appendChild(numCell);
+
+                        // Team cell
+                        const cell = document.createElement('td');
+                        cell.style.textAlign = 'center';
+                        
+                        // Get task from organized team tasks
+                        const teamTask = teamTasks[team][index];
+                        if (teamTask) {
+                            let value = teamTask;
+                            if (typeof value === 'object') {
+                                value = value.notes;
+                            }
+                            const assignmentDiv = document.createElement('div');
+                            assignmentDiv.className = 'assignment-item';
+                            assignmentDiv.innerHTML = value;
+                            cell.appendChild(assignmentDiv);
+                        }
+                        row.appendChild(cell);
+                    });
+                    
+                    tableBody.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = document.querySelectorAll('th').length * 2;
+                cell.textContent = 'No tasks available for this date';
+                cell.style.textAlign = 'center';
+                cell.style.padding = '20px';
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+
+                
+        </script>
+                
+            
+           
+</body>
+
+</html>
+
+{% endblock %}
+
+

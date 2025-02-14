@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+    .card{
+        box-shadow:none
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body" style="display: block; padding : 5px;">
+        <div class="row">
+            {% if data == "DocumentationDetails" %}
+            <div class="col-sm-12 col-lg-12">
+                <label for=""
+                    class="col-sm-4 text-left control-label col-form-label">Documentation Details
+                </label>
+            </div>
+            <div class="col-sm-12 col-lg-4">
+                <div class="form-group row m-0">
+                    <label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Batch ID
+                    </label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld"
+                            style="width: 100%;" readonly value="{{resp.batch_id}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-4 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Doc Sub date</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.Doc_submission_Date}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-4 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Remarks</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.Remarks}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-4 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Rec Status</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.record_status}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-4 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Doc Stamp Date</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.Doc_stamped_Date}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-4 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Reason</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.Reason}}">
+                    </div>
+                </div>
+            </div>
+            {% elif data == "TripDetails" %}
+            <div class="col-sm-12 col-lg-12">
+                <label for=""
+                    class="col-sm-4 text-left control-label col-form-label">Trip
+                </label>
+            </div>
+            <div class="col-sm-12 col-lg-6 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Trip Number</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.trip_numbr}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-6 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Status</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.status}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-6 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Driver Name</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.driver_name}}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-6 ">
+                <div class="form-group row m-0"><label for=""
+                        class="col-sm-4 text-left control-label col-form-label">Driver Phone<span
+                            class="text-danger">*</span></label>
+                    <div class="col-sm-8">
+                        <input type="text" id="" name="" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;" readonly value="{{resp.driver_phone}}">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+
+        </div>
+    </div>
+    {% if data == "TripDetails" %}
+    <div class="col-sm-12 col-lg-12">
+        <label for=""
+            class="col-sm-4 text-left control-label col-form-label">Trip Details
+        </label>
+    </div>
+    <div class='card-body' style="padding:0px">
+        <div id="dash-tbl_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+            <table id="" class="opnTxns table table-sm w-100 table-bordered no-footer dataTable"
+                style="font-size: smaller; width: 1240px;" role="grid">
+                <thead class="header-style">
+                      <tr>
+                        <th>Trip Id</th>
+                        <th>Int Ext</th>
+                        <th>Driver Name</th>
+                        <th>Vehicle Num</th>
+                        <th>Dms No</th>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Shipped Date</th>
+                        <th>Qty</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in tripDetails %}
+                    <tr>
+                        <td>{{trip.trip_id}}</td>
+                        <td>{{trip.int_ext}}</td>
+                        <td>{{trip.driver_name}}</td>
+                        <td>{{trip.vehicle_number}}</td>
+                        <td>{{trip.dms_do}}</td>
+                        <td>{{trip.item}}</td>
+                        <td>{{trip.description}}</td>
+                        <td>{{trip.status}}</td>
+                        <td>{{trip.shipped_date}}</td>
+                        <td>{{trip.quantity}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+                
+            
+{% endblock %}
+{% block js_files %}
+
+
+<script>
+</script>
+{% endblock %}

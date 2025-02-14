@@ -1,0 +1,54 @@
+<template id="select_comp">
+  <div data-classification="select" data-type="select" class="formulate-input" data-has-errors="true">
+    <div :class="context.wrapper">
+      <label for="account_type" class="formulate-input-label formulate-input-label--before">[[context.label]]</label>
+      <div :class="`formulate-input-element formulate-input-element--${context.class}`" :data-type="context.type">
+        <select :class="`form-control ${context.name}`" :name="context.name" :id="context.id"
+          v-bind="context.attributes" :value="context.value">
+          <option v-for="option in context.options" :value="option.value">
+            [[option.label]]
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  Vue.component('selectcomp', {
+    template: '#select_comp',
+    delimiters: ['[[', ']]'],
+    props: ['context'],
+    data() {
+      return {
+        selectedIndex: 0
+      }
+    },
+    mounted() {
+      const self = this;
+      const field_name = self.context.name
+      $('.' + field_name).select2({});
+
+      var option_val = $('.' + field_name + ' option:selected').val();
+      emit_data = {}
+      emit_data[field_name] = option_val
+      EventBus.$emit("options_selected", emit_data);
+
+      //fetchin account information when select the exising account primary number
+      $('.' + field_name).on("change", function (e) {
+        var option_val = $('.' + field_name + ' option:selected').val();
+        emit_data = {}
+        emit_data[field_name] = option_val
+        EventBus.$emit("options_selected", emit_data);
+      });
+
+    },
+    computed: {
+      model() {
+        const self = this
+        console.log('this.context.model', self.context.model)
+        return self.context.model
+      }
+    }
+  })
+</script>

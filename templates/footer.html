@@ -1,0 +1,678 @@
+{% load static %}
+<style>
+
+  .overlay{
+      display: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 999;
+      /* background: rgba(255,255,255,0.8) url("https://www.tutorialrepublic.com/examples/images/loader.gif") center no-repeat;
+       */
+      background: #fffdfdfa url("https://www.niri.org/loading.gif") center no-repeat;
+      background-size: 11%
+  
+  
+    }    
+  /* Turn off scrollbar when body element has the loading class */
+  body.loading
+  {
+      overflow: hidden;   
+  }
+  /* Make spinner image visible when body element has the loading class */
+  body.loading .overlay
+  {
+      display: block;
+  }
+
+
+
+  /* LOADER */
+  
+  /* Loader */
+
+    
+  .dropping-texts {
+  white-space: nowrap;
+
+  display: inline-block;
+  width: 100%;
+  text-align: left;
+  height: 36px;
+  font-size: 36px;
+  vertical-align: -2px;
+  height: 220px;
+}
+
+.dropping-texts > div {
+  font-size:0px;
+  opacity:0;
+  /* margin-left:-30px; */
+  text-align: center;
+  /* position:absolute; */
+  font-weight:300;   
+  box-shadow: 0px 60px 25px -20px rgba(179, 179, 179, 0.062);
+}
+
+.dropping-texts > div:nth-child(1) {
+  animation: roll 8s linear infinite 0s;
+}
+.dropping-texts > div:nth-child(2) {
+  animation: roll 8s linear infinite 2s;
+}
+.dropping-texts > div:nth-child(3) {
+  animation: roll 8s linear infinite 4s;
+}
+.dropping-texts > div:nth-child(4) {
+  animation: roll 8s linear infinite 6s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 8s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 10s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 12s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 14s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 16s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 18s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 20s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 22s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 24s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 26s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 28s;
+}
+.dropping-texts > div:nth-child(5) {
+  animation: roll 8s linear infinite 30s;
+}
+
+@keyframes roll {
+  0% {
+    font-size:0px;
+    opacity:0;
+    margin-left:-30px;
+    margin-top:0px;
+    transform: rotate(-25deg);
+  }
+  3% {
+    opacity:1;
+    transform: rotate(0deg);
+  }
+  5% {
+    font-size:inherit;
+    opacity:1;
+    margin-left:0px;
+    margin-top:0px;
+  }
+  20% {
+    font-size:inherit;
+    opacity:1;
+    margin-left:0px;
+    margin-top:0px;
+    transform: rotate(0deg);
+  }
+  27% {
+    font-size:0px;
+    opacity:0.5;
+    margin-left:20px;
+    margin-top:100px;
+  }
+  100% {
+    font-size:0px;
+    opacity:0;
+    margin-left:-30px;
+    margin-top:0px;
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes roll2 {
+  0% {
+    font-size:0px;
+    opacity:0;
+    margin-left:-30px;
+    margin-top:0px;
+    transform: rotate(-25deg);
+  }
+  3% {
+    opacity:1;
+    transform: rotate(0deg);
+  }
+  5% {
+    font-size:inherit;
+    opacity:1;
+    margin-left:0px;
+    margin-top:0px;
+  }
+  30% {
+    font-size:inherit;
+    opacity:1;
+    margin-left:0px;
+    margin-top:0px;
+    transform: rotate(0deg);
+  }
+  37% {
+    font-size:1500px;
+    opacity:0;
+    margin-left:-1000px;
+    margin-top:-800px;
+  }
+  100% {
+    font-size:0px;
+    opacity:0;
+    margin-left:-30px;
+    margin-top:0px;
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes bg {
+  0% {background: grey;}
+  3% {background: grey;}
+  20% {background: grey;}
+  23% {background: grey;}
+  40% {background: grey;}
+  43% {background: grey;}
+  60% {background: grey;}
+  63% {background: grey;}
+  80% {background: grey;}
+  83% {background: grey;}
+  100% {background: grey;}
+}
+
+</style>
+</div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+</div> 
+<div class="overlay" style=" z-index: 100000;"></div>  
+<!-- <footer class="main-footer no-print">
+<div class="float-right d-none d-sm-block">
+  <b>Version</b> 1.0.0
+</div>
+<strong>Copyright &copy; 2020-2021 <a href="#">Al Yousuf ITS</a>.</strong> All rights
+reserved.
+</footer> -->
+
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark" id="error_content" style="    z-index: 1000000;font-size: 11px;color: white;padding-top: 13px !important;  padding-right: 3px; ">
+ 
+ <div> <button onclick="hide_erroros('hide')" style="float:right;line-height: 14px; margin-right: 6px;" class="btn btn-sm btn-warning"> <i class="fa fa-window-close" aria-hidden="true"></i>  </button><br><br>
+ </div>
+
+ <div  id="error_content_t">
+
+ </div>
+
+<!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="{% static 'dist/js/demo.js' %}"></script>
+
+<!-- Select2 -->
+<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+<!--axios -->
+<script src="{% static 'js/axios.min.js' %}"></script>
+
+
+<!-- DataTables -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+
+<script src="{% static 'js/dataTables.buttons.min.js' %}"></script>
+
+
+{% if use_latest_vue %}
+  <script src="{% static 'js/vue.js' %}"></script>
+{% else %}
+  <script src="{% static 'js/vue.min.js' %}"></script>
+{% endif %}
+
+
+<script src="{% static 'js/toastr.min.js' %}"></script>
+
+<script src="{% static 'js/sweetalert.min.js' %}"></script>
+
+<script src="{% static 'custom_js/jquery-ui.min.js' %}"></script>
+
+<script src="{% static 'js/currency.min.js' %}"></script>
+
+<!-- 
+<script src="{% static 'custom_js/jquery.blockUI.js' %}"></script>
+ -->
+
+<!-- <script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.0/pace.min.js" ></script> -->
+
+<!-- <script src="http://192.168.16.204:8001/static/static/js/libphonenumber-js.min.js" ></script> -->
+
+
+
+
+<!-- <script src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.10/js/dataTables.checkboxes.min.js"></script> -->
+
+<!-- <script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script> -->
+
+
+
+<script src="{% static 'custom_js/qrscanner.js' %}"></script>
+
+
+
+<script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+
+
+<script type="text/javascript" src="{% static 'js/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/buttons.html5.min.js' %}"></script>
+
+<!-- <script src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script> -->
+<script src="{% static 'js/jszip.min.js' %}"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/buttons/1.6.4/js/buttons.html5.min.js"></script> -->
+
+<!-- <script src="{% static 'custom_js/jquery.countdown-timer.min.js' %}"></script> -->
+
+
+<script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
+
+
+ <script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+
+
+<!-- <script src="http://code.jquery.com/jquery-3.1.1.slim.min.js"></script> -->
+<script src="{% static 'custom_js/jquery.loadingModal.js' %}"></script>
+
+
+
+<!-- <script rel="stylesheet" src="{% static 'eid/eidatoolkit.js' %}" ></script>
+<script rel="stylesheet" src="{% static 'eid/toolkit_sample.js' %}" ></script> -->
+
+
+<link rel="stylesheet" href="{% static 'static/css/flatpickr.min.css' %}" >
+<script rel="stylesheet" src="{% static 'static/js/flatpickr.min.js' %}" ></script>
+
+<script src="{% static 'js/jspdf.min.js' %}"></script>
+<script src="{% static 'js/html2pdf.bundle.min.js' %}"></script> 
+<script src="{% static 'js/html2canvas.min.js' %}" ></script>
+{% include 'reports/pdfReport.html' %}
+  
+
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/vue-select@3.0.0/dist/vue-select.css">
+
+<script src="https://unpkg.com/vue-select@3.0.0"></script>
+
+<script>Vue.component('v-select', VueSelect.VueSelect);</script> -->
+
+<div class="modal" tabindex="-1" role="dialog" id="searchModal">
+  <div class="modal-dialog" role="document" style="    max-width: 65%;">
+    <div class="modal-content">  
+      
+      
+
+      <div class="modal-header">
+        <h4 class="modal-title" id="cust_info_name"></h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+
+<style>
+.timer{
+font-weight: bold;
+
+}
+.bold_txt
+{
+font-weight: bold;
+}
+
+</style>
+
+      <div class="modal-body">
+
+       <div class="table-responsive" id="cust_inf" >
+
+        
+
+       </div>
+          
+      </div>
+      
+      <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div class="modal fade" id="form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-bottom-0">
+        <h5 class="modal-title" id="exampleModalLabel">Customer Information</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <!-- <form> -->
+        <div class="modal-body">
+          <span>* Update Customer Info (If Required).</span>
+          <div class="form-group">
+            <label for="email1">Email address</label>
+            <input type="email" class="form-control" id="email1" aria-describedby="emailHelp" placeholder="Enter email">  
+            <span class="message error"  style="display: none;">Email invalid</span>    
+          </div>
+          <div class="form-group">
+            <label for="password1">Mobile Number</label>
+            <input type="text" class="form-control"  onkeyup="contactNumberValidator(this.value,this)" id="mobile1" placeholder="mobile">
+            <input type="hidden" class="form-control" id="order_number_1" placeholder="">
+            <input type="hidden" class="form-control" id="customer_id_1" placeholder="">            
+            <span id="phoneerror" class="error invalid-feedback" style="display: none;">Please enter a vaild phone address</span>
+          </div>         
+        </div>
+
+        <div class="modal-footer border-top-0 d-flex justify-content-center">
+          <button type="submit" id="btn_save_cust_mob" onclick="save_customer_mobile()" class="btn btn-secondary">Confirm</button>
+        </div>
+      <!-- </form> -->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script> 
+// localStorage.setItem('defs',"{{defs|safe}}")
+
+</script> 
+
+<script> 
+function customer_history(a)
+{    
+    // /alert(1)
+    $("#searchModal").modal("show"); 
+    $('#cust_inf').html();
+    $('#cust_inf').html('<table id="searchProdTable" class="table table-bordered table-hover table-hover tbl_font table-sm dataTable no-footer" style="white-space: nowrap;"></table>');
+    $('#cust_info_name').html()
+    var customer_number = a;
+    axios.get("get_customer_sales_history?defs="+localStorage.getItem('defs')+'&q='+customer_number)
+   .then(function(res)
+   {   
+     
+        console.log(res.data)         
+        //$('#cust_inf').html('No record found');
+
+        var oTblReport = $('#searchProdTable')
+        table= oTblReport.DataTable ({ 		      	
+           "data" : res.data.data,
+           "columns" : res.data.columns,
+            "columnDefs": [
+            {
+                // "targets": [ 0 ],
+                // "render": function(data,type,row,meta)
+                // {
+                //    // return ' <button  type="button" class="add-to-cart btn btn-sm btn-info"   style="">Add To Cart <i style="color: white;" class="fa fa-cart-plus fa-1x "  aria-hidden="true"></i></button>';
+
+                //     return '<input type="checkbox" class="row-checkbox" >';
+                // }
+            },
+            {
+                "targets": [ 1],
+                visible:false
+            },
+            ]
+        });   
+    
+         // $("#searchModal").modal("hide"); 
+         
+
+         $('#cust_info_name').html(res.data.data[0].customer_name)
+     
+  }).catch(function()
+  {
+    $('#cust_inf').html('No record found');
+    $('#cust_info_name').html('')
+      
+     
+  })
+
+
+ 
+}
+
+
+
+
+function ShowDIV(msgs)
+{ 
+  // $("body").addClass("loading"); 
+
+  showloader();
+
+  if (msgs !=undefined){
+    var html = '<div class="dropping-texts"><div>'+msgs.join('</div><div>')+'</div></div>';
+    // $('.jquery-loading-modal').css('display','block');
+    $('.jquery-loading-modal__text').empty().append(html);
+  }
+
+}    
+function HideDIV(msgs,callback,msgTimeout)
+{   
+  if (msgs !=undefined){
+    var html = '<div class="dropping-texts"><div>'+msgs.join('</div><div>')+'</div></div>';
+    if (msgTimeout == undefined) msgTimeout = 2000;
+    // $('.jquery-loading-modal').css('display','block');
+    $('.jquery-loading-modal__text').empty().append(html);
+      setTimeout(function(){
+        hideloader()
+        callback();
+      },msgTimeout*msgs.length);
+      return;
+  }
+
+    hideloader()
+
+  // $("body").removeClass("loading"); 
+
+
+}
+
+
+  function load_events()
+  {
+    var  queryString = window.location.search;
+    console.log(queryString);
+    var a= queryString.split('mid=')[1];
+    var uid=a.split('&')[0]
+    var mid=a.split('&s')[0];
+   // var smid= queryString.split('smid=')[1].split('&uid')[0];
+    var smid= queryString.split('smid=')[1].split('&')[0];
+    var rid=queryString.split('rid=')[1].split('&')[0]
+    // var rid=queryString.split('smid=')[1].split('&uid')[1].split('rid=')[1].split('&aid')[0];
+    $('#'+smid+rid).addClass("active");
+  
+    var top_id = document.getElementById(+smid+rid).getAttribute('data_top_id');
+    $('#'+top_id).addClass("menu-open");
+    
+    var responbility_name=document.getElementById(top_id).children[0].children[1].textContent;
+    $('#active_breadcumb').html(responbility_name);
+   
+    var sub_menu=document.getElementById(+smid+rid).children[1].textContent;
+    $('#active_breadcumb_w_title').html(responbility_name +  ' | ' +sub_menu) ;
+    $('#page_name').html()
+    $('#page_name').html($('#page_name').html()  + responbility_name +  ' | ' +sub_menu) ;    
+    var aid=queryString.split('aid=')[1];
+    var a=JSON.parse(localStorage['defs'])
+    $("#new_customer_url").attr("href", "/cust/?rid="+rid+"&aid="+aid+"&uname="+a['oracle_user_name']+'&mid='+mid+'&smid='+smid+'&uid='+uid)
+    
+    localStorage.setItem('inventroy_t',"/sio/?rid="+rid+"&aid="+aid+"&uname="+a['oracle_user_name']+'&mid='+mid+'&smid='+smid+'&uid='+uid)
+
+
+    $("#inv_href").attr("href", "/sio/?rid="+rid+"&aid="+aid+"&uname="+a['oracle_user_name']+'&mid='+mid+'&smid='+smid+'&uid='+uid+'&ACTION=OPEN')
+    
+
+  }
+  
+  load_events()
+ 
+ 
+ 
+  //ShowDIV()
+  //HideDIV()
+
+
+
+
+
+  
+function contactNumberValidator(value,thiz) 
+{ 
+        const countryCodeNames = {"AF": "Afghanistan", "AX": "Åland Islands", "AL": "Albania", "DZ": "Algeria", "AS": "American Samoa", "AD": "Andorra", "AO": "Angola", "AI": "Anguilla", "AQ": "Antarctica", "AG": "Antigua and Barbuda", "AR": "Argentina", "AM": "Armenia", "AW": "Aruba", "AU": "Australia", "AT": "Austria", "AZ": "Azerbaijan", "BS": "Bahamas", "BH": "Bahrain", "BD": "Bangladesh", "BB": "Barbados", "BY": "Belarus", "BE": "Belgium", "BZ": "Belize", "BJ": "Benin", "BM": "Bermuda", "BT": "Bhutan", "BO": "Bolivia, Plurinational State of bolivia", "BA": "Bosnia and Herzegovina", "BW": "Botswana", "BV": "Bouvet Island", "BR": "Brazil", "IO": "British Indian Ocean Territory", "BN": "Brunei Darussalam", "BG": "Bulgaria", "BF": "Burkina Faso", "BI": "Burundi", "KH": "Cambodia", "CM": "Cameroon", "CA": "Canada", "CV": "Cape Verde", "KY": "Cayman Islands", "CF": "Central African Republic", "TD": "Chad", "CL": "Chile", "CN": "China", "CX": "Christmas Island", "CC": "Cocos (Keeling) Islands", "CO": "Colombia", "KM": "Comoros", "CG": "Congo", "CD": "Congo, The Democratic Republic of the Congo", "CK": "Cook Islands", "CR": "Costa Rica", "CI": "Cote d\'Ivoire", "HR": "Croatia", "CU": "Cuba", "CY": "Cyprus", "CZ": "Czech Republic", "DK": "Denmark", "DJ": "Djibouti", "DM": "Dominica", "DO": "Dominican Republic", "EC": "Ecuador", "EG": "Egypt", "SV": "El Salvador", "GQ": "Equatorial Guinea", "ER": "Eritrea", "EE": "Estonia", "ET": "Ethiopia", "FK": "Falkland Islands (Malvinas)", "FO": "Faroe Islands", "FJ": "Fiji", "FI": "Finland", "FR": "France", "GF": "French Guiana", "PF": "French Polynesia", "TF": "French Southern Territories", "GA": "Gabon", "GM": "Gambia", "GE": "Georgia", "DE": "Germany", "GH": "Ghana", "GI": "Gibraltar", "GR": "Greece", "GL": "Greenland", "GD": "Grenada", "GP": "Guadeloupe", "GU": "Guam", "GT": "Guatemala", "GG": "Guernsey", "GN": "Guinea", "GW": "Guinea-Bissau", "GY": "Guyana", "HT": "Haiti", "HM": "Heard Island and Mcdonald Islands", "VA": "Holy See (Vatican City State)", "HN": "Honduras", "HK": "Hong Kong", "HU": "Hungary", "IS": "Iceland", "IN": "India", "ID": "Indonesia", "IR": "Iran, Islamic Republic of Persian Gulf", "IQ": "Iraq", "IE": "Ireland", "IM": "Isle of Man", "IL": "Israel", "IT": "Italy", "JM": "Jamaica", "JP": "Japan", "JE": "Jersey", "JO": "Jordan", "KZ": "Kazakhstan", "KE": "Kenya", "KI": "Kiribati", "KP": "Korea, Democratic People\'s Republic of Korea", "KR": "Korea, Republic of South Korea", "XK": "Kosovo", "KW": "Kuwait", "KG": "Kyrgyzstan", "LA": "Laos", "LV": "Latvia", "LB": "Lebanon", "LS": "Lesotho", "LR": "Liberia", "LY": "Libyan Arab Jamahiriya", "LI": "Liechtenstein", "LT": "Lithuania", "LU": "Luxembourg", "MO": "Macao", "MK": "Macedonia", "MG": "Madagascar", "MW": "Malawi", "MY": "Malaysia", "MV": "Maldives", "ML": "Mali", "MT": "Malta", "MH": "Marshall Islands", "MQ": "Martinique", "MR": "Mauritania", "MU": "Mauritius", "YT": "Mayotte", "MX": "Mexico", "FM": "Micronesia, Federated States of Micronesia", "MD": "Moldova", "MC": "Monaco", "MN": "Mongolia", "ME": "Montenegro", "MS": "Montserrat", "MA": "Morocco", "MZ": "Mozambique", "MM": "Myanmar", "NA": "Namibia", "NR": "Nauru", "NP": "Nepal", "NL": "Netherlands", "AN": "Netherlands Antilles", "NC": "New Caledonia", "NZ": "New Zealand", "NI": "Nicaragua", "NE": "Niger", "NG": "Nigeria", "NU": "Niue", "NF": "Norfolk Island", "MP": "Northern Mariana Islands", "NO": "Norway", "OM": "Oman", "PK": "Pakistan", "PW": "Palau", "PS": "Palestinian Territory, Occupied", "PA": "Panama", "PG": "Papua New Guinea", "PY": "Paraguay", "PE": "Peru", "PH": "Philippines", "PN": "Pitcairn", "PL": "Poland", "PT": "Portugal", "PR": "Puerto Rico", "QA": "Qatar", "RO": "Romania", "RU": "Russia", "RW": "Rwanda", "RE": "Reunion", "BL": "Saint Barthelemy", "SH": "Saint Helena, Ascension and Tristan Da Cunha", "KN": "Saint Kitts and Nevis", "LC": "Saint Lucia", "MF": "Saint Martin", "PM": "Saint Pierre and Miquelon", "VC": "Saint Vincent and the Grenadines", "WS": "Samoa", "SM": "San Marino", "ST": "Sao Tome and Principe", "SA": "Saudi Arabia", "SN": "Senegal", "RS": "Serbia", "SC": "Seychelles", "SL": "Sierra Leone", "SG": "Singapore", "SK": "Slovakia", "SI": "Slovenia", "SB": "Solomon Islands", "SO": "Somalia", "ZA": "South Africa", "SS": "South Sudan", "GS": "South Georgia and the South Sandwich Islands", "ES": "Spain", "LK": "Sri Lanka", "SD": "Sudan", "SR": "Suriname", "SJ": "Svalbard and Jan Mayen", "SZ": "Swaziland", "SE": "Sweden", "CH": "Switzerland", "SY": "Syrian Arab Republic", "TW": "Taiwan", "TJ": "Tajikistan", "TZ": "Tanzania, United Republic of Tanzania", "TH": "Thailand", "TL": "Timor-Leste", "TG": "Togo", "TK": "Tokelau", "TO": "Tonga", "TT": "Trinidad and Tobago", "TN": "Tunisia", "TR": "Turkey", "TM": "Turkmenistan", "TC": "Turks and Caicos Islands", "TV": "Tuvalu", "UG": "Uganda", "UA": "Ukraine", "AE": "United Arab Emirates", "GB": "United Kingdom", "US": "United States", "UY": "Uruguay", "UZ": "Uzbekistan", "VU": "Vanuatu", "VE": "Venezuela, Bolivarian Republic of Venezuela", "VN": "Vietnam", "VG": "Virgin Islands, British", "VI": "Virgin Islands, U.S.", "WF": "Wallis and Futuna", "YE": "Yemen", "ZM": "Zambia", "ZW": "Zimbabwe"};
+        const asYouType = new libphonenumber.AsYouType();
+        const phoneNumber =  value;
+        // alert(phoneNumber);
+        
+        const formattedPhoneNumber = asYouType.reset().input(phoneNumber)
+        // alert(formattedPhoneNumber);
+        thiz.value = formattedPhoneNumber.includes("+")?formattedPhoneNumber:'+'+formattedPhoneNumber ; 
+        console.log(asYouType);
+        console.log(value);
+        var isValidNumber =libphonenumber.parsePhoneNumberFromString(formattedPhoneNumber).isValid();
+        // alert(isValidNumber);
+        if(!isValidNumber) {
+            $('#phoneerror').show();
+            $('#phoneerror').text('Invalid Contact Number')
+            $('#btn_save_cust_mob')[0].disabled=true;
+            return //toastr.warning(['Invalid Contact Number']);
+        }
+        else 
+        {
+            //toastr.warning('Detected Region:' + countryCodeNames[asYouType.country] ); 
+            $('#btn_save_cust_mob')[0].disabled=false;
+            $('#phoneerror').hide();
+            return //toastr.success('Valid');
+        }
+        // console.log(err)
+        // return ['Invalid Contact Number'];
+}
+
+var regExp = /^([\w\.\+]{1,})([^\W])(@)([\w]{1,})(\.[\w]{1,})+$/;
+$('[type="email"]').on('keyup', function() 
+{
+    $('.message').hide();
+
+  if(regExp.test( $(this).val().trim() ))
+  {
+    $('#btn_save_cust_mob')[0].disabled=false;
+
+  }
+  else
+  {
+    $('.message.error').show();
+    $('#btn_save_cust_mob')[0].disabled=true;
+  }
+
+});
+
+
+function hideloader()
+{
+  // h__count++;
+  // if (h__count == s__count){
+    if (!glo_loading){
+
+      $('body').loadingModal('hide');
+      $('body').loadingModal('destroy');
+    }
+  // }
+}
+
+
+function showloader(a='Please Wait We are Fetching Results...')
+{
+        $('body').loadingModal({text: a});
+        var delay = function(ms){ return new Promise(function(r) { setTimeout(r, ms) }) };
+        var time = 2000;
+
+        delay(time)
+                .then(function() { $('body').loadingModal('animation', 'rotatingPlane').loadingModal('backgroundColor', 'teal'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'wave'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'wanderingCubes').loadingModal('backgroundColor', 'teal'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'spinner'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'chasingDots').loadingModal('backgroundColor', 'darkblue'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'threeBounce'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'circle').loadingModal('backgroundColor', 'teal'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'cubeGrid'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'fadingCircle').loadingModal('backgroundColor', 'teal'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'foldingCube'); return delay(time); } );
+                // .then(function() { $('body').loadingModal('color', 'black').loadingModal('text', 'Done :-)').loadingModal('backgroundColor', 'darkyellow');  return delay(time); } )
+                // .then(function() { $('body').loadingModal('hide'); return delay(time); } )
+                
+                // .then(function() { $('body').loadingModal('destroy')
+                
+                
+                // ;}
+                
+                
+                // );   
+              
+              }
+        $(document).ready(function(){
+          $('ul.nav-sidebar').prepend($('ul.nav-sidebar').find('.menu-open'))
+        })
+
+  </script>
+
+<script>
+  var glo_loading = false;
+</script>
+
+
+
+
+</body>
+</html>

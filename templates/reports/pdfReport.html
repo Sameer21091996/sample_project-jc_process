@@ -1,0 +1,275 @@
+<style>
+    
+table {      
+    page-break-inside: avoid !important;
+}
+span , p ,div {
+    page-break-inside: avoid !important;
+
+}
+tr { page-break-inside: avoid!important }
+
+table {
+    -fs-table-paginate: paginate;
+}
+
+
+
+/* .html2pdf__overlay{
+    opacity: 1 !important;
+} */
+
+</style>
+<script>
+   var jsPDFTableHeaderCallback,jsPDFFooterContentCallback,jsPDFCustomFooterFormatting;
+    var glo_waterMark = '';
+    var gloFinalPDFHTML = '';
+function generatePDFReport(selector,isHTMLContent,filename,config,custConfig,jsPDFCustomFooterFormatting,savePdf=true){
+    var renderTopTROnce = false;
+    window.scrollTo({
+        top: 0,
+        left: 0,
+    });
+    
+    
+    if (isHTMLContent){
+        var element = $(selector);  
+        
+    } else{
+        var element = $(selector).clone(true);  
+
+    }
+
+    var waterMark = '';
+    if (typeof custConfig != 'undefined' && Object.keys(custConfig).includes('waterMarkText')){
+
+        waterMark = `<p class="pdf-watermark" style="
+                            -webkit-transform: rotate(331deg);
+                            -moz-transform: rotate(331deg);
+                            -o-transform: rotate(331deg);
+                            transform: rotate(331deg);
+                            font-size: 12em;
+                            color: rgba(0, 0, 0, 0.1);
+                            z-index:999999999999;
+                            position: absolute;
+                            font-family: 'Denk One', sans-serif;
+                            text-transform:uppercase;
+                            padding-left: -15%;
+                            padding-top: 3%;
+                            ">${custConfig.waterMarkText}</p>`;
+
+
+        // waterMark = `<div id="myDiv" style="color: rgba(0, 0, 0, 0.09);
+        //                                     font-size: 12em;
+        //                                     position: absolute;
+        //                                     padding-top: 30%;
+        //                                     z-index: 9999;
+        //                                     transform: rotate(331deg);
+        //                                     ">${custConfig.waterMarkText}</div>`;
+    }
+
+    glo_waterMark=waterMark;
+
+    var footerLogoPresent= true;
+    if ($(selector).find('img:first')[0] === $(selector).find('img:last')[0]){
+        footerLogoPresent=false;
+    }
+
+
+    if ($(selector).find('img:first').length){
+        var header = $(selector).find('img:first').clone()[0];
+        header = convertCanvasToImage(convertImageToCanvas(header));
+    } else{
+        header = null;
+    }
+
+
+    if ($(selector).find('img:last').length && footerLogoPresent){
+        var footer = $(selector).find('img:last').clone()[0];
+        footer =convertCanvasToImage(convertImageToCanvas(footer));
+    } else {
+        footer = null;
+    }
+
+
+    $(element).find('img').remove();
+    //dfjksljdsfdsdfdfsfdsfsdfsdfdsd
+
+
+    // $('body').append(footer)
+    element.show();
+    element.addClass('m-3');
+
+    if (typeof custConfig != 'undefined'){
+
+
+        if (Object.keys(custConfig).includes('beforeTheadContent')){
+            jsPDFTableHeaderCallback = function (thead,t,curCallbackCount){
+
+                // debugger;
+                $(thead).before(custConfig.beforeTheadContent);
+                console.log(t);
+                
+                if (waterMark.length){
+                    var newOpcaity = (
+                        0.08-0.004*(curCallbackCount)
+                    ).toString();
+                    // var wm = $(waterMark).css('color','rgba(0, 0, 0, 0.09 )');
+                    // debugger;
+                    jQuery(t).after(waterMark);
+                    $('.pdf-watermark').css('color','rgba(0, 0, 0, '+newOpcaity+' )');
+
+                    if (!renderTopTROnce){
+                        jQuery(t).closest('tbody').prepend(waterMark);
+                        renderTopTROnce=true;
+                    }
+                }
+
+
+                // debugger;
+            }
+        }
+        
+
+    }
+
+
+    // if (renderTopTROnce == false && waterMark.length){
+    //     $(element).append(waterMark);
+    // }
+
+
+
+    if (typeof config == 'undefined'){
+        config = {
+            
+            margin:       [12, 0, 0, 0],
+            filename:     filename,
+            image:        { type: 'jpeg',quality: 5 },
+            html2canvas:  { scale:3,   useCORS: true, 
+                // logging: true, dpi: 1200  
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'p' } ,       
+            pagebreak: { mode: 'avoid-all', inside: "avoid"} ,
+            repeatTableHeader: true
+            
+            
+        }
+    } else {
+        config['filename'] = filename;
+    }
+    
+    var pdfReport = html2pdf().from(element[0].outerHTML,'string').set(config).toPdf().get('pdf').then(function (pdf) {
+        var totalPages =pdf.internal.getNumberOfPages();
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var dateTime = date+' '+time;
+        for (let i = 1; i <= totalPages; i++) 
+        {
+            pdf.setPage(i);
+            if (header != null)
+                pdf.addImage(header,'JPEG', 20, 3,175,23);
+            if (footer != null)
+                pdf.addImage(footer,'JPEG',20,  (pdf.internal.pageSize.getHeight() -32),175,22);
+            
+            
+            
+            if (typeof jsPDFCustomFooterFormatting != 'undefined'){
+                jsPDFCustomFooterFormatting(pdf);
+            }
+            
+
+            // if (typeof custConfig != 'undefined' && Object.keys(custConfig).includes('waterMarkText')){
+            //     // debugger;
+                
+            //     pdf.setTextColor(0, 0, 0, 0.3);
+                
+            //     pdf.setFontSize(50);
+            //     pdf.text(100,100, custConfig.waterMarkText);
+                
+            //     pdf.setFontSize(11);
+
+
+            // }
+
+
+
+                
+
+                
+                
+
+        }
+        // pdf=pdf.output()
+        // doc_=b2a(pdf);
+        // pdf.output('dataurlnewwindow');
+
+        if (!savePdf){
+            // window.open(pdf.output('bloburl'), '_blank');
+            // debugger;
+            tab_url = pdf.output('bloburl');
+            let tab_title2 = filename ;
+            let unique_name = new Date().getTime() ; //(Math.random() + 1).toString(36).substring(7)
+            var data = ['createTab', tab_title2 , tab_url, unique_name , true ]
+            var event = new CustomEvent('addOpenIframePage', { detail: data })
+            window.parent.document.dispatchEvent(event)
+        }
+        
+        // submitEvaluationForm(rowToUpdate.application_id,doc_,send_report);
+        
+    });
+    
+    if (savePdf){
+        pdfReport.save();
+    } 
+    
+    
+    
+    
+}
+
+var doc_ = '';
+
+
+
+
+function b2a(a) 
+{
+    var c, d, e, f, g, h, i, j, o, b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", k = 0, l = 0, m = "", n = [];
+    if (!a) return a;
+    do c = a.charCodeAt(k++), d = a.charCodeAt(k++), e = a.charCodeAt(k++), j = c << 16 | d << 8 | e, 
+    f = 63 & j >> 18, g = 63 & j >> 12, h = 63 & j >> 6, i = 63 & j, n[l++] = b.charAt(f) + b.charAt(g) + b.charAt(h) + b.charAt(i); while (k < a.length);
+    return m = n.join(""), o = a.length % 3, (o ? m.slice(0, o - 3) :m) + "===".slice(o || 3);
+}
+
+
+
+function convertImageToCanvas(image) {
+	var canvas = document.createElement("canvas");
+	canvas.width = image.width;
+	canvas.height = image.height;
+	canvas.getContext("2d").drawImage(image, 0, 0);
+
+	return canvas;
+}
+
+
+// Converts canvas to an image
+function convertCanvasToImage(canvas,type='jpeg') {
+	var image = new Image();
+	image.src = canvas.toDataURL("image/"+type);
+	return image;
+}
+
+
+const printPDF = (html, containerId, file_name="export.pdf",config,custConfig,jsPDFCustomFooterFormatting,savePdf)=>{
+      var element = document.getElementById(containerId);
+      if (containerId.length){
+         generatePDFReport(element,false,file_name,config,custConfig,jsPDFCustomFooterFormatting,savePdf);
+      } else {
+         
+         generatePDFReport(html,true,file_name,config,custConfig,jsPDFCustomFooterFormatting,savePdf);
+      }      
+   }
+</script>

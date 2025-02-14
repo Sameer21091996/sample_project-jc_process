@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Request</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+p {
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+table td:first-child {
+    font-weight: bold;
+    background-color: #f0f0f0;
+    width: 40%;
+}
+
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #777;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Dear Service Team,</p>
+        <p>New service request from below customer</p>
+       
+        <div class="section">
+            <h3>Customer Details:</h3>
+            <table>
+                <tr>
+                    <td>Request No</td>
+                    <td>{{ request_no }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>{{ date }}</td>
+                </tr>
+                <tr>
+                    <td>Customer Name</td>
+                    <td>{{ customer_name }}</td>
+                </tr>
+                <tr>
+                    <td>Customer No</td>
+                    <td>{{ customer_no }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3>Vehicle Details:</h3>
+            <table>
+                <tr>
+                    <td>Model</td>
+                    <td>{{ model }}</td>
+                </tr>
+                <tr>
+                    <td>Model Year</td>
+                    <td>{{ model_year }}</td>
+                </tr>
+                <tr>
+                    <td>VIN</td>
+                    <td>{{ vin }}</td>
+                </tr>
+                <tr>
+                    <td>Workshop Location</td>
+                    <td>{{ workshop_location }}</td>
+                </tr>
+                <tr>
+                    <td>Slot Time</td>
+                    <td>{{ slot_time }}</td>
+                </tr>
+                <tr>
+                    <td>Additional Info</td>
+                    <td>{{ additional_info }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <footer>
+            <p>© 2024 Al Yousuf LLC. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

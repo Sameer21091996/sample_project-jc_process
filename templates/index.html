@@ -1,0 +1,25 @@
+{% extends "base_sale.html" %}
+{% load static %}
+
+
+{% block content %}
+
+
+      {{ request.session.user_full_name }}
+
+
+
+<script>   
+  var a= document.querySelectorAll(".nav-treeview > .nav-item > a");
+  for (var i=0;i<a.length;i++)
+  { 
+        if(document.querySelectorAll(".nav-treeview > .nav-item > a >p")[i].innerText=='Sales')
+        {
+             document.querySelectorAll(".nav-treeview > .nav-item > a")[i].click();
+        }
+  }
+</script>
+
+
+{% endblock %}
+

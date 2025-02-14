@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="https://integration.inhealth.ae/" href="emiratesid/IDCardToolkitService.jnlp">
+	<information>
+		<title>ID Card Toolkit Service</title>
+		<vendor>ICA</vendor>
+		<homepage href="/" />
+		<description>ID Card Toolkit SDK</description>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<resources>
+		<j2se version="1.6+" />
+		<jar href="emiratesid/IDCardToolkitService.jar" main="true" download="eager"/>		
+	</resources>
+	<application-desc main-class="ae.gov.ica.idcard.toolkit.jws.agent.ServiceLauncher">
+		<!- config_url ->
+		<argument>config_url = https://integration.inhealth.ae/emiratesid/config/</argument>					
+	</application-desc>
+</jnlp>

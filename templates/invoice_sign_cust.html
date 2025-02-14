@@ -1,0 +1,1809 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice Print  ||    {{ohid|safe}}  </title>
+    
+    
+    <link rel="stylesheet" href="{% static 'css/jquery.loadingModal.css' %}">
+
+    
+    <style>
+
+
+        th{
+            text-align: center !important;
+
+        }
+        .text-right
+        {
+
+            text-align: right;
+
+        }
+       
+        .table-bordered > thead >tr >th 
+        {
+
+            text-align: center;
+            /* border: 1px solid; */
+            /* border-right: 0;
+            border-bottom: 0; */
+
+        }
+        /* .table:nth-child(2) > tbody > tr:nth-child(n) > td:nth-child(6)
+        {
+            border-right: 1px solid;
+        }
+        
+        .table:nth-child(2) > tbody > tr:nth-child(7) > td:nth-child(n)
+        {
+            border-bottom: 1px solid;
+        }
+
+        .table:nth-child(4) > tbody > tr:nth-child(n) > td:nth-child(10)
+        {
+            border-right: 1px solid;
+        }
+
+        .table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(n)
+        {
+            border-bottom: 1px solid;
+        }
+
+
+        #content > table:nth-child(7) > thead > tr > td,#content > table:nth-child(4) > thead > tr > th:nth-child(10)
+        {
+
+            border-right: 1px solid;
+        }
+
+        #content > table:nth-child(7) > thead > tr > th:nth-child(9)
+        {
+            border-right: 1px solid;
+        }
+        #content > table:nth-child(7) > tbody > tr:nth-child(n) > td:nth-child(9)
+        {
+            border-right: 1px solid;
+        } */
+
+
+        .t_r
+        {
+
+            text-align: right;
+        }
+        .t_c
+        {
+
+            text-align: center;
+        }
+
+
+    .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 0px;
+        border: none;
+        box-shadow: none;
+        font-size: 11px;
+        /* line-height: 18px; */
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        /* color: #555; */
+        color: #000;
+    }
+    
+    .invoice-box table {
+        width: 100%;
+        line-height: inherit;
+        text-align: left;
+        border-spacing: 0;
+        border-collapse: collapse;
+        border-color: #0000008a;
+    }
+    
+    .invoice-box table td {
+        padding: 2px;
+        vertical-align: top;
+    }
+    
+  
+    .invoice-box table tr.top table td {
+        padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.top table td.title {
+        font-size: 45px;
+        line-height: 45px;
+        color: #333;
+    }
+    
+    .invoice-box table tr.information table td {
+        padding-bottom: 40px;
+    }
+    
+    .invoice-box table tr.heading td {
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+    }
+    
+    .invoice-box table tr.details td {
+        padding-bottom: 20px;
+    }
+    
+    .invoice-box table tr.item td{
+        border-bottom: 1px solid #eee;
+    }
+    
+    .invoice-box table tr.item.last td {
+        border-bottom: none;
+    }
+    
+    .invoice-box table tr.total td:nth-child(2) {
+        border-top: 2px solid #eee;
+        font-weight: bold;
+    }
+    
+    @media only screen and (max-width: 600px) {
+        .invoice-box table tr.top table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+        
+        .invoice-box table tr.information table td {
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+    }
+    
+    /** RTL **/
+    .rtl {
+        direction: rtl;
+        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+    
+    .rtl table {
+        text-align: right;
+    }
+    
+    .rtl table tr td:nth-child(2) {
+        text-align: left;
+    }
+
+
+
+
+
+
+
+
+/* Styles go here */
+
+@page 
+{
+   margin-left: 5mm;
+   margin-right: 5mm;
+}
+@page {
+  size: A4 portait;
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+@media print {
+   /* thead {display: table-header-group;} 
+   tfoot {display: table-footer-group;}    */
+   button {display: none;}   
+   body {
+       margin: 0; 
+       zoom: 0.9;
+       border:none
+            
+    }
+
+
+
+  .invoice-box {
+        max-width: 100%;
+        margin: auto;
+        padding: 0px;
+        border: none;
+        box-shadow: none;
+        font-size: 10px;
+        line-height: 12px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #000;
+       
+    } 
+
+    .top_border
+    {
+        border-top: solid 1px !important;
+        border-color: black;
+    }
+   
+.page-header, .page-header-space 
+{
+   
+    height: 170px;
+    background: white;
+}
+
+.page-footer, .page-footer-space 
+{
+    height: 330px;
+    background: white;
+
+}
+#sign-modal{
+display: none;
+
+}
+#content
+{
+    /* margin-top: 206px;
+    margin-bottom: 180px; */
+
+    }
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%; 
+ 
+}
+
+.page-header {
+  position: fixed;
+  top: 0mm;
+  width: 100%;
+  
+}
+.page 
+{
+  page-break-after: always;
+}
+     
+   
+   
+   }
+
+
+
+
+    </style>
+
+<script src="{% static 'js/axios.min.js' %}"></script>
+
+<script src="{% static 'js/lodash.min.js' %}"></script>
+<script src="{% static 'js/vue.min.js' %}"></script>
+</head>
+
+<body>
+
+    <!-- <object data="/{{invoice_path|safe}}" type="application/pdf" width="100%" height="100%">
+        <p>Alternative text - include a link <a href="/{{invoice_path|safe}}">to the PDF!</a></p>
+    </object> -->
+
+    <div id="sign-modal" class="modal fade p-0" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-modal="true" >
+        <div class="modal-dialog modal-dialog-centered m-0">
+            <div class="modal-content" style="    text-align: center;">
+                <div class="modal-header d-flex align-items-center">
+                    <h3  class="modal-title" id="vcenter">Draw Signature with mouse or touch</h3>
+                    <!-- <button type="button" class="close ml-auto" data-dismiss="modal" aria-hidden="true">×</button> -->
+                </div>
+                <div class="modal-body">
+                    <section class="signature-component">     
+                        <div class="signature-pad--body">  
+                        <canvas id="signature-pad" width="300" height="100"  style="border: 1px solid;"></canvas>               
+                    </div>     
+                        <div style="display: none;">
+                            <button id="save" class="d-none">Save</button>
+                            <button id="showPointsToggle"  class="d-none">Show points?</button>
+                        </div>                        
+                        <p>
+                        
+                        </p>
+                    </section>
+                </div>
+                <div class="modal-footer">
+                    <button id="clear" class="btn btn-secondary waves-effect" >X Clear</button>
+                    <button type="button" class="btn btn-success waves-effect" data-dismiss="modal" onclick="chngSta()">Save</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    
+    <!-- <button type="button" class="btn btn-success waves-effect " onclick="show_mod()">Save</button>
+     -->
+
+  
+    <!-- <h1>No Record Found</h1> -->
+    <div class="invoice-box" id="v-test" style="display: none;"  >
+    </div>
+    <div class="invoice-box" id="v-invoice"   >
+    <template>
+
+        <header  id="header"  class="page-header">
+
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <!-- <td style="width: 16%;">
+                        <img    v-if="invs[0].logo_path_special"  :src="base_url+'/'+invs[0].logo_path_special"    v-if="invs[0].org_id == '94'"    style="    padding-top: 1%;width:100%;float: left;">
+                    </td> -->
+                    <td style="text-align: center;">
+                        <img   v-if="invs[0].logo_path"  :src="base_url+'/'+invs[0].logo_path"  style="    width: 60%;" >
+                        <br>
+                        <br>
+                       
+                    </td>
+                </tr>   
+                <tr>
+
+                    <td colspan="2" class="t_c" style="    text-align: center;"> 
+                        [[invs[0].organization_name]] ,          [[invs[0].inv_loc_address]] ,   [[invs[0].ae_emirate]]    , [[invs[0].country]] 
+                          <br>
+                    </td>
+                </tr> 
+                
+            </table> <br>
+    </header>
+
+
+
+
+
+ <div id="content">
+    <div class="page-header-space"></div>   
+            <table border="1">
+                <tbody>
+
+                    
+
+
+                        <tr>
+
+                            <td class="top_border" colspan="2" style="border: 1px solid;">
+        
+        
+                                <h3  v-if="invs[0].line_category_code!='RETURN'"  style="text-align: center;">
+        
+                                        [[invs[0].order_type_o]]       
+        
+                                </h3>
+        
+                               <h3  v-if="invs[0].line_category_code=='RETURN'"   style="text-align: center;">
+        
+                                        [[invs[0].order_type_o]]
+        
+                               </h3> 
+        
+                            </td>
+                           
+                            <td class="top_border"  colspan="4">
+        
+                                <h3  v-if="invs[0].line_category_code=='RETURN'"    style="text-align: center;" >
+                                    [[(invs[0].sales_type_new).toUpperCase()]]                  
+                               </h3>    
+                               <h3  v-if="invs[0].line_category_code!='RETURN'"  style="text-align: center;">
+                                [[(invs[0].sales_type_new).toUpperCase()]]
+                             </h3>
+        
+                            </td>
+
+
+                        </tr>
+
+
+                    <tr>
+                        <td class="pr-3 text-nowrap top_border"><strong>Bill To </strong></td>
+                        <td class="top_border">[[invs[0].bill_to_customer]] <br>([[invs[0].bill_to_customer_no]])</td>
+                        <td class="top_border"><strong>Customer Purchase Ref</strong></td>
+                        <td class="top_border"></td>
+                        <td class="top_border"><strong>Invoice Date</td>
+                        <td class="top_border">[[invs[0].ordered_date]]</td>
+                    </tr>
+                   
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Address</strong></td>
+                        <td>[[invs[0].bill_to_customer_add]]</td>
+                        <td><strong>Payment terms</strong></td>
+                        <td>[[invs[0].payment_term]]</td>
+                        <td><strong>Tax Invoice No.</td>
+                        <td>[[invs[0].order_number]]</td>
+                    </tr>
+
+                     
+                    <tr>
+                        <td  style="    padding-left: 0px;                        padding-right: 0px;" >
+                            <table >
+                                <tr> 
+                                    <td><strong>TRN</strong></td>  
+                                  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"><strong>Tel No</strong></td>
+                                </tr>
+                            </table>
+
+
+                        </td>
+                        <td  style="    padding-left: 0px;                        padding-right: 0px;" >
+                            <table >
+                                <tr> 
+                                    <td style="    height: 18px;"> <strong>[[invs[0].cust_vat_num]]    </strong></td>  
+                                  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"><strong>[[invs[0].bill_to_customer_phone]]</strong></td>
+                                </tr>
+                            </table>
+
+
+                        </td>
+                        <td class="top_border"><strong>Remarks</strong></td>
+                        <td class="top_border">[[invs[0].order_note]]</td>
+                        <td colspan="1" class="p-0" style="    padding-left: 0px;                        padding-right: 0px;">
+                            <table  class="p-0 w-100 h-100">
+                                <tr> 
+                                    <td><strong>TRN</strong></td>  
+                                  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"><strong>Date of Supply</strong></td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td colspan="1" class="p-0"  style="    padding-left: 0px;                        padding-right: 0px;">
+                            <table  class="p-0 w-100 h-100">
+                                <tr> 
+                                    <td><strong>    [[invs[0].cf_vat_num]]  </strong></td>  
+                                </tr>
+                                <tr> 
+                                    <td style="border-top: 1px solid;"> [[invs[0].ordered_date]]   </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong> </strong></td>
+                        <td ></td>
+                        <td style="border: none !important;"></td>
+                        <td  style="border: none !important;" ></td>
+                        <td><strong>Order Type</strong></td>
+                        <td>[[invs[0].order_type]]</td>
+                    </tr>
+
+                    
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Ship To
+                            </strong></td>
+                        <td>[[invs[0].party_name]] ([[invs[0].party_num]])</td>
+                        <td style="border: none !important;"></td>
+                        <td style="border: none !important;"></td>
+                        <td><strong>Location</strong></td>
+                        <td>[[invs[0].order_location]]</td>
+                    </tr>
+
+                   
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Address
+                            </strong></td>
+                        <td>[[invs[0].ship_to_address]]</td>
+                        <td style="border: none !important;"></td>
+                        <td style="border: none !important;"></td>
+                        <td><strong>Due Date</strong></td>
+                        <td>[[invs[0].ordered_date]] </td>
+                    </tr>
+
+                     
+                    <tr>
+                        <td class="pr-3 text-nowrap"><strong>Tel
+                            </strong></td>
+                        <td>[[invs[0].ship_to_phone]]</td>
+                        <td style="border: none !important;"></td>
+                        <td style="border: none !important;"></td>
+                        <td><strong>Original Order</strong></td>
+                        <td>[[invs[0].reference]]   </td>
+                    </tr>
+                </tbody>
+            </table>
+        
+        
+            <br>
+      
+                    <table border="1"   >
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="    width: 56px;">Sr.No</th>
+                                <th>Description of Goods</th>
+                                <th class="text-right">Unit Price ([[invs[0].currency_code]])</th>
+                                <th class="text-right">&nbsp; Qty &nbsp;&nbsp;</th>
+                                <th class="text-right">Gross Amount <br> ([[invs[0].currency_code]])</th>
+                                <th class="text-right">Discount  ([[invs[0].currency_code]])</th>
+                                <th class="text-right">Total Price<br>Excl.VAT  ([[invs[0].currency_code]])</th>
+                                <th class="text-right">VAT %</th>
+                                <th class="text-right">VAT <br>  ([[invs[0].currency_code]])</th>
+                                <th class="text-right">Total Price<br>Incl.VAT  ([[invs[0].currency_code]])</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <template v-for="(inv,index) in invs">
+                                <tr>
+                                    <td class="text-center">[[index+1]]</td>
+                                  
+                                    <td>
+                                         [[inv.mfg]]<br> 
+                                        [[inv.ordered_item]]<br>
+                                        [[inv.description]]<br>  
+                                    </td>
+                                     <td class="text-right">[[
+                                        formatCalculation(inv.selling_price.toFixed(2).toLocaleString())
+                                        ]]</td>
+                                       
+                                    <td class="text-right">[[inv.shipped_quantity]]</td>
+                                    <td class="text-right">[[
+                                        formatCalculation((inv.gross_amount).toFixed(2).toLocaleString())
+                                        ]]  </td>
+
+                                         
+                                    <td class="text-right">
+                                        [[
+                                        formatCalculation(parseFloat(inv.discount).toFixed(2).toLocaleString())
+                                        ]]
+                                    
+                                    </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(parseFloat(inv.line_total_excel_vat).toFixed(2).toLocaleString())
+                                        ]] </td>
+                                    <td class="text-right">[[ inv.vat ]] </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(parseFloat(inv.vat_amount_line).toFixed(2).toLocaleString())
+                                        ]]</td>
+                                    <td class="text-right">[[ 
+                                        formatCalculation(inv.total_amount_including_vat)
+                                        ]]</td> 
+                                </tr>
+                            </template>
+                           
+                                <tr>
+                                    <td class="text-center"></td>
+                                    <td>INVOICE VALUE</td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].sum_selling_price)
+                                        ]]</td>
+                                    <td class="text-right">[[
+                                        invs[0].sum_shipped_quantity
+                                        ]]</td>
+                                    <td class="text-right">[[
+                                       formatCalculation(invs[0].sum_gross_amount)
+                                        ]]  </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].sum_discount)
+                                        ]]</td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].invoice_total_excl_tax)
+                                         ]]   </td>
+                                    <td class="text-right"> </td>
+                                    <td class="text-right">[[
+                                        formatCalculation(invs[0].vat_amount_line_total)
+                                        ]]</td>
+                                    <td class="text-right">[[ 
+                                        formatCalculation(invs[0].invoice_total)
+                                        ]]</td>
+                                </tr>
+    
+    
+    
+                        </tbody>
+                    </table>
+               
+                    <br>
+                    <table border="1"       v-if="drafts[0]"    v-if="drafts[0].receipt_number">
+                        <thead >
+                            <tr>
+                                <th class="text-center"  style="    width: 56px;">Sr.No</th>
+                                <th>Particulars</th>
+                                <th class="text-right">Receipt No</th>
+                                <th class="text-right">Lpo No</th>
+                                <th class="text-right">RCD Loan No</th>
+                                <th class="text-right">PDC Batch No</th>
+                                <th class="text-right">Gv Voucher<br>No</th>
+                                <th class="text-right">Original <br>Amount</th>
+                                <th class="text-right">Available<br>Balance</th>
+                                <th class="text-right">Amount Assigned</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-for="(draft,i) in drafts">                                            
+                                <tr >                                        
+                                    <td class="text-center">[[draft.seq_order]]</td>                                  
+                                    <td> [[draft.particulars]] </td>
+                                 
+                                    <td>  [[draft.receipt_number]]</td>
+                                 
+                                    <td>  [[draft.lpo_number]]</td>
+                                    <td>  [[draft.rcd_loan_number]]</td>
+                                   
+                                    <td>   [[draft.pdc_batch_number]]</td>                                               
+                                 
+                                    <td class="text-right">  [[draft.gv_voucher_num]] </td>    
+    
+                                    <td class="text-right"> [[formatCalculation(draft.original_amount) ]]  </td>        
+                                    <td class="text-right">  [[formatCalculation(draft.loc_available_amount)]] </td>        
+                                    <td class="text-right">  [[formatCalculation(draft.amount_assigned)]] </td>  
+                                </tr>                                       
+                            </template>  
+                        </tbody>
+                    </table>
+
+                    
+    
+    
+    
+    
+      
+            <br>
+            
+                    <table border="1"  v-if="drafts[0].receipt_number1"   v-if="drafts[0]"       > 
+                        <thead   >
+                            <tr>
+                                <th class="text-center"  style="    width: 56px;">Sr.No</th>
+                                <th>Particulars</th>
+                                <th class="text-right">Receipt No</th>
+                                <th class="text-right">Date</th>
+                                <th class="text-right">Ref No</th>
+                                <th class="text-right">Tax Invoice No.<br>(Advance)</th>
+                                <th class="text-right">Amount Collected</th>
+                                <th class="text-right">Advance <br> Available<br>for<br>Adjustment</th>
+                                <th class="text-right">Advance<br>Adjusted</th>
+                            </tr>
+                        </thead>
+                        <tbody  v-if="drafts[0].receipt_number1">
+                            <template v-for="(draft,i) in drafts" >  
+                                <tr> 
+                                    <td class="text-center"> [[draft.seq_order]] </td>   
+                                    <td> Advance Received </td>           
+                                    <td rowspan="2"> [[draft.receipt_number]] </td>   
+                                
+                                    <td  class="text-right"> [[draft.amount_collected]] </td>
+                                    <td   class="text-right"> [[ draft.loc_available_amount ]] </td>    
+                                    <td class="text-right">  [[ formatCalculation(draft.adv_adj_amt_wo_vat)]] </td> 
+                                </tr>
+    
+                                <tr>
+                                    <td class="text-center"></td>                                                                                      
+                                    <td>  
+                                       Tax Advance Invoice  
+                                    </td>
+                                    <td></td>   
+                                    <td></td>   
+                                    <td class="text-right">  [[ formatCalculation(draft.vat_amount)]] </td>                                        
+                                       
+                                </tr>                                      
+                            </template>  
+    
+    
+                        </tbody>
+                    </table>
+            
+                    <br><br>
+
+                    
+             
+                    <table border="1"    style=" width: 35%;  float: right;">                               
+                        <tbody >
+                            <tr>
+                                <td class="text-center">Total excl. VAT(AED)</td>                                       
+                                <td class="text-right">[[ formatCalculation(invs[0].cf_base)]]
+                                </td>                                        
+                            </tr>   
+                            <tr>
+                                <td class="text-center" > VAT</td>
+    
+                                
+                                <td class="text-right" > 
+                                    <span v-if="invs[0].cf_expinvformula !='X'" >
+    
+                                        <span >
+    
+                                            [[ formatCalculation(invs[0].cf_tot_vat)]] 
+    
+                                        </span>  
+    
+    
+                                    </span>
+    
+                                   
+                                    </td>                                        
+                            </tr>   
+                            <tr>
+                                <td class="text-center">Balance Due</td>                                       
+                                <td class="text-right">
+    
+                                    <!-- <span  v-if="invs[0].cf_mg_promotion_checkformula !=''">
+    
+                                        [[ formatCalculation(invs[0].cf_base)]] 
+                                    </span>   -->
+    
+                                    <span  >
+    
+                                        [[ formatCalculation(invs[0].cf_final_bal)]] 
+    
+                                    </span>  
+                                </td>                                        
+                            </tr>   
+    
+    
+                        </tbody>
+                        
+                        
+                        </table>
+
+
+     <br>
+            <br>
+                    <table border="1" >                               
+                        <tbody>                                     
+                            <tr>
+                                <td class="text-left">Amount in Words</td>                                       
+                                <td class="text-left">
+    
+                                   
+                                    <span  v-if="invs[0].cf_mg_promotion_checkformula !=''">
+                                        [[ invs[0].amt_in_words]] 
+                                    </span>   
+<!--     
+                                    <span  v-if="invs[0].cf_mg_promotion_checkformula ==''">
+                                        [[ invs[0].cf_tot_in_words2]] 
+                                    </span>   -->
+    
+                                    
+                                </td>                                        
+                            </tr>                                   
+    
+                            <br>
+                            <br>
+                            <br>
+                        </tbody></table>
+    <br>
+     <div class="page-footer-space"></div>
+
+</div> 
+
+   <footer id="footer"  class="page-footer">
+    <table class="table ">                               
+        <tbody> 
+            <tr>
+            <td colspan="3">
+                Products purchased within a period of 7 days from the invoice date are eligible for EXCHANGE ONLY, items should be in original packing and unused condition with Original invoice.
+                   
+                    <br>
+                    No Return/ Exchange / Warranty on items above 30% discounts.
+            </td>
+
+
+            </tr>
+            <tr>
+
+                <td colspan="3" style="text-align:right;">
+                
+                    االمنتجات التي تم شرائها خلال سبعة أيام من تاريخ الفاتورة يمكن استبدالها فقط, ويجب أن تكون بالمغلّف الأصلي و غير مستعملة ويجب ابراز الفاتوره الاصلية.لا يمكن ارجاع أو استبدال أو ضمان المنتجات المخفّضة أكثر من30 %. 
+
+                          <br>
+             
+            <br><br></td>
+                
+                
+                            </tr>
+
+            <tr>
+                <td>
+                    CUSTOMER SIGNATURE:
+                </td>
+                <td id="signature_id">
+                  
+                </td>
+
+                <td>
+                    COMPANY REPRESENTATIVE:  
+                </td>
+                <td>
+                    [[ invs[0].salesrep_name]] 
+                </td>                
+            </tr>
+
+            <tr>
+                <td>
+                    Report Printed by:  
+                </td>
+                <td>
+                     
+                    [[ invs[0].printed_by]] 
+                   
+                </td>
+                <td>
+                Printed Date & time :
+                </td>
+                <td> {% now "SHORT_DATETIME_FORMAT" %}
+                </td>                
+            </tr>
+
+            </tbody>
+            </table>
+                    <br>
+                
+                            <div v-if="invs[0].org_id == '94'" class="col-md-12">
+                                <table style="    width: 100%;" border="1">
+                                    <tr>                            
+                                        <td class="border_td">
+                                        Dubai
+                                        </td>
+                                        <td class="border_td">
+                                        Abu Dhabi
+                                        </td>
+                                        <td class="border_td" >
+                                        Ajman
+                                        </td>
+                                        <td class="border_td" >
+                                        Fujairah
+                                        </td>
+                                        <td class="border_td" >
+                                        Ras Al Khaimah
+                                        </td>  
+                                    </tr>
+                                    <tr>                            
+                                        <td class="border_td">
+                                        04-5094013
+                                        </td>
+                                        <td class="border_td">
+                                        02-5588890
+                                        </td>
+                                        <td class="border_td">
+                                        06-7116000
+                                        </td>
+                                        <td class="border_td">
+                                        09-2221188
+                                        </td >
+                                        <td class="border_td">
+                                        07-2356900
+                                        </td>  
+                                    </tr>		
+                                    <tr>	
+                                        <td colspan="5" style="text-align: center;" class="border_td">			
+                                        Website: www.aym.ae
+                                        </td>
+                                    </tr>	
+
+
+                            </table>
+                            </div>
+                    
+                    
+                            <div v-if="invs[0].org_id == '97'" class="col-md-12">
+                                <table style="    width: 100%;" border="1">
+                                    <tr>                            
+                                    <td class="border_td">
+                                    Auto Sports Deira 
+                                    </td>
+                                    <td class="border_td">                    
+                                    Sharjah	
+                                    </td>                        
+                                    <td class="border_td">
+                                    RAK	Al Ain
+                                    </td>
+
+                                    <td class="border_td"> </td>
+                                    <td class="border_td"> </td>
+
+                                    <td class="border_td">	Musaffah
+                                    </td>
+                                    <td class="border_td">	Mina
+                                    </td>	
+                                    <td class="border_td">
+                                    UAQ	Dibba
+                                    </td>   
+
+                                    </tr>
+                                    <tr>                            
+                                             <td class="border_td"> 04-2214336</td>
+                                            <td class="border_td"></td>	06-5321117</td>
+                                            <td class="border_td"></td>	07-2223369</td>
+                                            <td class="border_td"></td>	03-7212172</td>
+                                            <td class="border_td"></td>	02-5552283</td>
+                                            <td class="border_td"></td>	02-6733886</td>
+                                            <td class="border_td"></td>	06-7653737</td>
+                                            <td class="border_td"></td>	09-2432578</td>                            
+                                    </tr>		
+                                    <tr>	
+                                        <td colspan="8" style="text-align: center;" class="border_td">			
+                                        Website: www.aym.ae
+                                        </td>
+                                    </tr>	 
+                                    
+                            </table>
+
+
+
+                            </div>
+                            <button type="button" style="
+                           position: fixed; 
+                           bottom: 20px;
+                           right: 30px; 
+                           z-index: 99;
+                           border: none;
+                           outline: none;
+                           background-color: gray;
+                           color: white; 
+                           cursor: pointer;
+                           padding: 15px;
+                           border-radius: 10px;
+                           font-size: 18px;"  class="btn btn-success waves-effect" onclick="window.print()">Print</button>
+                        
+                        </footer>        
+  
+    </template>
+  
+    </div>
+</body>
+
+
+<!-- <tr>	
+    <td colspan="2" style="border: none !important;text-align: center;" class="border_td">			
+  
+    </td>
+    <td   style="border: none !important;">
+
+    <div style="    display: inline-flex;    text-align: center;    margin-left: 20px;">
+        <br>
+            <span>
+                <img src="/media/logos/aym.ae.png"   style="    width: 31%;" />
+
+                <br> 
+                <span>www.aym.ae</span>
+
+            </span>
+
+
+            <span>
+
+                    <img src="/media/logos/aymmotorsport.png"  style="   width: 31%;"/>
+                    <br> 
+                    <span>www.aymotorsports.com</span>
+
+            </span>
+    </div>
+
+    </td>
+    <td    style="border: none !important;">
+    </td>
+    <td colspan="1" style="text-align: center;border: none !important;" class="border_td">			
+     </td>
+</tr>	 -->
+
+
+
+
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'custom_js/jquery.loadingModal.js' %}"></script>
+<script src="{% static 'js/html2canvas.js' %}"></script>
+
+<script src="{% static 'js/html2pdf.bundle.min.js' %}"></script>
+<script>
+var order_number= '';
+function addScript(url) {
+     var script = document.createElement('script');
+     script.type = 'application/javascript';
+     script.src = url;
+     document.head.appendChild(script);
+ }
+ addScript("{% static 'js/html2pdf.bundle.js' %}");
+
+
+
+
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+       axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+       axios.defaults.withCredentials = true;
+
+var vInv = new Vue({
+   el:'#v-test',
+   delimiters:["[[","]]"],
+   methods:{
+       formatCalculation(d){
+           if(d=="" || d==null || d==" ")
+           {
+               d=0
+           }
+           return parseFloat(d).toLocaleString(undefined,{minimumFractionDigits: 2,
+                                                           maximumFractionDigits: 2});
+       },
+   },
+   mounted(){   //showloader();  
+           this.base_url = window.location.origin;
+           axios.post("{% url 'get-sales-inv-api' %}",{
+               ohid:"{{ohid|safe}}",              
+           })
+           .then(function (res) 
+           {
+               
+               console.log(res.data)
+               if (res.data.validation=='Y')
+               {
+                   $('#sign-modal').html('')
+                   alert('document is already signed');
+                   // window.close();
+
+               }
+              vInv.invs = res.data.invs;
+            //    vInv.drafts = res.data.drafts;
+               order_number= (res.data.order_number)
+                $('#v-invoice').html(res.data.invs)
+                setTimeout(function(){
+
+                        //alert("Hello"); 
+                        oracel_order_number = order_number;
+                       // sendmailtosupp(oracel_order_number);
+
+                }, 10);
+
+               
+
+               
+           })
+           .catch(function () 
+           {
+                //hideloader()
+                alert('No Invoice Record found');
+           })
+   },
+   data:{
+       html:'',
+       invs: [],
+       base_url:'',
+       drafts: [],
+       draft_line_number:0,
+       draft_line_number_2:0,
+       
+   }
+});
+
+ function sendmailtosupp(oracel_order_number,final='')
+{
+	  
+    var today = new Date();
+	  var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+	  var dateTime = date+' '+time;		 	 
+	  var element = document.getElementById('v-invoice'); 
+	  
+	  var opt = {
+	    margin:       [0,0,0,0],
+	    filename:     oracel_order_number+".pdf",
+	    image:        { type: 'jpeg', quality:0.98},
+	    html2canvas: 
+        {
+            scale: 2.5,
+	        //   scale:2.5,
+	        useCORS: true,
+	        
+	        },
+	  	 
+	       
+         jsPDF:{  unit: 'in', format: [9.26772, 16.2669], orientation: 'portrait'  },	   
+         	   
+	  };  
+	  //html2pdf().set(opt).from(element).save();
+      //return ;
+	 html2pdf().from(element).set(opt).outputPdf().then(function(pdf)
+     {		
+         
+            var ht=document.getElementById('v-invoice').innerHTML
+            var   globalpdftoemail=b2a(pdf);
+             //console.log(globalpdftoemail)
+           axios.post("{% url 'invoice_save_in_table' %}",
+           {
+               po : globalpdftoemail,   
+               oracel_order_number:oracel_order_number   ,
+               document_type:'PDF', 
+               type:'customer_sign_document' ,               
+               invoice_html:ht,     
+               'signature':'<img style=" width: 46%;margin-top: -5px;" src="'+sgn.toDataURL('image/png')+'" />'
+        
+           })
+           .then(function (res) 
+           {
+               
+                       // console.log(res);
+                      /// alert(final)
+                        if (final=='final')
+                        {
+                                $('body').html('')
+                        }
+                        //toastr.success('Success')
+
+                       // sgn.clear();
+                        
+                      // toastr.success('Success')
+
+                        $('#sign-modal').html('')
+
+                       // document.getElementById('v-invoice').innerHTML='<object data="'+res.data.invoice_path+'" type="application/pdf" width="100%" height="100%"><p>link <a href="'+res.data.invoice_path+'">to the PDF!</a></p></object>'
+                        
+                        
+                // window.location.href = res.data.invoice_path;
+                        
+                        
+                        
+                        //<embed src="'+res.data.invoice_path+'" type="application/pdf" width="100%" height="100%" />'
+
+
+
+           })
+           .catch(function () 
+           {
+                
+               // alert('No Invoice Record found');
+
+               //window.close();
+           })
+        	
+		 
+		    
+	}); 
+	
+	
+}
+function b2a(a) {
+	  var c, d, e, f, g, h, i, j, o, b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", k = 0, l = 0, m = "", n = [];
+	  if (!a) return a;
+	  do c = a.charCodeAt(k++), d = a.charCodeAt(k++), e = a.charCodeAt(k++), j = c << 16 | d << 8 | e, 
+	  f = 63 & j >> 18, g = 63 & j >> 12, h = 63 & j >> 6, i = 63 & j, n[l++] = b.charAt(f) + b.charAt(g) + b.charAt(h) + b.charAt(i); while (k < a.length);
+	  return m = n.join(""), o = a.length % 3, (o ? m.slice(0, o - 3) :m) + "===".slice(o || 3);
+	}
+
+
+function sendemailtooo()
+{
+	
+	var email= document.getElementById('supplieremail').value;  
+	if(email!=null)
+	{
+		 var username=document.getElementById('username1').value;
+	     var textmsg= document.getElementById('commentstosupp').value;  	
+	 	
+	 var fd = new FormData();
+	fd.append('username',username);
+	fd.append('supname',supname);
+	fd.append('po_number',globalpooooooo);
+	fd.append('email',email);
+	fd.append('textmsg', textmsg);
+	fd.append('po', globalpdftoemail);
+	$.ajax({
+	    type: 'POST',
+	    url: webservice_url+'email/cpd_test.php',
+	    data: fd,
+	    processData: false,
+	    contentType: false
+	}).done(function(data) 
+	{
+	       console.log(data);
+	});
+	
+	 alert('Successfully send to supplier')
+	 
+	 $('#sendemailtosup').modal("hide");
+	 getallpoapprove();
+	  customreload();
+	 
+	} 
+	 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function hideloader()
+{
+  $('body').loadingModal('hide');
+  $('body').loadingModal('destroy');
+}
+
+function showloader(a='Please Wait We are Fetching Results...')
+ {
+        $('body').loadingModal({text: a});
+        var delay = function(ms){ return new Promise(function(r) { setTimeout(r, ms) }) };
+        var time = 2000;
+
+        delay(time)
+                .then(function() { $('body').loadingModal('animation', 'rotatingPlane').loadingModal('backgroundColor', 'gray'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'wave'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'wanderingCubes').loadingModal('backgroundColor', 'gray'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'spinner'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'chasingDots').loadingModal('backgroundColor', 'darkblue'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'threeBounce'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'circle').loadingModal('backgroundColor', 'black'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'cubeGrid'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'fadingCircle').loadingModal('backgroundColor', 'darkgray'); return delay(time);})
+                .then(function() { $('body').loadingModal('animation', 'foldingCube'); return delay(time); } )
+                .then(function() { $('body').loadingModal('color', 'black').loadingModal('text', 'Done :-)').loadingModal('backgroundColor', 'darkyellow');  return delay(time); } )
+                // .then(function() { $('body').loadingModal('hide'); return delay(time); } )
+                
+                // .then(function() { $('body').loadingModal('destroy')
+                
+                
+                // ;}
+                
+                
+                // );   
+              
+              }
+
+</script>
+
+
+<script >
+    /*!
+* Modified
+* Signature Pad v1.5.3
+* https://github.com/szimek/signature_pad
+*
+* Copyright 2016 Szymon Nowak
+* Released under the MIT license
+*/
+var sgn;
+var SignaturePad = (function(document) {
+    "use strict";
+
+    var log = console.log.bind(console);
+
+    var SignaturePad = function(canvas, options) {
+        var self = this,
+            opts = options || {};
+
+        this.velocityFilterWeight = opts.velocityFilterWeight || 0.7;
+        this.minWidth = opts.minWidth || 0.5;
+        this.maxWidth = opts.maxWidth || 2.5;
+        this.dotSize = opts.dotSize || function() {
+                return (self.minWidth + self.maxWidth) / 2;
+            };
+        this.penColor = opts.penColor || "black";
+        this.backgroundColor = opts.backgroundColor || "rgba(0,0,0,0)";
+        this.throttle = opts.throttle || 0;
+        this.throttleOptions = {
+            leading: true,
+            trailing: true
+        };
+        this.minPointDistance = opts.minPointDistance || 0;
+        this.onEnd = opts.onEnd;
+        this.onBegin = opts.onBegin;
+
+        this._canvas = canvas;
+        this._ctx = canvas.getContext("2d");
+        this._ctx.lineCap = 'round';
+        this.clear();
+
+        // we need add these inline so they are available to unbind while still having
+        //  access to 'self' we could use _.bind but it's not worth adding a dependency
+        this._handleMouseDown = function(event) {
+            if (event.which === 1) {
+                self._mouseButtonDown = true;
+                self._strokeBegin(event);
+            }
+        };
+
+        var _handleMouseMove = function(event) {
+           event.preventDefault();
+            if (self._mouseButtonDown) {
+                self._strokeUpdate(event);
+                if (self.arePointsDisplayed) {
+                    var point = self._createPoint(event);
+                    self._drawMark(point.x, point.y, 5);
+                }
+            }
+        };
+
+        this._handleMouseMove = _.throttle(_handleMouseMove, self.throttle, self.throttleOptions);
+        //this._handleMouseMove = _handleMouseMove;
+
+        this._handleMouseUp = function(event) {
+            if (event.which === 1 && self._mouseButtonDown) {
+                self._mouseButtonDown = false;
+                self._strokeEnd(event);
+            }
+        };
+
+        this._handleTouchStart = function(event) {
+            if (event.targetTouches.length == 1) {
+                var touch = event.changedTouches[0];
+                self._strokeBegin(touch);
+            }
+        };
+
+        var _handleTouchMove = function(event) {
+            // Prevent scrolling.
+            event.preventDefault();
+
+            var touch = event.targetTouches[0];
+            self._strokeUpdate(touch);
+            if (self.arePointsDisplayed) {
+                var point = self._createPoint(touch);
+                self._drawMark(point.x, point.y, 5);
+            }
+        };
+        this._handleTouchMove = _.throttle(_handleTouchMove, self.throttle, self.throttleOptions);
+        //this._handleTouchMove = _handleTouchMove;
+
+        this._handleTouchEnd = function(event) {
+            var wasCanvasTouched = event.target === self._canvas;
+            if (wasCanvasTouched) {
+                event.preventDefault();
+                self._strokeEnd(event);
+            }
+        };
+
+        this._handleMouseEvents();
+        this._handleTouchEvents();
+    };
+
+    SignaturePad.prototype.clear = function() {
+        var ctx = this._ctx,
+            canvas = this._canvas;
+
+        ctx.fillStyle = this.backgroundColor;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        this._reset();
+    };
+
+    SignaturePad.prototype.showPointsToggle = function() {
+        this.arePointsDisplayed = !this.arePointsDisplayed;
+    };
+
+    SignaturePad.prototype.toDataURL = function(imageType, quality) {
+        var canvas = this._canvas;
+        return canvas.toDataURL.apply(canvas, arguments);
+    };
+
+    SignaturePad.prototype.fromDataURL = function(dataUrl) {
+        var self = this,
+            image = new Image(),
+            ratio = window.devicePixelRatio || 1,
+            width = this._canvas.width / ratio,
+            height = this._canvas.height / ratio;
+
+        this._reset();
+        image.src = dataUrl;
+        image.onload = function() {
+            self._ctx.drawImage(image, 0, 0, width, height);
+        };
+        this._isEmpty = false;
+    };
+
+    SignaturePad.prototype._strokeUpdate = function(event) {
+        var point = this._createPoint(event);
+        if(this._isPointToBeUsed(point)){
+            this._addPoint(point);
+        }
+    };
+
+    var pointsSkippedFromBeingAdded = 0;
+    SignaturePad.prototype._isPointToBeUsed = function(point) {
+        // Simplifying, De-noise
+        if(!this.minPointDistance)
+            return true;
+
+        var points = this.points;
+        if(points && points.length){
+            var lastPoint = points[points.length-1];
+            if(point.distanceTo(lastPoint) < this.minPointDistance){
+                // log(++pointsSkippedFromBeingAdded);
+                return false;
+            }
+        }
+        return true;
+    };
+
+    SignaturePad.prototype._strokeBegin = function(event) {
+        this._reset();
+        this._strokeUpdate(event);
+        if (typeof this.onBegin === 'function') {
+            this.onBegin(event);
+        }
+    };
+
+    SignaturePad.prototype._strokeDraw = function(point) {
+        var ctx = this._ctx,
+            dotSize = typeof(this.dotSize) === 'function' ? this.dotSize() : this.dotSize;
+
+        ctx.beginPath();
+        this._drawPoint(point.x, point.y, dotSize);
+        ctx.closePath();
+        ctx.fill();
+    };
+
+    SignaturePad.prototype._strokeEnd = function(event) {
+        var canDrawCurve = this.points.length > 2,
+            point = this.points[0];
+
+        if (!canDrawCurve && point) {
+            this._strokeDraw(point);
+        }
+        if (typeof this.onEnd === 'function') {
+            this.onEnd(event);
+        }
+    };
+
+    SignaturePad.prototype._handleMouseEvents = function() {
+        this._mouseButtonDown = false;
+
+        this._canvas.addEventListener("mousedown", this._handleMouseDown);
+        this._canvas.addEventListener("mousemove", this._handleMouseMove);
+        document.addEventListener("mouseup", this._handleMouseUp);
+    };
+
+    SignaturePad.prototype._handleTouchEvents = function() {
+        // Pass touch events to canvas element on mobile IE11 and Edge.
+        this._canvas.style.msTouchAction = 'none';
+        this._canvas.style.touchAction = 'none';
+
+        this._canvas.addEventListener("touchstart", this._handleTouchStart);
+        this._canvas.addEventListener("touchmove", this._handleTouchMove);
+        this._canvas.addEventListener("touchend", this._handleTouchEnd);
+    };
+
+    SignaturePad.prototype.on = function() {
+        this._handleMouseEvents();
+        this._handleTouchEvents();
+    };
+
+    SignaturePad.prototype.off = function() {
+        this._canvas.removeEventListener("mousedown", this._handleMouseDown);
+        this._canvas.removeEventListener("mousemove", this._handleMouseMove);
+        document.removeEventListener("mouseup", this._handleMouseUp);
+
+        this._canvas.removeEventListener("touchstart", this._handleTouchStart);
+        this._canvas.removeEventListener("touchmove", this._handleTouchMove);
+        this._canvas.removeEventListener("touchend", this._handleTouchEnd);
+    };
+
+    SignaturePad.prototype.isEmpty = function() {
+        return this._isEmpty;
+    };
+
+    SignaturePad.prototype._reset = function() {
+        this.points = [];
+        this._lastVelocity = 0;
+        this._lastWidth = (this.minWidth + this.maxWidth) / 2;
+        this._isEmpty = true;
+        this._ctx.fillStyle = this.penColor;
+    };
+
+    SignaturePad.prototype._createPoint = function(event) {
+        var rect = this._canvas.getBoundingClientRect();
+        return new Point(
+            event.clientX - rect.left,
+            event.clientY - rect.top
+        );
+    };
+
+    SignaturePad.prototype._addPoint = function(point) {
+        var points = this.points,
+            c2, c3,
+            curve, tmp;
+
+        points.push(point);
+
+        if (points.length > 2) {
+            // To reduce the initial lag make it work with 3 points
+            // by copying the first point to the beginning.
+            if (points.length === 3) points.unshift(points[0]);
+
+            tmp = this._calculateCurveControlPoints(points[0], points[1], points[2]);
+            c2 = tmp.c2;
+            tmp = this._calculateCurveControlPoints(points[1], points[2], points[3]);
+            c3 = tmp.c1;
+            curve = new Bezier(points[1], c2, c3, points[2]);
+            this._addCurve(curve);
+
+           // Remove the first element from the list,
+            // so that we always have no more than 4 points in points array.
+            points.shift();
+        }
+    };
+
+    SignaturePad.prototype._calculateCurveControlPoints = function(s1, s2, s3) {
+        var dx1 = s1.x - s2.x,
+            dy1 = s1.y - s2.y,
+            dx2 = s2.x - s3.x,
+            dy2 = s2.y - s3.y,
+
+            m1 = {
+                x: (s1.x + s2.x) / 2.0,
+                y: (s1.y + s2.y) / 2.0
+            },
+            m2 = {
+                x: (s2.x + s3.x) / 2.0,
+                y: (s2.y + s3.y) / 2.0
+            },
+
+            l1 = Math.sqrt(1.0 * dx1 * dx1 + dy1 * dy1),
+            l2 = Math.sqrt(1.0 * dx2 * dx2 + dy2 * dy2),
+
+            dxm = (m1.x - m2.x),
+            dym = (m1.y - m2.y),
+
+            k = l2 / (l1 + l2),
+            cm = {
+                x: m2.x + dxm * k,
+                y: m2.y + dym * k
+            },
+
+            tx = s2.x - cm.x,
+            ty = s2.y - cm.y;
+
+        return {
+            c1: new Point(m1.x + tx, m1.y + ty),
+            c2: new Point(m2.x + tx, m2.y + ty)
+        };
+    };
+
+    SignaturePad.prototype._addCurve = function(curve) {
+        var startPoint = curve.startPoint,
+            endPoint = curve.endPoint,
+            velocity, newWidth;
+
+        velocity = endPoint.velocityFrom(startPoint);
+        velocity = this.velocityFilterWeight * velocity +
+            (1 - this.velocityFilterWeight) * this._lastVelocity;
+
+        newWidth = this._strokeWidth(velocity);
+        this._drawCurve(curve, this._lastWidth, newWidth);
+
+        this._lastVelocity = velocity;
+        this._lastWidth = newWidth;
+    };
+
+    SignaturePad.prototype._drawPoint = function(x, y, size) {
+        var ctx = this._ctx;
+
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+        this._isEmpty = false;
+    };
+
+    SignaturePad.prototype._drawMark = function(x, y, size) {
+        var ctx = this._ctx;
+
+        ctx.save();
+        ctx.moveTo(x, y);
+        ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+        ctx.fill();
+        ctx.restore();
+    };
+
+    SignaturePad.prototype._drawCurve = function(curve, startWidth, endWidth) {
+        var ctx = this._ctx,
+            widthDelta = endWidth - startWidth,
+            drawSteps, width, i, t, tt, ttt, u, uu, uuu, x, y;
+
+        drawSteps = Math.floor(curve.length());
+        ctx.beginPath();
+        for (i = 0; i < drawSteps; i++) {
+            // Calculate the Bezier (x, y) coordinate for this step.
+            t = i / drawSteps;
+            tt = t * t;
+            ttt = tt * t;
+            u = 1 - t;
+            uu = u * u;
+            uuu = uu * u;
+
+            x = uuu * curve.startPoint.x;
+            x += 3 * uu * t * curve.control1.x;
+            x += 3 * u * tt * curve.control2.x;
+            x += ttt * curve.endPoint.x;
+
+            y = uuu * curve.startPoint.y;
+            y += 3 * uu * t * curve.control1.y;
+            y += 3 * u * tt * curve.control2.y;
+            y += ttt * curve.endPoint.y;
+
+            width = startWidth + ttt * widthDelta;
+            this._drawPoint(x, y, width);
+        }
+        ctx.closePath();
+        ctx.fill();
+    };
+
+    SignaturePad.prototype._strokeWidth = function(velocity) {
+        return Math.max(this.maxWidth / (velocity + 1), this.minWidth);
+    };
+
+    var Point = function(x, y, time) {
+        this.x = x;
+        this.y = y;
+        this.time = time || new Date().getTime();
+    };
+
+    Point.prototype.velocityFrom = function(start) {
+        return (this.time !== start.time) ? this.distanceTo(start) / (this.time - start.time) : 1;
+    };
+
+    Point.prototype.distanceTo = function(start) {
+        return Math.sqrt(Math.pow(this.x - start.x, 2) + Math.pow(this.y - start.y, 2));
+    };
+
+    var Bezier = function(startPoint, control1, control2, endPoint) {
+        this.startPoint = startPoint;
+        this.control1 = control1;
+        this.control2 = control2;
+        this.endPoint = endPoint;
+    };
+
+    // Returns approximated length.
+    Bezier.prototype.length = function() {
+        var steps = 10,
+            length = 0,
+            i, t, cx, cy, px, py, xdiff, ydiff;
+
+        for (i = 0; i <= steps; i++) {
+            t = i / steps;
+            cx = this._point(t, this.startPoint.x, this.control1.x, this.control2.x, this.endPoint.x);
+            cy = this._point(t, this.startPoint.y, this.control1.y, this.control2.y, this.endPoint.y);
+            if (i > 0) {
+                xdiff = cx - px;
+                ydiff = cy - py;
+                length += Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+            }
+            px = cx;
+            py = cy;
+        }
+        return length;
+    };
+
+    Bezier.prototype._point = function(t, start, c1, c2, end) {
+        return start * (1.0 - t) * (1.0 - t) * (1.0 - t) +
+            3.0 * c1 * (1.0 - t) * (1.0 - t) * t +
+            3.0 * c2 * (1.0 - t) * t * t +
+            end * t * t * t;
+    };
+
+    return SignaturePad;
+})(document);
+$(function() {
+
+
+    var canvas = document.getElementById('signature-pad');
+    // canvas.width= window.innerWidth - 100;
+    // canvas.height=window.innerHeight - 300 ;
+var sPad = new SignaturePad(canvas, {
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+    penColor: 'rgb(0, 0, 0)',
+    velocityFilterWeight: .7,
+    minWidth: 0.5,
+    maxWidth: 2.5,
+    throttle: 16, // max x milli seconds on event update, OBS! this introduces lag for event update
+    minPointDistance: 3,
+});
+sgn = sPad;
+var saveButton = document.getElementById('save'),
+    clearButton = document.getElementById('clear'),
+    showPointsToggle = document.getElementById('showPointsToggle');
+
+saveButton.addEventListener('click', function(event) {
+    console.log(sPad);
+    var data = sPad.toDataURL('image/png');
+    window.open(data);
+});
+clearButton.addEventListener('click', function(event) {
+    sPad.clear();
+});
+showPointsToggle.addEventListener('click', function(event) { 
+    sPad.showPointsToggle();
+    showPointsToggle.classList.toggle('toggle');
+});
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    function show_mod(){
+    
+        $('#sign-modal').modal('show');
+    
+    }
+    function chngSta()
+    {
+        $('.waves-effect').attr('disabled',true)
+    document.getElementById('v-invoice').style.display="block";
+        var data =
+         {                //'rdata':rdata,
+                'sign': sgn.toDataURL('image/png')
+         }
+
+        $('#signature_id').html('<img style=" width: 46%;margin-top: -5px;" src="'+sgn.toDataURL('image/png')+'" />')  
+        
+      //  $('#signature_id').html(document.getElementById('signature-pad').outerHTML)
+        oracel_order_number = order_number;
+
+        sendmailtosupp(oracel_order_number,'final');
+        return 
+        console.log(sgn)
+        axios.post("resre",data)
+        .then(function(res)
+        {
+            console.log(res);
+            // initDT();
+            //var index = $('#dash-stats').find('.card-body.bg-primary').data('index') +1;
+            //$('#dash-stats').find('.card-body')[index].click();
+            sgn.clear();
+    
+            toastr.success('Success')
+    
+           // $('#sign-modal').modal('hide');
+
+        })
+        .catch(function(err){
+    
+        });
+    }
+    
+        </script>
+    
+
+
+</html>

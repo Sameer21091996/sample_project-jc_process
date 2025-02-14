@@ -1,0 +1,3349 @@
+{% extends "base_sale.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+
+
+
+/* approver history workflow */
+#search-tbl{
+
+
+    text-align: center;
+
+}
+
+
+.popover-header{
+
+
+    background: rgb(255, 214, 204);
+    color: black;
+
+
+}
+
+
+#blink-bg{
+		color: #fff;
+		padding: 10px;
+		display: inline-block;
+		border-radius: 5px;
+		animation: blinkingBackground 2s infinite;
+	}
+	@keyframes blinkingBackground{
+		0%		{ background-color: #10c018;}
+		25%		{ background-color: #1056c0;}
+		50%		{ background-color: #ef0a1a;}
+		75%		{ background-color: #254878;}
+		100%	        { background-color: #04a1d5;}
+	}
+
+
+#customer_receipt
+{
+  /*   height: 250px;
+    overflow: scroll;
+ */
+}
+body {
+    background-color: #eee
+}
+
+.mt-70 {
+    margin-top: 70px
+}
+
+.mb-70 {
+    margin-bottom: 70px
+}
+
+.card {
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    border-width: 0;
+    transition: all .2s
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(26, 54, 126, 0.125);
+    border-radius: .25rem
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem
+}
+
+.vertical-timeline {
+    width: 100%;
+    position: relative;
+    padding: 1.5rem 0 1rem
+}
+
+.vertical-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 26%;
+    height: 100%;
+    width: 4px;
+    background: #e9ecef;
+    border-radius: .25rem
+}
+
+.vertical-timeline-element {
+    position: relative;
+    margin: 0 0 1rem
+}
+
+.vertical-timeline--animate .vertical-timeline-element-icon.bounce-in {
+    visibility: visible;
+    animation: cd-bounce-1 .8s
+}
+
+.vertical-timeline-element-icon {
+    position: absolute;
+    top: 0;
+    left: 60px
+}
+
+.vertical-timeline-element-icon .badge-dot-xl {
+    box-shadow: 0 0 0 5px #fff
+}
+
+.badge-dot-xl {
+    width: 18px;
+    height: 18px;
+    position: relative
+}
+
+.badge:empty {
+    display: none
+}
+
+.badge-dot-xl::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: .25rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -5px 0 0 -5px;
+    background: #fff
+}
+
+.vertical-timeline-element-content {
+    position: relative;
+    margin-left: 27%;
+    font-size: .8rem
+}
+
+.vertical-timeline-element-content .timeline-title {
+    font-size: .8rem;
+    text-transform: uppercase;
+    margin: 0 0 .5rem;
+    padding: 2px 0 0;
+    font-weight: bold
+}
+
+.vertical-timeline-element-content .vertical-timeline-element-date {
+    display: block;
+    position: absolute;
+    left: -25%;
+    top: 0;
+    /* padding-right: 10px; */
+    text-align: right;
+    /* color: #adb5bd; */
+    font-size: .7619rem;
+    white-space: nowrap;
+
+    border-radius: 4px;
+    background-color: #007bff;
+    display: inline-block;
+    font-weight: 600;
+    color: white;
+    padding: 5px;
+}
+
+.vertical-timeline-element-content:after {
+    content: "";
+    display: table;
+    clear: both
+}
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+.plus-item{
+
+display: none;
+
+}
+.minus-item{
+
+display: none;
+
+}
+
+.table-sm td {
+  
+    text-align: center;
+}
+
+
+
+.select2-results__option[aria-selected] {
+   
+    background: #c1c1c1; 
+}
+
+select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #909090;
+    color: white;
+}
+
+/* .select2-results{
+
+    width: 226%;
+    float: right;
+
+} */
+
+.right, .entered_price{
+
+    text-align: right;
+}
+
+.total{
+    font-weight: bold;
+}
+
+#search-tbl_filter > label{
+
+    font-weight: bold;
+}
+
+
+
+table#datagrid td:nth-child(9) {
+   display: none;
+}
+table#datagrid th:nth-child(9) {
+   display: none;
+}
+
+
+
+
+table#datagrid td:nth-child(13) {
+   display: none;
+}
+table#datagrid th:nth-child(13) {
+   display: none;
+}
+
+
+table#datagrid td:nth-child(10) {
+   display: none;
+}
+table#datagrid th:nth-child(10) {
+   display: none;
+}
+
+table#datagrid td:nth-child(11) {
+   display: none;
+}
+table#datagrid th:nth-child(11) {
+   display: none;
+}
+
+table#datagrid td:nth-child(12) {
+   display: none;
+}
+table#datagrid th:nth-child(12) {
+   display: none;
+}
+
+table#datagrid td:nth-child(14) {
+   display: none;
+}
+table#datagrid th:nth-child(14) {
+   display: none;
+}
+
+@-webkit-keyframes blink {
+    50% {
+        color: darkred;
+        background: white
+    }
+}
+@-moz-keyframes blink {
+    50% {
+        color:darkred;
+        background: white
+    }
+}
+@keyframes blink {
+    50% {
+        color: darkred;
+        background: white
+    }
+}
+.blink {
+    -webkit-animation-direction: normal;
+    -webkit-animation-duration: 5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: blink;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-direction: normal;
+    -moz-animation-duration: 5s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-name: blink;
+    -moz-animation-timing-function: linear;
+    animation-direction: normal;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-name: blink;
+    animation-timing-function: linear;
+}
+
+
+
+
+
+
+
+
+
+
+
+#show-cart td, .table-sm th {
+   
+    border: 1px solid #17a2b861;
+}
+
+#show-cart > thead > tr > td{
+
+font-weight: bold;
+
+}
+#dept_line{
+        
+        
+        }
+.badge{
+    padding: 4px;
+
+}
+   .dt-button {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: none;
+    }
+#products_wrapper > div:nth-child(2) > div
+{
+    overflow: hidden;
+    overflow-y: scroll !important;
+    height: 150px !important;
+}
+#products > thead
+{
+    position: sticky;
+    top: 0px;
+    background: white;
+}
+
+
+#search-tbl > tfoot > tr > th > input[type=text]
+{
+
+    width: 100%;
+
+}
+.tbl_font
+{
+    font-size:14px;
+}
+
+.row-checkbox
+{
+    zoom: 1.8;
+    margin-top: 2px;
+    
+}
+.dataframe{
+  
+    width: 100%;
+
+}
+/* @-webkit-keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: rgb(197, 80, 80); }
+    100% { background-color: #fff; }
+  } */
+  /* @-moz-keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: #a29c9c; }
+    100% { background-color: #fff; }
+  } */
+  @keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: #a29c9c;  }
+    100% { background-color: #fff; }
+  }
+  .forty_eight
+{
+  -webkit-animation: argh-my-eyes 1s infinite;
+  -moz-animation:    argh-my-eyes 1s infinite;
+  animation:         argh-my-eyes 5s infinite;
+  /*background-color: #ffdddd !important*/
+}
+.tw_four
+{
+    /* background-color: #ca2424 !important */
+    color: red;
+}
+tfoot 
+{
+    display: table-header-group;
+}
+
+</style>
+
+<script>
+function los_modal_s(thizz)
+{
+    $('#los_modal').modal('show');
+}
+
+document.addEventListener('DOMContentLoaded', function(event) {
+  
+$('#los_modal').on('shown.bs.modal', function (e) {
+    //alert("I want this to appear after the modal has opened!");
+    initSelect2();
+})
+
+})
+
+
+
+
+function initSelect2()
+{
+            $('select.form-control.wotags').select2({
+                    placeholder:' - Select -',
+                    dropdownAutoWidth : true,
+                    // tags: true,
+                    allowClear: true,
+                    // minimumResultsForSearch: Infinity,
+                    minimumInputLength: 0,
+                    language: {
+                        inputTooShort: $('<div>Please select </div>')
+                    },
+                    ajax: {
+                        url: "{% url 'getListOfValues' %}",
+                        dataType: 'json',
+                        delay: 250,
+                        beforeSend:function(xhr,settings){
+                            if (!this.crossDomain) {
+                                xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+                                }
+                        },
+                        data: function (params) {
+                            if ( $('.select2-results').find('.search-loader').length == 0){
+                                $('.select2-results').append('<div class="d-flex search-loader justify-content-center p-2">\
+                                <div class="spinner-grow text-info" role="status"><span class="sr-only">Loading...</span></div></div>');
+                            }
+                            console.log(this);
+                            return {
+                                q: params.term, // search term
+                                page: params.page,
+                                select_name:this.attr('name'),
+                                defs:localStorage.getItem('defs')
+
+                            };
+                    },
+                    processResults: function (data, params) {
+                            $('.search-loader').remove();
+                            params.page = params.page || 1;
+        
+                            // console.log(this);
+        
+                            return {
+                                results: data.items,
+                                pagination: {
+                                    more: (params.page * 30) < data.total_count
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    // templateSelection: function (data, container) {
+                    //     Object.keys(data).forEach(function (key) {
+                    //         $(data.element).attr('data-'+key, data[key]);  
+                    //     })
+                    //     return data.text;
+                    // }
+        
+                });
+        }
+
+function insertlos()
+{
+            ShowDIV()
+
+        var u_full_name=$('#u_full_name').html();
+        
+        $('#create_los').prop('disabled', true);
+
+        var organization_name=JSON.parse(localStorage.getItem('defs'))['organization_name'];
+
+        try 
+        {
+            var main_customner_name=$('#searchCust').select2('data')[0]['customer_name'];
+
+            var main_customer_number=$('#searchCust').select2('data')[0]['customer_number'];
+
+            var email_address =$('#searchCust').select2('data')[0]['email_address']
+
+           var additional_mobile_no=  $('#searchCust').select2('data')[0]['additional_mobile_no']
+
+        } 
+        catch (error) 
+        {
+                console.log(error);
+                alert('Please select a customer');
+                HideDIV()
+                return ;
+                // expected output: ReferenceError: nonExistentFunction is not defined
+                // Note - error messages will vary depending on browser
+        }
+
+        var data = $('.wotags').select2('data')
+        var los_reason=data[0].text;
+
+        var remarks =$('#remakrs_').val()
+
+        var qty =1
+        var cart= JSON.stringify(shoppingCart.listCart());
+        
+        
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+        axios.defaults.xsrfCookieName = "csrftoken";
+        axios.defaults.withCredentials = true;
+        axios.post('submit-los', 
+        {
+            staffname: u_full_name,
+            organization_name: organization_name,
+            main_customner_name:main_customner_name,
+            main_customer_number:main_customer_number,
+            los_reason:los_reason,
+            remarks:remarks,   
+            cart:cart  ,
+            email_address:email_address,
+            additional_mobile_no:additional_mobile_no      
+        })
+        .then(function (response) 
+        {
+            console.log(response);
+            toastr.success(response.data.message);
+            $('#los_modal').modal('hide');
+            HideDIV()
+            toastr.success(response.id)
+
+
+
+
+        })
+
+
+            //var data = parseForm('#lossofsale-form');
+           // var custphone =  data.filter(x => x.name == 'custphone')[0].value;
+            //if (custphone == "" || custphone.trim().length <10)
+           // {
+            //    return toastr.error("Please enter a valid phone number ");
+           // }
+
+           // var data = parseForm('#lossofsale-form')
+            // axios.post('submit-los',{
+        // staffname: u_full_name,
+        // organization_name: organization_name,
+        // main_customner_name:main_customner_name,
+        // main_customer_number:main_customer_number,
+        // los_reason:los_reason,
+        // remarks:remarks,
+        // qty:qty                
+            //     })
+            // .then(function (response) 
+            // {
+            //     if (response.data.flag == 'S')
+            //     {
+                   // toastr.success(response.data.message);
+                   // $('#lossofsale-form [type="reset"]').click();
+                   // window.location.href="/lossofsale/losdetails/"+window.location.search;
+                // }
+                // else if(response.data.flag == 'E')
+                // {
+                //     //toastr.error(response.data.message);
+                // }
+            // })
+            // .catch(function(error)
+            // {
+            //     toastr.error(error.response.data);
+            // })
+       
+
+
+
+}
+
+</script>
+<div class="modal" tabindex="-1" role="dialog" id="los_modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="control-label col-form-label">Reason for Loss of Sale <span style="color: red;">*</span></label>
+                    <select class="select wotags form-control form-control-sm text dyn-fld" type="text" style="width:100%" required><option></option> 
+                    </select>
+                </div>
+            </div>
+
+
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="remarks" class="control-label col-form-label">Remarks <span style="color: red;">*</span></label>
+                    <textarea class="form-control dyn-fld" id="remakrs_" rows="3" placeholder="Remarks"></textarea>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="insertlos()">Submit</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<!-- The Modal -->
+<div id="v-dash">
+
+    <!-- <div class="modal  fade modal-small in" id="pdi_req_modal" role="dialog">
+        <div class="modal-dialog modal-lg" style="    max-width: 86% !important;">
+          <div class="modal-content">      
+           
+            <div class="modal-header">
+              <h4 class="modal-title" style="font-weight: 800;">PDI   ( <span id="order_n">  </span>) <input type="hidden" id="order_id"  /></h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+           
+            <div class="modal-body" style="    padding-left: 3%;
+            padding-right: 3%;
+            margin-bottom: 4%;
+            margin-top: 1%;">
+            <div id="process_type">
+                
+            </div> 
+
+            <div id="header_v2">
+                
+            </div>   
+
+    
+              <p>* select lines and then click on save button to create a PDI request</p>
+            <div class="table-responsive-sm">
+                  
+                  <table id="pdi_main_tbl" class="table table-sm  table-hover table-responsive" style="white-space: nowrap;">
+                    <thead>
+                        <tr>
+                      
+                        <th></th>
+                        <th class="text-center" >SR </th>
+                        <th  class="text-center">PDI Number</th>
+                        <th  class="text-center">Item Name</th>
+                        <th  class="text-center">Item Description</th>
+
+                        <th  class="text-center">Mfg Code</th>
+                        <th  class="text-center">UOM</th>
+                        <th  class="text-center">Qty</th>
+                        <th  class="text-center">Color</th>
+                        <th  class="text-center">Year</th>
+                        <th  class="text-center">Source</th>
+                        <th  class="text-center">PDI Location</th>
+
+                        <th  class="text-center">Serial</th>
+                        <th  class="text-center">Required Date</th>
+                        <th  class="text-center">From Subinventry</th>
+                        <th  class="text-center">Job Card</th>
+
+
+                        <th  class="text-center">To Subinventry</th>
+                        <th  class="text-center">Header Status</th>
+                        <th  class="text-center">Line Status</th>
+                        <th  class="text-center">PDI Value</th>
+                        <th  class="text-center">Delivery Number</th>
+                        <th  class="text-center">Workshop Delivery</th> 
+                        <th  class="text-center">Return Reason</th>    
+                        <th  class="text-center">PDI Activities</th>                                 
+                      </tr>
+                    </thead>
+                    <tbody>
+                         
+                      <tr v-for="(row,index)  in ret_line_data">    
+                          <td    ><input    v-if="row['doc_number']==''"    type="checkbox" /></td>                    
+                        <td>[[row.line_number]]</td>
+                        <td>[[row.doc_number]]   </td>
+                       
+                      
+
+                        <td>[[row.item_code]] <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" /></td>
+                        <td>[[row.item_code]] <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" /></td>
+                      
+                            <td>[[row.mfg_code]]</td>
+                            <td>[[row.primary_uom_code]]</td>
+                            <td >[[row.ordered_qty]]</td>  
+                            <td >[[row.color]]</td>  
+                            <td >[[row.year]]</td>  
+                            <td >[[row.stock_location]]</td> 
+
+                            <td>                              
+
+                                <select    v-if="row['doc_number']==''"        class="form-control" :required="true"  style="    width: 234px;">
+                                    <option  v-for="option in ret_line_reason_lov"   v-bind:value="option.lookup_code" > [[option.meaning ]]</option>
+                                </select>
+
+                               <span   v-if="row['doc_number']!=''" >[[row.pdi_loc]]</span>
+
+                            </td>
+                            <td >[[row.vin_number]]</td>
+                            <td><input  v-if="row['doc_number']==''"        v-bind:id="row.line_number"  v-bind:value="row.delivery_date"   type="txt"  />
+                                <input  v-if="row['doc_number']!=''" disabled   v-bind:value="row.delivery_date"   type="txt"  />
+                            
+                            </td>
+
+                            <td>  [[row.subinventory]]</td>
+                            <td></td>
+                            <td>  [[row.subinventory]]</td>
+                            <td> [[row.header_status]]</td>
+                            <td> [[row.line_status]]</td>                           
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                           
+                            
+                           
+                        <td>
+                            <input type="hidden"  v-bind:value="row.order_header_id"    id="custom_table_oder_header_id" /> 
+                            <span style=" color: #E13300"  v-bind:id="[[index+1+'msg']]" ></span>
+                        </td>                    
+                        <td>
+                                <button  v-if="row['doc_number']!=''"     v-bind:id="row.line_id" style="    line-height: 12px;"      class="btn btn-sm btn-primary" onclick="line_activity(this)">Add Line Activities</button>                            
+                               
+                               <span   v-if="row['doc_number']!=''">
+
+                                <button   v-if="row['line_status']=='Draft'"     v-bind:id="row.header_id"  style="    line-height: 12px;"     onclick="request_pdi(this)"   class="btn  btn-sm btn-primary">Submit Request </button>
+                       
+
+                               </span>
+                              
+                       
+                            </td>                        
+    
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+    
+            </div>
+            
+            
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              <button type="button" class="btn bg-olive btn-flat"  id="sbtn_pdi" onclick="create_pdi_req_header()" >Save</button>
+    
+    
+            </div>
+            
+          </div>
+        
+        
+        
+        </div>
+      
+    
+    
+    
+    
+    </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="modal  fade modal-small in" id="pdi_req_line_modal" role="dialog">
+        <div class="modal-dialog modal-lg" style="    max-width: 50% !important;">
+          <div class="modal-content">      
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title" style="font-weight: 800;"></h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body"  id="pdi_req_line_modal_body" style=" padding-left: 3%;      padding-right: 3%; margin-bottom: 4%; margin-top: 1%;">              
+
+    
+              
+           
+  
+            </div>
+            
+            <!-- Modal footer -->
+           
+            
+          </div>
+        
+        
+        
+        </div>
+      
+    
+    
+    
+    
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+<div class="modal  fade modal-small in" id="ret_modal" role="dialog">
+    <div class="modal-dialog modal-lg" style="    max-width: 65% !important;">
+      <div class="modal-content">      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-weight: 800;">Return Sales</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+            <div class="row">
+            <div class="col-sm-2">
+            <label>
+
+                Return Type :
+
+            </label>
+
+            </div>
+            <div class="col-sm-5 text-left">
+                <select class="form-control" :required="true" id="sales_type_list" onchange="get_ret_line_type(this)">
+                    <option  v-for="option in ret_type"    v-bind:value="option.id" >[[option.text ]]</option>
+                  </select>
+
+            </div>
+            </div>
+
+            <br>
+
+          
+            <div class="table-responsive-sm">
+              
+              <table id="firstTable" class="table table-sm  table-hover table-responsive" style="white-space: nowrap;">
+                <thead>
+                    <tr>
+                    <!-- <th v-for="row in ret_line_col"> [[row.title]]</th> -->
+                    <th class="text-center" >SR </th>
+                    <th  class="text-center">Item Name</th>
+                    <th  class="text-center">Qty</th>
+                    <th  class="text-center" style="width: 4%;">Returned</th>
+                    <th  class="text-center" style="width: 4%;">Return Qty</th>
+                    <th  class="text-center">Return Category</th>        
+                    <th  class="text-center">Return Reason</th>    
+                    <th  class="text-center"  style="display: none;">Line Type</th>                                 
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row,index)  in ret_line_data">
+                    <td>[[row.line_number]]</td>
+                    <td  style="text-align: center; padding-top: 12px;" >[[row.item_code]] <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" />
+                        <input type="hidden"  v-bind:value="row.order_header_id"    id="custom_table_oder_header_id" /> 
+                        <span style=" color: #E13300"     v-bind:id="[[index+1+'msg']]" ></span></td>
+                    <td  style="text-align: center; padding-top: 12px;"  >[[row.ordered_qty]]</td>     
+                    <td style="text-align: center; padding-top: 12px;">[[row.returned]]</td>    
+                    <td ><input      type="text" class="form-control"  placeholder="0" v-bind:id="[[index+1]]"  v-bind:data_val="[[row.ordered_qty- row.returned]]"   name="qty[]"  value="0" onkeyup="receivedPurchase(this)"  /></td>  
+                    <td>
+                        <select class="form-control" :required="true" >
+                            <option  v-for="option in ret_line_reason_lov"   v-bind:value="option.lookup_code" > [[option.meaning ]]</option>
+                          </select>
+                    </td>
+                    <td><textarea style="    width: 100%;line-height: 31px;"  rows="1" placeholder="Return remarks " ></textarea><input type="hidden"  v-bind:value="row.inventory_item_id"  />                     
+                        
+                    </td>
+                    <td  style="display: none;"> 
+
+                            <select   v-bind:id="[[index+1+'ret_line_type']]"  >
+                                <option  v-for="option in ret_line_type"    v-bind:value="option.value" > [[option.display ]]</option>
+                            </select>
+
+                    </td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-olive btn-flat"  id="sbtn_r" onclick="savereturn()" >Save</button>
+
+
+        </div>
+        
+      </div>
+    
+    
+    
+    </div>
+  
+
+
+
+
+</div>
+
+
+  <!-- The Modal -->
+  <div class="modal  fade modal-small in" id="edit_order" role="dialog">
+    <div class="modal-dialog modal-lg" style="    max-width: 65% !important;">
+      <div class="modal-content">      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-weight: 800;"> Sales</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+         
+
+            <div class="row"  v-if="order_line_data.length">
+                <div class="col-6">
+                <table style="width:100%;">
+                        <tbody>  
+
+                            <tr style="line-height: 33px;">
+                                <td class="pr-3"><b>Order Number:</td>                      
+                                <td v-if="order_line_data[0]" > [[order_line_data[0].om_order_number]]</td>
+                            </tr>
+
+
+                            <tr style="line-height: 33px;">
+                                <td class="pr-3"><b>Order Type:</td>                      
+                                <td v-if="order_line_data[0]" > [[order_line_data[0].order_type]]</td>
+                            </tr>
+
+
+                            
+                            <tr style="line-height: 33px;">
+                                <td class="pr-3"><b>Customer LPO:</b></td>
+                                <td> 
+                                    [[order_line_data[0].lpo_number]] 
+                                </td>
+                            </tr>
+
+                            <tr style="line-height: 33px;"> 
+                              
+                                <td class="pr-3"><b>Order Note :</b></td>
+                                <td> 
+                                    [[order_line_data[0].order_note]] 
+                                </td>
+                            </tr>
+
+                        </tbody>
+                </table>
+           
+              
+                </div>
+                <div class="col-6">
+                
+                   <div class="col-sm-12"  id="invoice_total_v_1">
+                       <div class="card">
+                         
+                           <div class="card-body" style="    padding: 0rem;">                                
+                          
+                               
+                            <div >
+                           <div class="row ">
+
+                                   <label for="address" class="col-sm-4 col-form-label">Sub Total :</label>
+                                   <div class="col-sm-8">
+                                       <input type="text" class="form-control  form-control-sm " id="subtotal" :value="Number(t).toFixed(2)" placeholder="" readonly="">
+                                   </div>
+                           </div>
+                           <div class=" row ">
+
+                               <label for="address" class="col-sm-4 col-form-label">Tax (<span id="vat_percent">[[vat_p]]</span>) :</label>
+                               <div class="col-sm-8">
+                                   <input type="text" class="form-control  form-control-sm " id="tax" :value="Number(tv).toFixed(2)" placeholder="" readonly="">
+                               </div>
+                         </div>
+
+                         <div class="row ">
+
+                           <label for="address" class="col-sm-4 col-form-label">Discount / Surcharge :</label>
+                           <div class="col-sm-8">
+                               <input type="text" class="form-control  form-control-sm " id="discount"  :value="Number(td).toFixed(2)" placeholder="" readonly="">
+                           </div>
+                       </div>
+
+
+                        <div class=" row ">                                
+                           <label for="address" class="col-sm-4 col-form-label" >Grand Total :</label>
+                           <div class="col-sm-8">
+                               <input type="text" class="form-control  form-control-sm "  :value="Number(gt).toFixed(2)" placeholder="" readonly="">
+                         
+                             
+
+                           </div>
+                        
+                       </div>
+
+                       </div>
+
+                           </div>
+
+                       </div>
+                   </div>                       
+
+                     
+
+                </div>    
+        
+                <div class="col-0 text-right">
+                   <!-- <button id="clear-cart" class="btn btn-default btn-xs">Clear Cart</button>  
+                   -->
+                   <br>
+                 </div>
+             
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <br>
+
+          
+            <div class="table-responsive-sm">
+              
+              <table id="update_order_tbl" class="table table-sm  table-hover table-responsive" style="white-space: nowrap;">
+                <thead>
+                    <tr>
+                    <!-- <th v-for="row in ret_line_col"> [[row.title]]</th> -->
+                    <th class="text-center" >SR </th>
+                    <th  class="text-center">Item Name</th>
+                    <th  class="text-center">Qty</th>
+                    <th  class="text-center" style="width: 4%;">UOM</th>
+                    <th  class="text-center" style="width: 4%;">Color</th>
+                    <th  class="text-center" style="width: 4%;" style="display: none;" >Model Year</th>
+                    <th  class="text-center" style="width: 4%;" style="display: none;">Serial Number</th> 
+                    <th  class="text-center" style="width: 4%;">List Price</th>   
+                                     
+                    <th  class="text-center" style="width: 4%;">Price</th> 
+                    <th  class="text-center" style="width: 4%;">Discount / Surcharge</th>
+                    <th  class="text-center" style="width: 4%;">VAT</th>
+                    <th  class="text-center" style="width: 4%;">Line Total</th>
+
+                   
+                      </tr>
+                </thead>
+                <tbody>
+
+                   
+
+                  <tr v-for="(row,index)  in order_line_data">
+                    <td> [[row.line_number]]</td>
+                    <td> <span id="item_code"> [[row.item_code]]</span> <i class="fa fa-pencil-square-o" aria-hidden="true" onclick="get_stock_view_list()"></i> <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" />
+                        <input type="hidden"  v-bind:value="row.order_header_id"    id="custom_table_oder_header_id" /> 
+                        <span style=" color: #E13300"  v-bind:id="[[index+1+'msg']]" ></span></td>
+                    <td >[[row.ordered_qty]]</td>     
+                    <td>  [[row.primary_uom_code]] </td> 
+                    <td> [[row.color]]                        
+                      <!--   <input type="text" class="form-control"  placeholder="0" v-bind:id="[[index+1]]"  v-bind:data_val="[[row.ordered_qty]]"   name="qty[]"  value="0" onkeyup="receivedPurchase(this)"  />
+                      -->
+
+                    </td>  
+                    
+                    <td>
+                        [[row.year]]                
+                    </td>
+                    <td>
+                        [[row.vin_number]]
+                        <!--
+                        <textarea rows="1" placeholder="Return remarks " ></textarea><input type="hidden"  v-bind:value="row.inventory_item_id"  />                     
+                        -->
+                    </td>
+                    <td v-bind:id="[[index+'-list-price']]">[[row.list_price]]</td>
+                    <td contenteditable="true"  v-bind:id="[[index]]"   onkeyup="price_enter_change(this)" >[[row.unit_selling_price]]</td>
+                    <td  v-bind:id="[[index+'-discount']]">[[row.line_discount]]</td>    
+                    <td v-bind:id="[[index+'-line-vat']]" >[[row.line_tax]]</td>  
+                    <td v-bind:id="[[index+'-line-total']]" > [[row.line_total]]</td>  
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-olive btn-flat"  id="sbtn" onclick="savereturn()" >Save</button>
+
+
+        </div>
+        
+      </div>
+    
+    
+    
+    </div>
+  
+
+
+
+
+</div>
+
+
+
+
+
+<div class="modal  fade modal-small in" id="ret_rec" role="dialog">
+    <div class="modal-dialog modal-lg" style="    max-width: 65% !important;">
+      <div class="modal-content">      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-weight: 800;">Return Receiving</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body" id="ret_rec_body">
+        
+
+        </div>  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-olive btn-flat"  onclick="ret_receving_btn()" >Confirm Receiving</button>
+        </div>        
+      </div> 
+    
+    
+    </div>
+</div>
+
+
+
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="approver_history">
+    <div class="modal-dialog" role="document" style="    max-width: 100%;">
+      <div class="modal-content">
+        <div class="modal-header">        
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"  id="time_lines_list">       
+
+            <!-- <div class="row d-flex justify-content-center">
+                <div class="col-md-12">
+                    <div class="main-card mb-3 card">
+                        <div class="card-body">              
+                            <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="time_lines_list">
+                              
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+         
+         
+
+        </div>        
+        <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="initiate_payment_modal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="    max-width: 100%;margin-left: 1%;">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h4 class="modal-title">Initiate Advance Payment</h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+
+         <div class="table-sm" id="initiate_payment_modal_data">
+           
+            
+
+         </div>
+
+         
+         
+
+        </div>
+        
+        <!-- <div class="modal-footer"    id="initiate_payment_modal_data_footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  
+
+
+  <div class="modal" tabindex="-1" role="dialog" id="reservation_modal">
+    <div class="modal-dialog" role="document" style="    max-width: 65%;">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h4 class="modal-title">Extend Reservation <span id="res_number"></span></h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <label> Remarks :</label> 
+           </div>
+
+           <div class="col-sm-6">
+                        <textarea   style="    width: 100%;" placeholder="Please write here"   id="remarks"></textarea>
+           </div>
+        </div><br>
+           <div class="row">
+
+            <div class="col-sm-2">
+
+                <label>Days :</label> 
+
+            </div>
+            <div class="col-sm-6">
+                  <input  style="width:100%;"  type="text" id="days" value="7" />
+
+            </div>
+        </div>
+
+
+
+
+         
+         
+
+        </div>
+        
+        <!-- <div class="modal-footer"    id="initiate_payment_modal_data_footer">
+          <button type="button" class="btn btn-secondary" onclick="extend_reser()"  >Update</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+<style>
+	.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+	.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+.initSelc2  + .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 36px;
+}
+
+.initSelc2  + .select2-container .select2-selection--single 
+{
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 50px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.select2-container .select2-selection--single {
+   
+    height: 100% ; 
+    padding: 6px;
+    
+}
+</style>
+
+
+<div class="row" id="counts_row">
+    <!-- <div class="col-12 col-sm-6 col-md-3">
+      <div class="info-box" onclick="onDashClick(this)" style="background-color:#a0a0a0">
+        <span class="info-box-icon bg-info elevation-1"><i class="ion ion-cube"></i></span>
+
+        <div class="info-box-content">
+          <span class="info-box-text">Create Sales Order</span>
+          <span class="info-box-number">
+            
+            <small></small>
+          </span>
+        </div>
+      
+      </div>
+     
+    </div> -->
+    <!-- /.col -->
+    <!-- <div class="col-12 col-sm-6 col-md-3">
+      <div class="info-box mb-3" onclick="onDashClick(this)">
+        <span class="info-box-icon bg-danger elevation-1"><i class="ion ion-refresh"></i></span>
+
+        <div class="info-box-content">
+       
+          <span class="info-box-text">In Process Orders</span>
+          <span class="info-box-number">[[data.reserved_stock]]</span>
+        </div> 
+      </div>
+     
+    </div> -->
+
+
+    <!-- fix for small devices only -->
+    <div class="clearfix hidden-md-up"></div>
+
+    <!-- <div class="col-12 col-sm-6 col-md-2">
+      <div class="info-box mb-3" onclick="onDashClick(this)">
+        <span class="info-box-icon bg-success elevation-1"><i class="ion ion-android-archive"></i></span>
+
+        <div class="info-box-content">
+        
+          <span class="info-box-text">Approved Orders</span>
+          <span class="info-box-number">[[data.on_order]]</span>
+        </div>
+      
+      </div>
+    
+    </div> -->
+
+
+
+    <div class="col-12 col-sm-6 col-md-2" >
+        <div class="info-box mb-4" onclick="onDashClick(this)">
+          <span class="info-box-icon bg-warning elevation-1"><i class="ion ion-filing"></i></span>
+  
+          <div class="info-box-content">
+            <span class="info-box-text">Closed Orders</span>
+            <span class="info-box-number">[[data.closed_orders]]</span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+
+
+    <!-- /.col -->
+    <!-- <div class="col-12 col-sm-6 col-md-2">
+      <div class="info-box mb-3" onclick="onDashClick(this)">
+        <span class="info-box-icon bg-warning elevation-1"><i class="ion ion-filing"></i></span>
+
+        <div class="info-box-content">
+          <span class="info-box-text">Return Orders</span>
+          <span class="info-box-number">[[data.all_on_order]]</span>
+        </div>
+     
+      </div>
+   
+    </div> -->
+
+    <div class="col-12 col-sm-6 col-md-2" style="display: none;">
+        <div class="info-box mb-3" onclick="onDashClick(this)">
+          <span class="info-box-icon bg-warning elevation-1"><i class="ion ion-filing"></i></span>
+  
+          <div class="info-box-content">
+            <span class="info-box-text">PDI Requests</span>
+            <span class="info-box-number">[[data.pdi_req]]</span>
+          </div>
+          <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+      </div>
+
+
+    <!-- /.col -->
+  </div>
+
+
+<div class=" common_area_cls" id="avlable_stock" >
+
+<input type="hidden"  id="cust_disc_perc" value=0 />
+<input type="hidden"   id="discount_id" value=0 />
+
+
+<input type="hidden"  id="actual_bal_amount" value=0 />
+<input type="hidden"  id="customer_limit" value=0 />
+<div class="accordion" id="accordionExample">
+      
+    <div class="card">
+        <div class="card-header" id="headingTwo_1">
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"> 1. Fill Customer Details</button>
+               
+               <span id="sel_cust" style="float: right;font-size: 16px;color: green;padding-top: 12px;">
+    
+              </span>
+            
+            </h2>
+           
+        </div>
+       
+        <div id="collapseThree" class="collapse" aria-labelledby="headingTwo_1">
+            <div class="card-body">
+          
+                <div class="row"  id="cart_area">
+                <div class="col-sm-4">
+                
+                
+                    <div class="card">
+	  
+                    <div class="card-header">
+                      <h3 class="card-title">                      
+                        Main Customer                      
+                      </h3>
+                      <div class="card-tools">		
+                      
+                    
+                        <a target_='blank' id="new_customer_url" href='#' target='_blank' style="float: right;">New Customer : <i class="fa fa-plus-square" aria-hidden="true" style="float: right;margin-top: 2px; margin-left: 6px;font-size: 19px;"></i></a> 
+                        
+                      
+                      </div>
+                    </div>  
+                  
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    
+                                    <select name="" id="searchCust"  class="form-control-sm" style="width: 100% ; ">
+                                        <option></option>
+                                    </select>
+
+
+                                    <input type="hidden" id="main_cust" />
+
+                                    <input type="hidden" id="main_customer_number" />
+
+                                    <input type="hidden" id="main_customer_id" />
+
+                                    <div class="form-group row col-lg-12" style="display: none;">
+                                        <label  class="col-sm-4 col-form-label">Search By :</label>
+                                        
+                                        <div class="col-sm-8" style="margin-top: 7px;">
+                                            <select name="" class="form-control-plaintext"  id="serach_based_on_type" style="width: 100% ; ">                          
+                                            </select>
+                                        </div>
+            
+                                  </div> 
+
+
+                                </div>
+
+
+                                <div    id="customer_infoo">
+                      
+                                </div>                                 
+                            </div>
+                        </div>
+                    
+
+                   
+
+                     
+                    
+                    
+                      
+                      
+                      
+                      
+                    </div>
+                    <div class="card-footer">
+                      
+                    </div>
+                    
+                  </div>
+                </div>
+
+
+
+
+
+
+
+
+                        
+
+                        <div class="col-sm-4">
+
+                            <div class="card">
+	  
+                                <div class="card-header">
+                                  <h3 class="card-title">                      
+                                    Ship To Customer                      
+                                  </h3>
+                                  <div class="card-tools">		
+                                  
+                                  
+                                  </div>
+                                </div>  
+                              
+                                <div class="card-body">
+            
+                                    <div class="row">
+                                        <div class="col-sm-12">
+
+
+                                            <div class="form-group">                                              
+                                                     <select name=""  class="col-sm-4 form-control-sm"   id="customer" style="width: 100% ; "></select>
+                                            </div>
+
+                                           
+
+                                            <div id="ship_to_customer_infoo">
+
+                                                
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="card-footer">
+                      
+                                </div>
+                                    
+                             
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+                           <div class="col-sm-4">
+
+
+
+                            <div class="card">
+	  
+                                <div class="card-header">
+                                  <h3 class="card-title">                      
+                                    Bill To Customer                      
+                                  </h3>
+                                  <div class="card-tools">		
+                                  
+                                 
+                                    
+                                  </div>
+                                </div>  
+                              
+                                <div class="card-body">
+            
+                                    <div class="row">
+                                        <div class="col-sm-12">
+
+
+                                            <div class="form-group">                                              
+                                                <select name=""   id="customer_bill" class="form-control-sm"  style="width: 100% ; "></select>
+                                            
+                                            </div>
+                                            
+
+                                            <div id="bill_to_customer_infoo">
+
+                                                
+                                            </div>
+
+                                
+                                  
+                                       
+                                   </div>
+                               </div>
+                           </div>
+
+                           <div class="card-footer">
+                      
+                        </div>
+                         
+                      
+                        </div>
+                       
+                    
+                    </div>
+                
+                
+                
+                
+              </div>          
+                
+                           
+                
+                
+                
+                
+                
+                 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+    
+    
+                
+            </div>
+        </div>
+    </div>
+
+
+
+
+<div class="card">
+           
+    <div class="card-header" id="headingOne">
+         <h2 class="mb-0">
+             <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseOne">2. Search Stock</button>									
+        
+             <span id="selected_item" style="float: right;font-size: 16px;color: green;padding-top: 12px;"></span>
+            </h2>
+     </div>
+<div id="collapseOne" class="collapse" aria-labelledby="headingOne">
+<div class="card-body">
+
+
+
+<div class="block-finder__title text-dark" style="    font-size: 20px;
+font-weight: bold; display: none;">ITEM DETAILS</div>
+
+
+<button  type="button" class="add-to-cart pull-right btn btn-sm btn-info" style="display: none;" onclick="" >Add To Cart <i style="color: white;" class="fa fa-cart-plus fa-1x "  aria-hidden="true"></i></button> 
+
+<style>
+
+.dataframe >thead > tr {
+
+
+    text-align: center !important;
+}
+
+.dataframe >thead > tr  > th {
+
+    border: 1px solid !important;
+
+}
+
+
+table.dataTable thead>tr>th
+{
+
+}
+table.table-bordered.dataTable tbody td
+{
+
+}
+</style>
+
+<div class="table-responsive" style="display: none;">
+
+<table class="table table-bordered table-hover w-100 table-hover tbl_font table-sm "   style="    white-space: nowrap;"  id="pre_filter"></table>
+
+</div>
+
+
+ 
+ <div class="table-responsive " >
+     
+     <table id="search-tbl" class="tbl_font table table-sm" style="white-space: nowrap; width: 100%;">
+         
+     </table>
+
+</div>
+
+
+
+<style>
+
+
+
+.lbl_qty_count{
+
+
+text-align: right;
+color: #007bff;
+}
+
+</style>
+
+
+
+<h3> Available Stock </h3>
+<div class="table-responsive" style="    border: 1px solid;" > 
+<p id="sum"></p>
+<table class="table tbl_font table-hover table-sm dataTable"  style="white-space:nowrap;"  id="products"></table>
+</div>
+
+
+
+
+
+</div>
+</div>
+ </div>
+
+
+ <div class="card">
+    <div class="card-header" id="headingTwo">
+        <h2 class="mb-0">
+            <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" onclick="Preview_Order()"> 3. Preview Order </button>
+        
+
+
+
+
+             <a type="button" id="inv_href" target="_blank"  href="#" class="btn btn-sm waves-effect waves-light cart-btn btn-primary" aria-expanded="true"   style="    float: right;
+             margin-top: 7px;  margin-left: 39px;">               
+
+                
+                
+              View Transfers List (<span class="inv_transfer_qty_selected">0</span>)
+            </a>
+
+         
+
+            <span class="fa-stack fa-1x has-badge collapsed back-to-top" data-count="0"   data-toggle="collapse" data-target="#collapseTwo"   id="qty_selected" onclick="Preview_Order()" >
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-shopping-cart fa-stack-1x fa-inverse float"></i>
+             </span>
+<style>
+
+
+#qty_selected
+{
+    cursor: pointer;
+    zoom: 0.7;
+    float: right;
+
+}
+    .fa-stack[data-count]:after {
+    position: absolute;
+    right: 0%;
+    top: 0%;
+    content: attr(data-count);
+    font-size: 40%;
+    padding: 0.6em;
+    border-radius: 999px;
+    line-height: 0.75em;
+    color: white;
+    color: green;
+    text-align: center;
+    min-width: 2em;
+    font-weight: bold;
+    background: white;
+    border-style: solid;
+    }
+
+    .fa-circle 
+    {
+    color: green;
+    }
+
+    .red-cart {
+    color: green;
+    background: white;
+    }
+
+</style>
+
+
+
+        </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+        <div class="card-body">
+      
+
+
+            <div class="row"  id="cart_area">
+            
+                <div class="col-sm-12" id="stock_view" style="text-align: left;">
+                       <div class="card">
+                           <div class="card-header bg-info" style="display: none;">
+                               <h5 class="m-b-0 text-white">Cart
+                                   <i style="color: white;    float: right;" id="full_screen"   onclick="fullscreen(this.id)"  class="fa fa-plus fa-1x "  aria-hidden="true"></i>
+                               </h5>
+                              
+                           </div>
+                           <div >
+                               
+                    
+            
+                       <a type="button" style="display: none;"   id="btn_cart" data-toggle="collapse" href="#collapseExample" aria-controls="collapseExample" class="btn btn-sm waves-effect waves-light cart-btn btn-primary collapsed" aria-expanded="false"><i class="mdi mdi-cart"></i>Cart (<span class="total-count">0</span>)</a>
+                              
+                       <a type="button" style="display: none;"  id="btn_cart_1"  href="{% url 'checkout_page' %}"  class="btn btn-sm waves-effect waves-light cart-btn btn-primary " aria-expanded="false">
+                               <i class=" mdi-open-in-new mdi mdi-cart"></i> checkout
+                       </a>
+                     
+            
+            
+           
+               
+               <ul class="nav nav-tabs" id="myTab" role="tablist">
+                   <li class="nav-item"    style="display: none;">
+                     <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="flase">Units Stock</a>
+                   </li>
+                   <li class="nav-item" style="    display: none;">
+                     <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true" onclick="get_order_type_lov()">Shopping Cart</a>
+                   </li>
+               
+                 </ul>
+            
+                 <div class="tab-content" id="myTabContent">
+                   <div class="tab-pane fade show active" id="home" role="tabpanel" style="display: none;" aria-labelledby="home-tab">
+            
+                           <div class="row">
+                             
+                               <div class=" col-md-12">
+                                   <div class="card">
+                                       
+                                       
+                                       <div class="table-responsive" style="margin-top: 11px;">
+         
+                                       </div>
+                                   </div>
+                               </div>
+                               
+                           </div>
+            
+            
+            
+            
+                   </div>
+            
+            
+                   <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                       
+            
+                           
+                           <div class="card">  
+                        
+                                <div id="invoice_total_v" style="    padding: 14px;">  
+                                    <div id="data"></div>
+                                <form action='#'> 
+                                    {% csrf_token %} 
+                                    <div class="form-row">  
+                                        
+
+                                        <div class="col-md-3">  
+                                            <label>Order Type: <span style="color: red;"> *</span></label>  
+                                            <select style="width: 100%;"  class="select2-input form-control-sm form-control"    id="order_type_lov_item_page" onchange="order_header_change(this)">                            
+                                             </select>  
+                                        </div> 
+
+                                        <div class="col-md-3">  
+                                            <label>Order Category: <span style="color: red;"> *</span></label>                                                  
+                                            <select class="form-control form-control-sm" required="true" id="order_category_lov">
+                                                <option  v-for="option in order_category"    v-bind:value="option.value" >[[option.display ]]</option>
+                                              </select>
+                                         </div>
+
+
+
+
+
+                                        <div class="col-md-3">  
+                                            <label>Ship To Customer:</label>  
+
+                                            <input type="text"  readonly  id="shiptocust"  class="form-control form-control-sm" />  
+                                    
+
+                                        </div> 
+
+                                        <div class="col-md-3">  
+                                            <label>Bill To Customer: </label>  
+
+                                            <input type="text"  readonly  id="billtocust"  class="form-control form-control-sm" />  
+                                    
+                                        </div> 
+
+                                        
+                                        
+
+                                        <div class="col-md-3">  
+                                            <label>Customer LPO:</label>  
+                                            <input type="text" id="customer_po"  class="form-control form-control-sm" />  
+                                        </div> 
+
+
+
+                                        <div class="col-md-3">  
+                                            <label>Air Miles :</label>  
+                                            <input  type="text" class="form-control form-control-sm" id="txt_air_miles"></textarea>
+                                         </div>
+
+
+
+                                          
+
+
+                                        <div class="col-md-3">  
+                                            <label>Tax (<span id="vat_percent">[[vat_p]]</span>%) :</label>  
+                                            <input  readonly   id="tax" :value="Number(tv).toFixed(2)"   type="text" class="form-control form-control-sm" />  
+                                        </div>
+
+                                        <div class="col-md-3">  
+                                            <label>Sub Total :</label>  
+                                            <input type="text"  readonly  id="subtotal" :value="Number(t).toFixed(2)" class="form-control form-control-sm" />  
+                                        </div>
+
+
+                                        
+                                    </div>  
+                                    <div class="form-row">  
+
+                                        <div class="col-md-6">  
+                                            <label>Leads :</label>  
+                                            
+                                            <select class="form-control form-control-sm" required="true" id="leads_lov">
+                                                <option  v-for="option in leads"    v-bind:value="option.value" >[[option.display ]]</option>
+                                              </select>
+
+                                         </div>
+
+                                         <div class="col-md-3">  
+                                            <label>Discount / Surcharge :</label>  
+                                            <input readonly type="text" id="discount"  :value="Number(td).toFixed(2)"  placeholder="Enter Mobile Number" class="form-control form-control-sm" />  
+                                        </div> 
+
+                                        <div class="col-md-3">  
+                                            <label>Grand Total :</label>  
+                                            <input readonly  type="text"  :value="Number(gt).toFixed(2)" id="g_total"  placeholder="" class="form-control form-control-sm" />  
+                                        </div> 
+
+                                          
+                                    </div>   
+                                       <div class="form-row">  
+                                           <div class="col-md-6">                                            
+                                            
+                                           
+
+                                             <div class="col-md-12">  
+                                                <label>Order Note :</label>  
+                                                <textarea   type="text" class="form-control form-control-sm" id="order_remarks"></textarea>
+                                             </div>
+
+                                            </div>  
+            
+                                           <div class="col-md-6"> 
+                                            <br>
+                                            
+                                            <div id="error_area" style="    height: 126px;    overflow-y: scroll;">
+
+
+                                            </div>
+                                           
+                                           <div class="col-md-12" style="display: none;">  
+                                            <label> Line Charges :</label>              
+                                            <input readonly  type="text"  id='line_charges'   :value="Number(total_line_charges).toFixed(2)"    abc     placeholder="00.0" class="form-control form-control-sm" />  
+
+                                      
+
+
+                                        </div> 
+
+                                           
+                                        <!-- <div class="col-md-12" style="    margin-top: 16px;">  
+                                            <label style="display:inline-flex;width: 100%;">Print Charges :   <input   type="checkbox"  id="print_charges"  style="width: 30%;  zoom: .8;"  class="form-control" />  </label>  
+                                              
+                                        </div>  -->
+                                        </div>
+            
+                                       </div>  
+                                       <div class="form-row">  
+                                           <div class="col-md-6">  
+                                                
+                                           </div>  
+                                            
+                                       </div> 
+                                      
+                                   </form>  
+                               </div>  
+                                                
+
+                            
+                          
+                          
+                            </div> 
+            
+                
+            
+            
+            
+                           <div class="">
+                            <!-- <div class="row">
+                               
+                                <div class="col-6">
+                                
+                                                      
+            
+                                     
+            
+                                </div>    
+                        
+                                <div class="col-0 text-right">-->
+                                   <!-- <button id="clear-cart" class="btn btn-default btn-xs">Clear Cart</button>  
+                                   
+                                   <br>
+                                 </div>
+                             
+            
+            
+                            </div> -->
+            
+                            <!-- <div class="row pt-3">
+            
+            
+                               <div class="col-12 text-right">
+                                      -->
+                                   <!-- <button id="daft_lines" class="btn waves-effect waves-light btn-info btn-sm" >Save Item</button> 
+                                    <button id="clear-cart" class="btn btn-default btn-sm">  Clear Cart &nbsp;&nbsp; <i class="fa fa-times" aria-hidden="true"></i> </button> 
+                                    <button type="submit" id="btn_order" onclick="submit_order(this)" class="btn btn-default btn-sm">  Create sales order &nbsp;&nbsp; <i class="fa fa-usd" aria-hidden="true"></i> </button>
+                                    
+                                    </div>
+            
+            
+                            </div> -->
+            
+            
+                        
+                                 <div id="show-cart-parent_div"> 
+
+                                <table class="table tbl_font  table-sm  show-cart"  id="show-cart" >
+                        
+                                </table>  
+
+                                </div>
+                              
+                                 
+                        
+                            </div>
+                        
+                            <div id="customer_receipt">
+
+
+                            </div>
+                            
+
+<br><br>
+
+                            <div style="margin-top:15px;    text-align: right;">  
+                                <input type="hidden" id="temp_order_number_to_oracle_order" value="" />
+                                <div id="msg_for_edit_order"  style='text-align: left;margin-bottom: 11px;'></div>
+
+                                   
+                                   <button type="button"  id="clear-cart"  class="btn btn-sm btn-danger rounded-0">Clear Cart</button>  
+                                   <!-- <button type="button"  id="create_los"  onclick="los_modal_s(this)"  class="btn btn-sm btn-danger rounded-0">Create LOS</button>  -->
+                                   <!-- <button type="button"  id="validate_order" onclick="validate_order(this)"  class="btn btn-primary rounded-0">validate order</button>   -->
+                                  
+                                   <!-- <button type="button"  id="btn_draft_it" onclick="submit_order(this)"  class=" btn-sm btn btn-primary rounded-0">Save as Draft</button>   -->
+                                   <button type="button"  id="btn_req_credit" onclick="submit_order(this)"  class="btn btn-sm  btn-primary rounded-0">Req credit limit</button>  
+                                   <button type="button"  id="btn_order" onclick="submit_order(this)"  class="btn btn-primary btn-sm rounded-0">Create Sales Order</button> 
+                                   
+                                   
+                                  
+                                   
+
+                               </div>  
+                          
+                               <br><br>
+                               <br><br>
+            
+            
+                   </div>
+            
+                   <!-- <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">Accessories Stock</div> -->
+            
+                 </div>
+            
+                           </div>
+                       </div>
+            
+               </div>
+              
+     
+        
+        
+        
+        
+        
+        
+        
+            </div>
+            
+
+            
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+<div id="reserved_stock" class="common_area_cls table-responsive" >
+
+   
+    <table   class="table table-bordered table-hover table-hover tbl_font table-sm"  style="    white-space: nowrap;"     id="tbl_reserved_stock"></table>
+
+</div>
+
+
+
+
+
+<style>
+    .pull-left{float:left!important;
+        width: 75%;
+        margin-bottom: 40px;
+    }
+    .pull-right{float:right!important;}
+    #search-tbl_filter{
+    
+        width: 90%;
+    }
+    #search-tbl{
+        border: 1px solid;
+    
+    }
+    #search-tbl_filter label
+    {
+            width: 100%;
+    }
+    #search-tbl_filter label input
+    {
+            width: 97%;
+            height: 47px;
+            font-size: 20px;
+    }
+    #search-tbl_length > label > select
+    {
+        height: 47px;
+        font-size: 20px;
+            
+    }
+
+
+    
+#search-tbl > tbody > tr:hover{
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF !important;
+    cursor: pointer;
+}
+#search-tbl > tbody > tr.selected 
+{
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF;
+}
+
+#serach_based_on_type+span span span{
+
+    font-size: 12px;
+    padding: 0px;
+    padding-left: 6px;
+}
+    </style>
+{% endblock %}
+
+
+{% block script_block %}
+
+
+<script>
+
+var counts_row=new Vue({
+      el: '#counts_row',    
+      delimiters:['[[',']]'], 
+      data:
+      {
+        data: {{counts|safe}}   
+      },
+      methods: 
+      {
+      },  
+  });
+ 
+
+
+
+
+
+  var table_1;
+  localStorage.setItem('defs','{{defs|safe}}')
+
+  
+
+//   $(function()
+//   {
+//     //   try
+//     //   {
+//     //     var a=JSON.parse(localStorage.getItem('defs'))
+
+ 
+//     //  }
+//     //  catch(error)
+//     //  {
+
+
+//     //  }
+
+//         //reservation_amount
+//         //axios.get("/sales/sd"+window.location.search+'&organization_code='+a['organization_code'])
+// 		axios.get("/sales/sd"+window.location.search)
+//         .then(function(res)
+//         {
+// 			console.log(res);
+// 			// vProductTbl.columns = res.data.columns;
+// 			//initDT(res.data)
+// 			$('#search-tbl').append(buildTheadTfoot(res.data.columns));
+// 			var columnsMeta =res.data.columns.map(x=>x.data);
+
+
+// 			table_1=$('#search-tbl').DataTable({
+// 				"processing": true,
+//                 "serverSide": true,
+//                 "language": 
+//                 {
+//                     processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading..n.</span> '
+//                 },
+//                 "deferLoading": 0,
+//                 "dom": '<"pull-left"f><"pull-right"l>tip',
+// 				colReorder: true,
+//                // "pageLength": 10,
+//                 "oLanguage":
+//                 {
+//                     "sSearch": "Item Search :"
+//                 },
+//                 "destroy": true,               
+//                 columnDefs:[
+//                     {
+//                         targets:res.data.hcols,
+//                         visible:false
+//                     }
+//                 ],
+//                 preDrawCallback: function(settings,json) {
+// 							//Should I put it here?
+//                            // alert(1)
+//                            console.log(settings)
+//                            console.log(json)
+//                            console.log(this)
+//                         //this.context[0].jqXHR.abort()
+//                              try 
+//                              {
+//                                 $(this).dataTableSettings[0].jqXHR.abort()
+//                             } 
+//                             catch (error) 
+//                             {
+//                                 console.log(error);
+                        
+//                             }
+
+                       
+//                        // table_1.context[0].jqXHR.abort()
+//                 },
+// 				"ajax":{
+// 					type:"POST",
+//                     xhr: function() {
+//                     var xhr = $.ajaxSettings.xhr();
+//                     xhr.upload.onprogress = function(e) 
+//                     {
+//                        // xhr.abort(); //abort all current request here
+//                       // table_1.settings()[0].jqXHR.abort()
+//                        //alert(23)
+//                     };
+//                     return xhr;
+//                     },
+// 					url:"/sales/sd",
+// 					headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    				
+
+//                 data : 
+//                 {
+//                 	's':'{{s}}',
+//                     columnsMeta:JSON.stringify(columnsMeta),
+//                     'defs':localStorage.getItem('defs')
+                  
+
+//                 },
+// 				},
+// 				drawCallback:function(d)                
+//                 {
+// 					// alert($('#search-tbl_filter input').val());
+//                 //    console.log(d)
+// 					var sT= getCurUrlGETObj().s;				
+//                     if (sT != $('#search-tbl_filter input').val())
+//                     {
+// 						var toFind= $('#search-tbl_filter input').val().toLowerCase();						
+//                     } else
+//                     {
+// 						$('#search-tbl_filter input').val("{{s}}");
+// 						var toFind= "{{s}}".toLowerCase();
+// 					}
+// 					$('#search-tbl td').each(function()
+//                     {
+						
+// 						if ($(this).text().toLowerCase().indexOf(toFind) > -1)
+//                         {
+
+// 							var s= $(this).text().toLowerCase();
+// 							var start = s.indexOf(toFind);
+// 							var end = start + toFind.length;
+// 							var html = $(this).text().slice(0,start)+'<span class="font-weight-bold">'+$(this).text().slice(start,end)+'</span>'+ $(this).text().slice(end);
+							
+// 							$(this).html(html)
+
+// 						}
+// 					})
+
+// 				},                 
+//                 initComplete: function () 
+                
+//                 {
+
+//                     var i=0;
+//                      this.api().columns().every( function () 
+//                     {
+
+//                         i++;
+//                         var a=Math.floor(Math.random() * 11);
+//                         var column = this;		
+//                         if(i==5)
+//                         {
+//                             $(column.footer()).append("<br>")
+//                             $(column.footer()).html(' ')
+
+//                             var select = $('<select id='+i+a+'   style="width: 100%;    padding: 3px;">'+res.data.business+'</select>')
+//                             .appendTo($(column.footer()))
+//                             .on('change', function () 
+//                             {
+//                                 // var val = $.fn.dataTable.util.escapeRegex(
+//                                 // $(this).val());
+//                             })
+
+//                         }
+
+
+//                         var that = this;	
+//                         console.log(that)	;
+//                         $( 'select', this.footer()).on( 'keyup change clear', function () 
+//                         {       
+//                             console.log(that)                     
+//                             if ( that.search() !== this.value ) 
+//                             {
+// 								that.search(this.value).draw();
+// 							}
+// 						});
+
+                                                       
+
+// 						var that = this;	
+//                         console.log(that)	;
+//                         $( 'input', this.footer()).on( 'keyup change clear', function () 
+//                         {       
+//                             console.log(that)                     
+//                             if ( that.search() !== this.value ) 
+//                             {
+// 								that.search(this.value).draw();
+// 							}
+// 						});
+//                     });
+                    
+// 				}	
+                
+                
+
+
+//         //         initComplete: function () {
+//         //     this.api().columns().every( function () {
+//         //         var column = this;
+//         //         var select = $('<select><option value=""></option></select>')
+//         //             .appendTo( $(column.footer()).empty() )
+//         //             .on( 'change', function () {
+//         //                 var val = $.fn.dataTable.util.escapeRegex(
+//         //                     $(this).val()
+//         //                 );
+
+//         //                 column
+//         //                     .search( val ? '^'+val+'$' : '', true, false )
+//         //                     .draw();
+//         //             } );
+
+//         //         column.data().unique().sort().each( function ( d, j ) {
+//         //             select.append( '<option value="'+d+'">'+d+'</option>' )
+//         //         } );
+//         //     } );
+//         // }
+
+
+
+                
+                
+
+
+// 			})
+//         });    
+
+//         var temp1; $('#search-tbl').on( 'click', 'tr', function (e) 
+//         {
+//             console.log('#')
+//             console.log( table_1.row( this ).data());
+//             $('#search-tbl > tbody > tr').children('td').css('color','black');
+//             $('#search-tbl > tbody > tr').children('td').css('background-color','transparent');         
+//             $(e.currentTarget).children('td').css('background-color','rgba(41, 103, 182, 0.89)');
+//             $(e.currentTarget).children('td').css('color','white');
+//             console.log('#')
+//             temp1=table_1.row( this ).data()      
+//             console.log('232323')  
+//             console.log(temp1)  
+//             console.log('232323')  
+
+//             try
+//              {
+//                      update_datatable(temp1[0])       
+//             } catch (e)
+//              {
+//                 console.log('error in page ')  
+          
+//             }
+
+               
+                           
+//         }); 
+// 	});
+</script>
+
+<script src="{% static 'custom_js/signature.js' %}"></script>
+<script src="{% static 'custom_js/cart.js' %}"></script>
+
+<script src="{% static 'custom_js/inventroy_cart.js' %}"></script>
+
+<script src="{% static 'custom_js/sum().js' %}"></script>
+
+
+<script>
+
+vDash= new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#v-dash',
+    data(){
+    return {   
+
+            info:{},
+            dashInfo:[],
+            ret_line_data:[],
+            pdi_line_activities:[],
+            pdi_line_activities_lov:[],
+            pdi_line_id:'',
+            ret_line_col:[],
+            ret_type:[],
+            ret_line_reason_lov:[],
+            ret_line_type:[],
+            order_line_data:[],
+            order_line_col:[],
+
+           
+            't':'0',
+            'td':'0',
+            'tv':'0',
+            'gt':'0',
+            'vat_p':'',
+            'et':'0'
+
+           
+        }
+    },
+    mounted(){
+       
+       
+    },
+    computed: {
+
+    },
+    methods: {
+    }
+});
+
+$(document).ready(function()
+{	  
+
+        shoppingCart.clearCart();
+        $('#temp_order_number_to_oracle_order').val("");  
+        document.querySelector("#counts_row > div:nth-child(3) > div").click();
+
+
+    // var defs= localStorage.getItem('defs')       	  
+    // axios.get("http://192.168.16.150:6323/python_api/get_forms.php?defs="+defs+'&uid=12445')
+    //  .then(function (response) 
+    //  {
+    //      console.log(response)
+           
+    //        $('#data').append(response.data);
+           
+          
+    //  })
+    //  .catch(function (error) {
+    //    // handle error
+    //    alert(error);
+    //  })
+    //  .finally(function () {
+    //    // always executed
+    //  });  
+    FisherMan();
+ });
+
+
+function FisherMan()
+{
+
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var  discount_id = urlParams.get('discount_id')
+    //alert(discount_id)
+    if(discount_id!='' &&  discount_id!=null)
+    {
+
+                axios.get("fisher_man_validation?discount_id="+discount_id)
+                .then(function (response) 
+                {
+                        console.log(response)
+                        dt=response.data
+
+                       if (dt.msg !='null')
+                       {
+                            toastr.info(dt.msg)
+                            return 
+                       }
+
+
+                        var data =
+                        {
+                            id:dt.cust_account_id,
+                            text:dt.customer_name,
+                            customer_number:dt.account_number,
+                            customer_name:dt.customer_name
+                        };
+
+                        var newOption = new Option(data.text, data.id, false, false);
+                        
+                        $('#searchCust').append(newOption).trigger('change');
+
+                        $('#searchCust').val(dt.cust_account_id).trigger('change');
+                        $('#searchCust').select2('data')[0]['customer_name']=dt.customer_name;
+                        $('#searchCust').select2('data')[0]['customer_number']=dt.account_number;
+
+
+                        document.getElementById('main_cust').value=dt.customer_name;
+                        document.getElementById('main_customer_number').value=dt.customer_number;
+                        document.getElementById('main_customer_id').value=dt.cust_account_id;     
+
+                        
+                        
+
+                        // var newOption = new Option(dt.customer_name, dt.cust_account_id, false, false);
+                        // $('#searchCust').append(newOption).trigger('change');
+
+                        $('#customer').append('<option value="'+dt.cust_account_id+'">'+dt.customer_name+'</option>')
+
+                        $('#customer_bill').append('<option value="'+dt.cust_account_id+'">'+dt.customer_name+'</option>')
+
+
+                        // $('#searchCust').val(dt.cust_account_id).trigger('change') 
+
+                        // $('#searchCust').select2('data')[0]['customer_name']=dt.customer_name;
+                        // $('#searchCust').select2('data')[0]['customer_number']=dt.customer_number;
+
+
+                     
+
+
+                        $('#customer').val(dt.cust_account_id);
+
+                        $('#customer_bill').val(dt.cust_account_id);
+
+                        $('#shiptocust').val(dt.customer_name)
+
+                        $('#billtocust').val(dt.customer_name)
+
+                        $('#sel_cust').html(dt.customer_name);
+
+
+                        cust_disc_perc= dt.cust_disc_perc
+
+                        actual_bal_amount= (parseFloat(dt.actual_bal_amount)).toFixed(2) 
+
+                        customer_limit= (parseFloat(dt.customer_limit)).toFixed(2) 
+
+                        $('#sel_cust').prepend(' <br>Discount Max Percentage :'+ cust_disc_perc+' <br>'); 
+
+                        $('#sel_cust').prepend('Available Limit (AED): '+ actual_bal_amount+' ');
+
+                        
+
+                       // 16: show place holder on the input fields 
+
+                        $('#avlable_stock').prepend("<marquee>This customer is selected for disacount</marquee>")
+
+                        $('#cust_disc_perc').val(cust_disc_perc)
+
+
+                        $('#discount_id').val(discount_id)
+
+
+                        
+
+                        $('#actual_bal_amount').val(actual_bal_amount);
+                        $('#customer_limit').val(customer_limit);
+
+                        //
+
+
+                        $('#searchCust').prop('disabled', true);
+                        $('#customer').prop('disabled', true);
+                        $('#customer_bill').prop('disabled', true);
+
+
+                        
+                        cust_account_id_(dt.cust_account_id)
+                       
+                        //get_tax_()
+
+                        
+
+                })
+                .catch(function (error) 
+                {
+                        alert(error);
+                })
+                .finally(function () 
+                {
+               
+                });  
+
+    }
+
+
+}
+
+var selected_customer=''
+function cust_account_id_(id)
+{
+    //alert(1)
+    axios.get("/sales/get-customer-data?caid="+id+"&defs="+localStorage.getItem('defs'))
+      .then(function(res)
+      {
+        //alert(12)
+  
+         //customer_infoo
+        
+         document.getElementById('customer_infoo').innerHTML='<div class=" row" id="customer_infoo_tbl"> <label for="name" class="col-sm-4" >Name :</label><span class="col-sm-8"  >'+res.data.hdr.customer_name+'</span></div><div class=" row"><label class="col-sm-4"  for="name"> Customer #: </label><span  class="col-sm-8"   style="color: #007bff;text-decoration: none; background-color: transparent;cursor: pointer;" onclick="customer_history('+ res.data.hdr.account_number +')" >'+ res.data.hdr.account_number +'</span></div> <div class=" row "><label class="col-sm-4"  for="name">Email :</label><span class="col-sm-8"  >'+res.data.hdr.email_id+'</span></div><div class=" row "><label for="name" class="col-sm-4"> Mobile : </label><span class="col-sm-8" >'+res.data.hdr.mob_no+'</span></div>';
+         //$('#sel_cust').html(res.data.hdr.customer_name);
+      
+      //document.getElementById('selected_cust').innerHTML='<b> Customer Name :</b> '+res.data.hdr.customer_name+'<br>';
+  
+      //document.getElementById('selected_cust_account').innerHTML='<b> Customer Number :</b>'+ res.data.hdr.account_number+'<br>';
+  
+  
+     // document.getElementById('selected_cust_email').innerHTML='<b> Customer Email :</b> '+res.data.hdr.email_id+'<br>';
+  
+     // document.getElementById('selected_cust_phone').innerHTML='<b> Customer Mobile :</b> '+res.data.hdr.mob_no;
+  
+      
+      
+  
+      //console.log(res.data)
+      selected_customer=res.data;           
+  
+    //   for (var k in formDetails.data)
+    //   {
+    //   if (formDetails.data[k] == null)
+    //   {
+    //          formDetails.data[k] = '-';
+    //   }
+    //   }
+  
+          //http://lp00735/cust/get-customer-data?caid=3579
+      $("#available_customer_address_div").removeClass('d-none');    
+      var out='';
+      for(var i=0;i<res.data.lines_data.data.length;i++)
+      {
+             // out+='<option value="'+res.data.lines_data.data[i][2]+'">'+res.data.lines_data.data[i][2]+'</option>';
+  
+             // alert(res.data.lines_data.data[i][9])
+  
+      if(res.data.lines_data.data[i][9]=='SHIP_TO')
+      {   
+          var $select = $('#customer');
+          $select.empty();                     
+          $select.append("<option value="+res.data.lines_data.data[0][14]+">"+res.data.lines_data.data[0][12]+"</option>"); 
+  
+  
+        //   var $select = $('#number');
+        //   $select.empty();                     
+        //   $select.append("<option value="+res.data.lines_data.data[0][11]+">"+res.data.lines_data.data[0][11]+"</option>"); 
+  
+  
+                  // document.getElementById('number').value=res.data.lines_data.data[i][11];
+  
+  
+                  //document.getElementById('customer').value=res.data.hdr_data.data[0][7];
+                //   document.getElementById('location').value=res.data.lines_data.data[i][10];
+  
+                //   document.getElementById('address').value=res.data.lines_data.data[i][2];
+                //   document.getElementById('address_2').value=res.data.lines_data.data[i][3];
+                //   document.getElementById('address_3').value=res.data.lines_data.data[i][4];
+  
+                //   document.getElementById('area').value=res.data.lines_data.data[i][6];
+                //   document.getElementById('country').value=res.data.lines_data.data[i][8];
+                //   document.getElementById('contact').value=res.data.lines_data.data[i][13];
+                 // alert(3333)
+                 // alert(2)
+                //   console.log(res.data.lines_data.data[i])
+
+                
+               // document.getElementById('ship_to_customer_infoo').innerHTML='<div class=" row" id="customer_infoo_tbl"> <label for="name" class="col-sm-4" >Name :</label><span class="col-sm-8"  >'+res.data.hdr.customer_name+'</span></div><div class=" row"><label class="col-sm-4"  for="name"> Customer #: </label><span  style="color: #007bff;text-decoration: none; background-color: transparent;cursor: pointer;" onclick="customer_history('+ res.data.hdr.account_number +')" >'+ res.data.hdr.account_number +'</span></div> <div class=" row "><label class="col-sm-4"  for="name">Email :</label><span>'+res.data.hdr.email_id+'</span></div><div class=" row "><label for="name" class="col-sm-4"> Mobile : </label><span>'+res.data.hdr.mob_no+'</span></div>';
+  
+                document.getElementById('ship_to_customer_infoo').innerHTML='<div class=" row" id="customer_infoo_tbl"> <label for="name" class="col-sm-4" >Name :</label><span class="col-sm-8"  >'+res.data.hdr.customer_name+'</span></div><div class=" row"><label class="col-sm-4"  for="name"> Customer #: </label><span  class="col-sm-8"   style="color: #007bff;text-decoration: none; background-color: transparent;cursor: pointer;" onclick="customer_history('+ res.data.hdr.account_number +')" >'+ res.data.hdr.account_number +'</span></div> <div class=" row "><label class="col-sm-4"  for="name">Email :</label><span class="col-sm-8"  >'+res.data.hdr.email_id+'</span></div><div class=" row "><label for="name" class="col-sm-4"> Mobile : </label><span class="col-sm-8" >'+res.data.hdr.mob_no+'</span></div>';
+  
+                $('#shiptocust').val(res.data.hdr.customer_name)
+               
+                
+               }
+  
+               if(res.data.lines_data.data[i][9]=='BILL_TO')
+              {
+                  
+                  //alert(1)
+                 // console.log(res.data.lines_data.data[i])
+                 // alert(res.data.lines_data.data[i][12])
+  
+                  var $select = $('#customer_bill');
+                  $select.html('');                     
+                  $select.append("<option value="+res.data.lines_data.data[i][14]+">"+res.data.lines_data.data[i][12]+"</option>"); 
+  
+  
+                //    var $select_1 = $('#number_bill');
+                //    $select_1.empty();                     
+                //    $select_1.append("<option value="+res.data.lines_data.data[i][11]+">"+res.data.lines_data.data[i][11]+"</option>"); 
+                  
+  
+                 // document.getElementById('customer_bill').value=res.data.hdr_data.data[0][7] || '';
+                //   document.getElementById('location_bill').value=res.data.lines_data.data[i][10] || '';                   
+                //   document.getElementById('address_bill').value=res.data.lines_data.data[i][2] || '';                                     
+                  //document.getElementById('address_2_bill').value=res.data.lines_data.data[i][3] || '';                   
+                  //document.getElementById('address_3_bill').value=res.data.lines_data.data[i][4] || '';                   
+                //   document.getElementById('area_bill').value=res.data.lines_data.data[i][6] || '';
+                 
+                 /// document.getElementById('country_bill').value=res.data.lines_data.data[i][8] || '';
+                //   document.getElementById('contact_bill').value=res.data.lines_data.data[i][13] || '';
+                  
+                document.getElementById('bill_to_customer_infoo').innerHTML='<div class=" row" id="customer_infoo_tbl"> <label for="name" class="col-sm-4" >Name :</label><span class="col-sm-8"  >'+res.data.hdr.customer_name+'</span></div><div class=" row"><label class="col-sm-4"  for="name"> Customer #: </label><span  class="col-sm-8"   style="color: #007bff;text-decoration: none; background-color: transparent;cursor: pointer;" onclick="customer_history('+ res.data.hdr.account_number +')" >'+ res.data.hdr.account_number +'</span></div> <div class=" row "><label class="col-sm-4"  for="name">Email :</label><span class="col-sm-8"  >'+res.data.hdr.email_id+'</span></div><div class=" row "><label for="name" class="col-sm-4"> Mobile : </label><span class="col-sm-8" >'+res.data.hdr.mob_no+'</span></div>';
+  
+                $('#billtocust').val(res.data.hdr.customer_name)
+  
+               }
+  
+  
+  
+              
+              // alert(123)
+  
+  
+          }
+  
+         // document.getElementById('available_customer_address').innerHTML=out;
+         // $('#available_customer_address').select2(); 
+          //
+         // alert(res.data.lines_data.data.length)
+         // available_customer_address
+       
+         
+      })
+      .catch(function(){
+          //$('#viewCust').unblock();
+         // $('#v-form-detail').hide();
+  
+      })
+
+
+}
+</script>
+
+
+
+<script>
+
+function draft_addRow(tableID) {
+            //alert(tableID)
+			var table_cash = document.getElementById(tableID);
+			var rowCount = table_cash.rows.length;			
+			var row = table_cash.insertRow(rowCount);
+			var colCount = table_cash.rows[0].cells.length;
+			for(var i=0; i<colCount; i++) 
+            {	
+               // alert(rowCount)		
+
+                //alert(table_cash.rows[i+1].cells[1].childNodes[0].value)
+
+			// if(rowCount >= 3) 
+			// {
+			// 	table_cash.deleteRow(rowCount);
+			// 	alert("Cannot add the rows more then 2.");
+			// 	break;					
+			// }
+
+			//onkeyup="this.value = minmax(this.value,0, 1000000)"
+				var newcell	= row.insertCell(i);
+				newcell.innerHTML = table_cash.rows[1].cells[i].innerHTML;
+				//alert(newcell.childNodes[0].type);
+				switch(newcell.childNodes[0].type) {
+					case "text":
+							newcell.childNodes[0].value = "";
+							newcell.childNodes[0].id="text"+rowCount;	
+							newcell.childNodes[0].disabled=false;							
+							break;
+					case "checkbox":
+							newcell.childNodes[0].checked = false;
+							break;
+					case "select-one":
+							newcell.childNodes[0].selectedIndex =0;
+						    newcell.childNodes[0].id='select'+i;	
+							break;
+					case "number":
+							newcell.childNodes[0].value = "";
+							newcell.childNodes[0].id="number"+rowCount;	
+                            newcell.childNodes[0].class="sun_rec";	
+							//newcell.childNodes[0].onkeyup = "this.value = minmax(this.value,0, 1000000)";
+							break;
+				}
+			}
+            draft_line_type_change();
+            
+		}
+
+
+		
+		function draft_selectval(id)
+		{
+		    		   
+		    var sel=document.getElementById(id);
+			var opt = sel.options[sel.selectedIndex];			 
+					   
+		   //alert(opt.text);
+		   if(opt.text=="CASH")
+		   {
+		   document.getElementById("text"+id).disabled = true;
+		   }
+		   else
+		   {
+		   document.getElementById("text"+id).disabled = false;
+		   } 
+		   
+		   
+		   
+		
+		}
+		
+		function draft_deleteRow(tableID) {
+			try {
+			var table_cash = document.getElementById(tableID);
+			var rowCount = table_cash.rows.length;
+			for(var i=0; i<rowCount; i++) {
+				var row = table_cash.rows[i];
+				var chkbox = row.cells[0].childNodes[0];
+				if(null != chkbox && true == chkbox.checked) {
+					if(rowCount <= 1) 
+					{
+						alert("Cannot delete all the rows.");
+						break;
+					}
+					table_cash.deleteRow(i);
+					rowCount--;
+					i--;
+				}
+
+
+			}
+			}catch(e) 
+			{
+				
+                alert(e);
+			}
+            draft_line_type_change()
+		}
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+		function addRow(tableID) {
+			var table = document.getElementById(tableID);
+			var rowCount = table.rows.length;			
+			var row = table.insertRow(rowCount);
+            var colCount = table.rows[0].cells.length;
+            var count=0;
+            for(var i=0; i<colCount; i++) 
+            {			
+
+			// if(rowCount >= 2) 
+			// {
+			// 	table.deleteRow(rowCount);
+			// 	alert("Cannot add the rows more then 2.");
+			// 	break;					
+			// }
+			//onkeyup="this.value = minmax(this.value,0, 1000000)"
+                var newcell	= row.insertCell(i);
+                count++
+               
+                if(i==0)
+                {
+                   
+                    newcell.innerHTML =rowCount;
+                }
+                else if(i==6)
+                {
+                    
+                    newcell.innerHTML ='<a class="btn btn-xs delete-record"  v-bind:did="index+row.line_id"   onclick="deleteRow(this)">Delete</a>'
+                }
+                else
+                {
+                    
+                    newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+                }
+				
+				//alert(newcell.childNodes[0].type);
+				// switch(newcell.childNodes[0].type) {
+				// 	// case "text":
+				// 	// 		newcell.childNodes[0].value = "";
+				// 	// 		newcell.childNodes[0].id="text"+rowCount;	
+				// 	// 		newcell.childNodes[0].disabled=false;							
+				// 	// 		break;					
+				// 	// case "select-one":
+				// 	// 		newcell.childNodes[0].selectedIndex = 1;
+				// 	// 	    newcell.childNodes[0].id=rowCount;	
+				// 	// 		break;
+				// 	// case "number":
+				// 	// 		newcell.childNodes[0].value = "";
+				// 	// 		newcell.childNodes[0].id="number"+rowCount;	
+				// 			//newcell.childNodes[0].onkeyup = "this.value = minmax(this.value,0, 1000000)";
+				// 			break;
+				// }
+			}
+		}
+
+
+		
+		function selectval(id)
+		{
+		    		   
+		    var sel=document.getElementById(id);
+			var opt = sel.options[sel.selectedIndex];			 
+					   
+		   //alert(opt.text);
+		   if(opt.text=="CASH")
+		   {
+		   document.getElementById("text"+id).disabled = true;
+		   }
+		   else
+		   {
+		   document.getElementById("text"+id).disabled = false;
+		   } 
+		   
+		   
+		   
+		
+		}
+		
+		function deleteRow(thizz) {
+            // try 
+            // {
+
+           
+            line_to_removed=$(thizz).attr("did");
+
+            $(thizz).closest('tr').remove();
+           // $('#'+line_to_removed).remove();
+
+			// var table = document.getElementById('pdi_line_act');
+			// var rowCount = table.rows.length;
+            // for(var i=0; i<rowCount; i++) 
+            // {
+			// 	var row = table.rows[i];
+			// 	var chkbox = row.cells[0].childNodes[0];
+			// 	if(null != chkbox && true == chkbox.checked) {
+			// 		if(rowCount <= 1) 
+			// 		{
+			// 			alert("Cannot delete all the rows.");
+			// 			break;
+			// 		}
+			// 		table.deleteRow(i);
+			// 		rowCount--;
+			// 		i--;
+			// 	}
+
+
+			// }
+			// }catch(e) 
+			// {
+		 	// alert(e);
+			// }
+            }
+            
+shoppingCart.clearCart();           
+      
+      
+      
+ 
+
+$(document).on('click','.add-to-cart',function(event) {
+    
+    event.preventDefault();
+    var dtApi = $(this).closest('table').DataTable();
+    var rowData = $(this).closest('table').DataTable().row($(this).closest('tr')).data();
+    console.log(rowData);
+    var obj = {};
+    Object.keys(rowData).forEach(function(key)
+    {
+        obj[key] = rowData[key];
+    });
+    /*
+    Validatinig selected item's age
+    */
+    obj['current_org'] = JSON.parse(localStorage.getItem('defs')).organization_code;
+
+    // obj['code'] = rowData.inventory_item_id + rowData.color.trim() + rowData.model_year.trim();
+    rowData['serial_number'] = rowData['barcode'] + rowData['item_code'] + rowData['organization_code'];
+    rowData['serial_number'] = rowData.organization_id;
+    obj['name'] = rowData.inventory_item_id + rowData.organization_id;
+    obj['name'] = obj['name'].trim();
+    // $('#'+obj['name']).hide();
+    obj['item_code'] = rowData.item_code;
+    obj['organization_code'] = rowData.organization_code;
+    obj['org_id'] = rowData.org_id;
+    obj['organization_id'] = rowData.organization_id;
+    obj['from_org_name'] = rowData.organization_name;
+    // obj['serial_number'] = rowData.barcode+rowData.item_code+rowData.organization_code;
+    obj['inventory_item_id'] = rowData.inventory_item_id;
+    obj['onhand_qty'] = rowData.reservable_qty;
+    obj['vin_price'] = rowData.vin_price;
+    obj['item_type'] = rowData.item_type;
+    obj['comment'] = "";
+    obj['required_date'] = moment().add(0.5,'hours').format("DD-MMM-YYYY hh:mm:ss a").toUpperCase();
+
+    // moment().format("DD-MMM-YYYY HH:mm:ss a").toUpperCase()
+    var price = Number(0);
+
+
+    flyToCart($(this).closest('tr')[0]);
+    invTransfersCart.addItemToCart_invTransfersCart(obj, price, 1);
+    dtApi.draw(false);
+//   if(rowData.stock_status=='Available'){
+
+//   } else {
+//     alert('Stock status is not available');
+//   }
+
+
+  inv_trnfdisplayCart();
+});
+
+
+function inv_trnfdisplayCart() {
+  var cartArray = invTransfersCart.listCart();
+//   stepsCompnent.tab1.count = invTransfersCart.totalCount();
+  $('.inv_transfer_qty_selected').html(invTransfersCart.totalCount());
+
+  if (cartArray.length == 0){
+    $('.show-cart').empty();
+    $('.cart-tot').remove();
+    $('.cart-zero').remove();
+    $('.show-cart').after('<h4 class="cart-zero">Cart is empty.</h4>');
+    $('.inv_transfer_qty_selected').html(invTransfersCart.totalCount());
+    return;
+  }
+
+}
+      
+invTransfersCart.clearCart();
+
+
+
+
+$( document ).ready(function() 
+{  
+   // console.log("ready!");   
+
+   setTimeout(() => {$('.mb-4').click()  }, 2000);
+
+});
+
+      
+</script>
+{% endblock %}

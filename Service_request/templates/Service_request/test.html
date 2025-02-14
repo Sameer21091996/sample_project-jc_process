@@ -1,0 +1,780 @@
+{% extends 'base.html' %} {% load static %} {% load humanize %}
+{% block content_app %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Count Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        .container-fluid {
+            padding-top: 10px;
+        }
+
+        .stock-table th {
+            background-color: #323d89;
+            color: white;
+            /* padding: 10px 20px; */
+            font-weight: bold;
+            border-right: 1px solid #ffffff30;
+            white-space: nowrap;
+        }
+
+        .color-button {
+            background-color: #323d89;
+        }
+
+        .table th {
+            padding: 0.3rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .table td {
+            padding: 0.0rem;
+            padding-left: 0.4rem;
+            vertical-align: middle;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stock-table td {
+            border-right: 1px solid #eee;
+        }
+
+        .stock-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .sort-controls {
+            display: flex;
+            flex-direction: column;
+            margin-left: 8px;
+        }
+
+        .sort-icon {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            line-height: 8px;
+        }
+
+        .sort-icon.active {
+            color: white;
+        }
+
+        .search-row input {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .search-row td {
+            background: #f8f9fa;
+            padding: 2px;
+        }
+
+        .scrollable-container {
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            position: relative;
+        }
+
+        .pagination-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .status-btn {
+            padding: 5px;
+            border: 1px solid black;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+
+        .status-btn.active {
+            background-color: #323d89;
+            color: white;
+        }
+
+        .view-button {
+            background-color: #323d89;
+            color: white;
+            padding: 2px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            background: #f8f9fa;
+        }
+
+        .count-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+
+        /* Hide scrollbar for Chrome/Safari/Opera */
+        .stock-table td:nth-child(6)::-webkit-scrollbar,
+        .stock-table td:nth-child(8)::-webkit-scrollbar {
+            display: none;
+        }
+
+        .page-link {
+            position: relative;
+            display: block;
+            padding: .5rem .75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: #323d89;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+        }
+
+        .input-group input {
+            width: 10px !important;
+            ;
+        }
+
+        .btn-secondary {
+            color: #fff;
+            background-color: #323d89;
+            border-color: #323d89;
+            box-shadow: none;
+        }
+
+        /* Add these styles to your existing <style> section */
+        /* .button-controls {
+            display: flex;
+            
+            align-items: center;
+        } */
+
+        .left-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn-group .btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-group input[type="radio"] {
+            margin: 0;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .right-buttons .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Radio button styling */
+        .radio-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-btn input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-circle {
+            position: relative;
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+        }
+
+        .radio-btn input[type="radio"]:checked+.radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+
+        .radio-btn label {
+            margin: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+
+<body>
+    <template id="sortIcons">
+        <div class="sort-controls">
+            <i class="fas fa-sort-up sort-icon"></i>
+            <i class="fas fa-sort-down sort-icon"></i>
+        </div>
+    </template>
+    <div class="container-fluid">
+
+        <!-- Add this button inside the header-controls div in jobSummary.html -->
+        <div class="header-controls">
+            <h1 style="font-size: 20px;">Job Card Summary</h1>
+            <a href="{% url 'Service_request:jobCard' %}" class="btn btn-secondary">
+                Job Card
+            </a>
+        </div>
+
+
+        <div class="status-filters mb-3">
+            <button class="status-btn active" data-status="all">All<span class="count-badge"
+                    id="count-all">0</span></button>
+            <button class="status-btn" data-status="draft">WIP<span class="count-badge"
+                    id="count-draft">0</span></button>
+            <button class="status-btn" data-status="in-progress">RCS<span class="count-badge"
+                    id="count-progress">0</span></button>
+            <button class="status-btn" data-status="completed">Open<span class="count-badge"
+                    id="count-completed">0</span></button>
+            <button class="status-btn" data-status="completed">LHP<span class="count-badge"
+                    id="count-completed">0</span></button>
+            <button class="status-btn" data-status="completed">WFP<span class="count-badge"
+                    id="count-completed">0</span></button>
+        </div>
+        <!-- Add this after the status-filters div and before the date-filter div -->
+        <!-- Replace the existing button-controls div with this updated version -->
+        <div class="button-controls mb-3">
+            <div class="left-buttons">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-secondary radio-btn"
+                        style="margin-right: 5px; border-radius: 3px;">
+                        <input type="radio" name="view" id="showAll" checked>
+                        <span class="radio-circle"></span>
+                        <label for="showAll">Show All</label>
+                    </button>
+                    <button type="button" class="btn btn-secondary radio-btn" style="border-radius: 3px;">
+                        <input type="radio" name="view" id="showMine">
+                        <span class="radio-circle"></span>
+                        <label for="showMine">Show Mine</label>
+                    </button>
+                </div>
+
+                <div class="right-buttons">
+                    <button class="btn btn-danger">
+                        <i class="fas fa-times-circle"></i> Closed/Cancelled
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="date-filter mb-3">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="input-group">
+                        <input type="text" id="dateRangePicker" class="form-control search-input"
+                            placeholder="Select date range...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary" id="clearDateRange">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-secondary export-btn ms-2">
+            <i class="fas fa-file-excel"></i> Export Excel
+        </button>
+
+        <div class="scrollable-container">
+            <table class="table stock-table">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-field="action">Action</th>
+                        <th class="sortable" data-field="incident_number">Incident Number</th>
+                        <th class="sortable" data-field="created_at">Incident Date</th>
+                        <th class="sortable" data-field="incident_type">Incident Type</th>
+                        <th class="sortable" data-field="incident_status">Incident Status</th>
+                        <th class="sortable" data-field="item">Item</th>
+                        <th class="sortable" data-field="description">Item Descr</th>
+                        <th class="sortable" data-field="vin">Vin</th>
+                        <th class="sortable" data-field="category">Category</th>
+                        <th class="sortable" data-field="account_number">Account Number</th>
+                        <th class="sortable" data-field="customer_name">Customer Name</th>
+                    </tr>
+
+
+                    <tr class="search-row">
+                        <td><input type="text" class="column-search" data-field="action" placeholder=""></td>
+                        <td><input type="text" class="column-search" data-field="incident_number" placeholder="Search">
+                        </td>
+                        <td><input type="date" class="column-search" data-field="created_at" placeholder="Search"></td>
+                        <td><input type="text" class="column-search" data-field="incident_type" placeholder="Search">
+                        </td>
+                        <td><input type="text" class="column-search" data-field="incident_status" placeholder="Search">
+                        </td>
+                        <td><input type="text" class="column-search" data-field="item" placeholder="Search"></td>
+                        <td><input type="text" class="column-search" data-field="description" placeholder="Search"></td>
+                        <td><input type="text" class="column-search" data-field="vin" placeholder="Search"></td>
+                        <td><input type="text" class="column-search" data-field="category" placeholder="Search"></td>
+                        <td><input type="text" class="column-search" data-field="account_number" placeholder="Search">
+                        </td>
+                        <td><input type="text" class="column-search" data-field="customer_name" placeholder="Search">
+                        </td>
+                    </tr>
+
+                </thead>
+                <tbody id="dataTable">
+                    <!-- Data rows will be populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-container">
+            <div class="pagination-info">
+                Showing <span id="showingStart">0</span> to <span id="showingEnd">0</span> of <span
+                    id="totalEntries">0</span> entries
+            </div>
+            <nav>
+                <ul class="pagination mb-0">
+                    <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
+                    <li class="page-item">
+                        <select id="pageSize" class="form-control">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </li>
+                    <li class="page-item"><span class="page-link" id="pageInfo">Page 1 of 1</span></li>
+                    <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        function initializeSummary() {
+            fetchData();
+            setupEventListeners();
+        }
+        let currentData = [];
+        let filteredData = [];
+        let itemsPerPage = 10;
+        let currentPage = 1;
+
+        function initializeSummary() {
+            fetchData(false); // Default to show all
+            setupEventListeners();
+            setupRadioButtons(); // Add this line
+        }
+
+
+
+        async function fetchData(showMineOnly = false) {
+            try {
+                const url = showMineOnly ?
+                    '/api/servicerequest/service-requests/?show_mine=true' :
+                    '/api/servicerequest/service-requests/';
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    credentials: 'same-origin'
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('API Response:', data);
+                        currentData = data.map(item => ({
+                            action: '',
+                            incident_number: item.incident_number || '',
+                            created_at: formatDate(item.created_at),
+                            incident_type: item.incident_type || '',
+                            incident_status: item.incident_status || '',
+                            item: item.item || '',
+                            description: item.description || '',
+                            vin: item.vin || '',
+                            category: item.category || '',
+                            account_number: item.account_number || '',
+                            customer_name: item.customer_name || ''
+                        }));
+
+                        filteredData = [...currentData];
+                        updateTable();
+                        updatePagination();
+                        updateStatusCounts();
+                    });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load service request data'
+                });
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
+        function updateTable() {
+            const tableBody = document.getElementById('dataTable');
+            tableBody.innerHTML = '';
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedData = filteredData.slice(start, end);
+
+            if (paginatedData.length === 0) {
+                tableBody.innerHTML = `
+            <tr>
+                <td colspan="11" class="no-results">No records found</td>
+            </tr>
+        `;
+                return;
+            }
+
+            paginatedData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+            <td><button class="view-button" onclick="viewServiceRequest('${row.incident_number}')">View</button></td>
+            <td>${row.incident_number}</td>
+            <td>${row.created_at}</td>
+            <td>${row.incident_type}</td>
+            <td>${row.incident_status}</td>
+            <td>${row.item}</td>
+            <td>${row.description}</td>
+            <td>${row.vin}</td>
+            <td>${row.category}</td>
+            <td>${row.account_number}</td>
+            <td>${row.customer_name}</td>
+        `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateStatusCounts() {
+            const counts = {
+                all: filteredData.length,
+                wip: filteredData.filter(item => item.incident_status === 'WIP').length,
+                rcs: filteredData.filter(item => item.incident_status === 'RCS').length,
+                open: filteredData.filter(item => item.incident_status === 'Open').length,
+                lhp: filteredData.filter(item => item.incident_status === 'LHP').length,
+                wfp: filteredData.filter(item => item.incident_status === 'WFP').length
+            };
+
+            Object.keys(counts).forEach(status => {
+                const element = document.getElementById(`count-${status}`);
+                if (element) {
+                    element.textContent = counts[status];
+                }
+            });
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const start = filteredData.length ? (currentPage - 1) * itemsPerPage + 1 : 0;
+            const end = Math.min(start + itemsPerPage - 1, filteredData.length);
+
+            document.getElementById('showingStart').textContent = start;
+            document.getElementById('showingEnd').textContent = end;
+            document.getElementById('totalEntries').textContent = filteredData.length;
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+
+            document.getElementById('prevPage').classList.toggle('disabled', currentPage <= 1);
+            document.getElementById('nextPage').classList.toggle('disabled', currentPage >= totalPages);
+        }
+
+        function setupEventListeners() {
+            const dateRangePicker = flatpickr("#dateRangePicker", {
+                mode: "range",
+                dateFormat: "d-M-Y",
+                altFormat: "d-M-Y",
+                altInput: true,
+                onChange: function (selectedDates) {
+                    if (selectedDates.length === 2) {
+                        const startDate = selectedDates[0];
+                        const endDate = selectedDates[1];
+                        endDate.setHours(23, 59, 59, 999);
+
+                        filteredData = currentData.filter(item => {
+                            const itemDate = new Date(item.created_at);
+                            return itemDate >= startDate && itemDate <= endDate;
+                        });
+
+                        currentPage = 1;
+                        updateTable();
+                        updatePagination();
+                        updateStatusCounts();
+
+                    }
+                }
+            });
+
+
+
+            // Add this to your setupEventListeners function
+            document.querySelectorAll('.column-search').forEach(input => {
+                input.addEventListener('input', function () {
+                    const searchField = this.dataset.field;
+                    const searchValue = this.value.toLowerCase();
+
+                    filteredData = currentData.filter(item => {
+                        if (!item[searchField]) return false;
+
+                        // Special handling for date field
+                        if (searchField === 'created_at' && this.type === 'date') {
+                            const itemDate = item[searchField].split('-').reverse().join('-'); // Convert DD-MMM-YYYY to YYYY-MMM-DD
+                            return itemDate.includes(searchValue);
+                        }
+
+                        return item[searchField].toString().toLowerCase().includes(searchValue);
+                    });
+
+                    currentPage = 1;
+                    updateTable();
+                    updatePagination();
+                    updateStatusCounts();
+                });
+            });
+
+
+            document.getElementById('clearDateRange').addEventListener('click', () => {
+                dateRangePicker.clear();
+                filteredData = [...currentData];
+                currentPage = 1;
+                updateTable();
+                updatePagination();
+                updateStatusCounts();
+            });
+
+            document.querySelectorAll('.status-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const status = button.dataset.status;
+
+                    filteredData = status === 'all'
+                        ? [...currentData]
+                        : currentData.filter(item => item.incident_status.toLowerCase() === status);
+
+                    currentPage = 1;
+                    updateTable();
+                    updatePagination();
+                    updateStatusCounts();
+                });
+            });
+
+            document.getElementById('prevPage').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
+                    updatePagination();
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', (e) => {
+                e.preventDefault();
+                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                    updatePagination();
+                }
+            });
+
+            document.getElementById('pageSize').addEventListener('change', (e) => {
+                itemsPerPage = parseInt(e.target.value);
+                currentPage = 1;
+                updateTable();
+                updatePagination();
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function viewServiceRequest(incidentNumber) {
+            window.location.href = `/Service_request/jobCard/?incident=${incidentNumber}`;
+        }
+
+
+        function setupRadioButtons() {
+            const showAllRadio = document.getElementById('showAll');
+            const showMineRadio = document.getElementById('showMine');
+            const radioButtons = document.querySelectorAll('.radio-btn input[type="radio"]');
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (this.id === 'showAll') {
+                        fetchData(false);
+                    } else if (this.id === 'showMine') {
+                        fetchData(true);
+                    }
+                });
+            });
+
+            // Remove the onclick="return false" and handle the click events properly
+            showAllRadio.removeAttribute('onclick');
+            showMineRadio.removeAttribute('onclick');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSummary();
+            new TableSorter();
+        });
+
+
+
+        class TableSorter {
+            constructor() {
+                this.initializeSorting();
+            }
+
+            initializeSorting() {
+                const headers = document.querySelectorAll('th.sortable');
+                headers.forEach(header => {
+                    // Add sort icons
+                    const headerContent = document.createElement('div');
+                    headerContent.className = 'header-content';
+                    headerContent.innerHTML = `
+                <span>${header.textContent}</span>
+                <div class="sort-controls">
+                    <i class="fas fa-sort-up sort-icon"></i>
+                    <i class="fas fa-sort-down sort-icon"></i>
+                </div>
+            `;
+                    header.textContent = '';
+                    header.appendChild(headerContent);
+
+                    // Add click handler
+                    header.addEventListener('click', () => this.handleSort(header));
+                });
+            }
+
+            handleSort(header) {
+                const field = header.dataset.field;
+                const currentDirection = header.getAttribute('data-sort') === 'asc' ? 'desc' : 'asc';
+                header.setAttribute('data-sort', currentDirection);
+
+                // Update icons
+                document.querySelectorAll('th.sortable').forEach(h => {
+                    h.classList.remove('asc', 'desc');
+                });
+                header.classList.add(currentDirection);
+
+                // Sort data
+                filteredData.sort((a, b) => {
+                    let valueA = a[field]?.toString().toLowerCase() || '';
+                    let valueB = b[field]?.toString().toLowerCase() || '';
+
+                    if (field === 'created_at') {
+                        valueA = new Date(valueA.split('-').reverse().join('-'));
+                        valueB = new Date(valueB.split('-').reverse().join('-'));
+                    }
+
+                    return currentDirection === 'asc'
+                        ? valueA > valueB ? 1 : -1
+                        : valueA < valueB ? 1 : -1;
+                });
+
+                updateTable();
+            }
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>
+{% endblock %}

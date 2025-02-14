@@ -1,0 +1,155 @@
+<template id="menu_div">
+   <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+       <li class="nav-item">
+           <a href="/leads" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Leads</p>
+           </a>
+       </li>
+       <li class="nav-item">
+           <a href="/quotation" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Quotation</p>
+           </a>
+       </li>
+       <li class="nav-item">
+           <a href="/customer" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Customer</p>
+           </a>
+       </li>
+       <li class="nav-item">
+           <a href="/contact" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Contact</p>
+           </a>
+       </li>
+       <li class="nav-item">
+           <a href="/product" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Product</p>
+           </a>
+       </li>
+       <li class="nav-item">
+           <a href="#" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Setup</p>
+           </a>
+           <ul>
+               <li class="nav-item">
+                  <a  class="nav-link" href="{% url 'product:manufactures' %}">
+                     <i class="nav-icon ion ion-person-add"></i>
+                     <p>
+                        Manufactures
+                     </p>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a  class="nav-link" href='{% url 'product:categories' %}';">
+                     <i class="nav-icon ion ion-person-add"></i>
+                     <p>
+                        Categories
+                     </p>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a  class="nav-link" href='{% url 'product:prices' %}';">
+                     <i class="nav-icon ion ion-person-add"></i>
+                     <p>
+                        Prices
+                     </p>
+                  </a>
+               </li>
+               <li class="nav-item">
+                   <a class="nav-link" href="{% url 'product:importitem' %}';">
+                      <i class="nav-icon ion ion-person-add"></i>
+                      <p>
+                         Upload
+                      </p>
+                   </a>
+                </li>
+                <li class="nav-item">
+                  <a  class="nav-link" href='{% url 'setup:template' %}';">
+                     <i class="nav-icon ion ion-person-add"></i>
+                     <p>
+                        Template
+                     </p>
+                  </a>
+               </li>
+           </ul>    
+       </li>
+       <li class="nav-item">
+           <a href="/invoice" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Invoice</p>
+           </a>
+       </li>
+       <li class="nav-item">
+           <a href="#" class="nav-link">
+               <i class="nav-icon ion ion-person-add"></i>
+               <p>Accounts</p>
+           </a>
+           <ul>
+               <li class="nav-item">
+                   <a  class="nav-link" href="{% url 'accounts:user_inventory' %}">
+                      <i class="nav-icon ion ion-person-add"></i>
+                      <p>
+                         User Organization & Roles
+                      </p>
+                   </a>
+                </li>
+               <li class="nav-item">
+                   <a  class="nav-link" href="{% url 'accounts:roles' %}">
+                      <i class="nav-icon ion ion-person-add"></i>
+                      <p>
+                         Roles
+                      </p>
+                   </a>
+                </li>
+               <li class="nav-item">
+                  <a  class="nav-link" href="{% url 'accounts:role_permissions' %}">
+                     <i class="nav-icon ion ion-person-add"></i>
+                     <p>
+                        Role Permissions
+                     </p>
+                  </a>
+               </li>
+               
+           </ul>    
+       </li>
+   </ul>
+</template>
+
+<script type="application/javascript">
+
+   Vue.component('sidebarmenucomp', {
+       template: '#menu_div',
+       delimiters:['[[',']]'],
+       props: [],
+       data : function () {
+                   return { 
+                       dynamic_menus: {}                            
+                       }
+       },
+       methods:{
+           view_sidebar(row_id) {
+               $('.row-view').ControlSidebar('show');
+           },
+           closeCtrlSidebar(elm){
+              $('.row-view').ControlSidebar('collapse');
+           }
+       },
+       mounted(){
+            var url = 'test'
+            axios.get(url)
+                     .then(response => {
+                        menus = response.data.data;
+                        this.dynamic_menus = menus
+                     })
+                     .catch(e => {
+                        console.log(e)
+                     });
+            }
+   })
+
+</script>

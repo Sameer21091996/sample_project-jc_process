@@ -1,0 +1,44 @@
+<div class="card card-default">
+  <div class="card-body">
+      <ul class="nav nav-pills mb-2">
+        <li class="nav-item">
+          <a
+            href="#po-sales-history-by-org"
+            data-toggle="tab"
+            class="nav-link active"
+            >By Org</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            href="#srv-sales-history-by-year"
+            data-toggle="tab"
+            class="nav-link"
+            >By year</a
+          >
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div
+          class="table-responsive tab-pane active"
+          id="po-sales-history-by-org"
+          style="max-height: 800px"
+        >
+          <table
+            id="product-sales-history-t1-table"
+            class="table table-bordered container text-nowrap table-sm table-head-fixed"
+          ></table>
+        </div>
+        <div
+          id="srv-sales-history-by-year"
+          class="tab-pane table-responsive"
+          style="max-height: 800px"
+        >
+          <table
+            id="product-sales-history-t2-table"
+            class="table table-bordered w-100 container text-nowrap table-sm table-head-fixed"
+          ></table>
+        </div>
+      </div>
+  </div>
+</div>

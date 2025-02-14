@@ -1,0 +1,524 @@
+<template id="edit_view_temp">
+    <aside class="control-sidebar control-sidebar-light row-view shadow" :style="{ width: view_meta.width + '%' }">
+       <!-- Control sidebar content goes here -->
+       <div class="p-3">
+        <div class="os-content">
+            <div class="card-header">
+                <h3 class="card-title">[[view_meta.title]]</h3>
+                <div class="card-tools">
+                    <button type="button"  @click="closeCtrlSidebar(this)" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card card-primary card-outline">
+               <div class="card-body">
+                  <div class="tab-content" id="custom-tabs-three-tabContent">
+                      <div class="tab-pane fade active show" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
+                         <div class="invoice p-3 mb-3">
+                            <div class="row">
+                               <div class="col-12">
+                                <img style="vertical-align:middle" src="https://media.licdn.com/dms/image/C4D0BAQF-_7PWozukVw/company-logo_200_200/0/1651209397374?e=2147483647&v=beta&t=YVE8uy7828Cp2NQSErwwr7ljZQO9WqX8-V7DaIZw1wc">
+                                <span>AL Yousuf LLC</span>
+                                <h4 class="float-right">Date:</h4>
+                                </div>
+                        </div>
+                        <div class="row invoice-info">
+                            <div class="col-sm-6 invoice-col">
+                             <label>Select Customer : </label>
+                             <input type="text" id="customer_search_edit" name="customer-search" placeholder="Search Customer" @keyup="findCustomer($event)">
+                             <hr>
+                             <div id="showcustomeridcomp">
+                                <template id="showcustomer" v-if="customers">
+                                   <template v-for="(c,i) in customers">
+                                      <address @click="selectCustomeredit(c)" style="background-color: aliceblue;">
+                                         <b>Customer Name : </b> [[c.account_name]]<br>
+                                         <b>Customer Email : </b> [[c.email_address]]<br>
+                                         <b>Customer Phone Number : </b> [[c.mobile_number]]<br> 
+                                     </address>
+                                     <hr>
+                                 </template>
+                             </template>
+                         </div>
+                         <div id="selCust">
+                            <label>Customer Name:</label>[[selCust.account_name]]<br>
+                            <label>Customer Email:</label>[[selCust.email_address]]<br>
+                            <label>Customer Phone Number:</label> [[selCust.mobile_number]]<br> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+               <div class="col-md-3">
+                <template>
+                    <address @click="downloadCSV()">
+                        <strong class="text-info">Download CSV</strong>
+                    </address>
+                </template>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+             <form action="{% url 'quotation:uploadcsv' %}" id="form" class="form-inline">
+                {% csrf_token %}
+                <div class="form-group">
+                   <label for="name">Choose file:</label>
+                   <input type="file" class="form-control" name="file" id="name">
+                   <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+               </div>
+               &nbsp;   
+               <div class="form-group">
+                   <button type="submit" class="btn btn-primary">Validate <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
+               </div>
+
+           </form>
+       </div>
+   </div>
+   <br/>
+   <div class="row">
+      <div class="col-12 table-responsive">
+         <table class="table table-striped table-sm">
+            <thead>
+               <tr>
+                  <th>Item</th>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody>
+            <template v-if="itemdata">
+               <template v-for="(value,i) in itemdata">
+                  <tr>
+                   <td contenteditable class="name" @input="" :data-key="[[i]]" :id="[[i]]" >[[ value.name ]] </td>
+                   <td contenteditable class="description" @input="updateItem" :data-key="[[i]]" >[[ value.isCustom != true ?value.description :'']]  </td>
+                   <td contenteditable class="quantity" @input="updateItem" :data-key="[[i]]">[[ value.isCustom != true ?value.quantity :'']]  </td>
+                   <td contenteditable class="price" @input="updateItem" :data-key="[[i]]">[[ value.isCustom != true ?parseFloat(value.price).toFixed(2) :'']]  </td>
+                   <td contenteditable>[[ (parseFloat(value.quantity)*parseFloat(value.price)).toFixed(2) ]] </td>
+                   <td><button type="button" class="btn btn-sm btn-danger" @click="deleteItem(i)">x</button></td>
+               </tr>
+           </template>
+       </template>
+
+   </tbody>
+</table>
+<div class="col-md-2" style="padding:0px">
+ <form class="searchForm" v-on:submit.prevent="findCustomer($event)">
+  <input type="text" id="item_search_edit" class="form-control" name="item-search" placeholder="Search items" @input="findItems($event)" style="width: 85%;">
+</form>
+</div>
+<hr>
+<div id="showitemidedit">
+   <template id="showitem" v-if="items">
+      <template v-for="(c,i) in items">
+         <address @click="selectItem(c)" style="background-color: aliceblue;">
+            <b>Name : </b> [[c.name]]<br>
+            <b>Description: </b> [[c.description]]<br>
+            <b>Price : </b> [[c.price]]<br>
+            <!-- <b>Quantity : [[c.quantity]]</b> -->
+        </address>
+        <hr>
+    </template>
+</template>
+</div>
+</div>
+</div>
+<div class="row">
+  <div class="col-6">
+  </div>
+  <div class="col-6">
+     <div class="table-responsive">
+        <table class="table">
+           <tbody>
+              <tr>
+                 <th style="width:50%">Subtotal:</th>
+                 <td>[[  getInvoiceTotal()   ]]</td>
+             </tr>
+             <tr>
+              <th>Total:</th>
+              <td>[[  getInvoiceTotal()   ]] </td>
+          </tr>
+      </tbody>
+  </table>
+</div>
+</div>
+</div>
+<div>
+   <div class="col-12">
+      <h6>Term & Conditions</h6>
+      <textarea id="terms_conditions_edit"  name="terms_conditions" rows="4" cols="50">[[terms_conditions]]</textarea>
+  </div>
+  <div class="col-12">
+      <h6>Description</h6>
+      <textarea id="description_edit"  name="description" rows="4" cols="50">[[description]]</textarea>
+  </div>
+</div>
+<div class="row no-print">
+   <div class="col-12">
+      <button type="button" class="btn btn-success float-right editQuotationBtn" @click="editQuotation()" >Edit quotation
+      </button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Content of the sidebar goes here -->
+</div>
+</aside>
+<!-- /.control-sidebar -->
+</template>
+
+<script>
+
+    var formComp = Vue.component('quotationeditviewcomp', {
+        template    : '#edit_view_temp',
+        delimiters  : ['[[',']]'],
+        props       : ['view_meta'],
+        data() {
+            return {
+                custom_data:[],
+                itemdata:[],
+                customers:[],
+                o_customers:[],
+                selCust: [],
+                items: [],
+                terms_conditions:[],
+                description:[],
+                id:"",
+                o_items: []
+            }
+        },
+        mounted(){
+            EventBus.$on('view_sidebar', this.view_sidebar);
+        },
+        methods : {
+
+            deleteItem: function(index) {
+                this.itemdata.splice(index, 1)
+            },
+            addNewItem: function() {
+             this.itemdata.push(
+                {name:'', description: '', quantity: 0, price: 0, total:0, exists: true, isCustom: true }
+                )
+         },
+         updateItem: function(i) {
+             var index = i.target.dataset.key;
+             var item = this.itemdata[index];
+             item[i.target.className] = i.target.innerText;
+             item['total'] = (parseFloat(item.quantity)*parseFloat(item.price))
+             console.log(item[i.target.className])
+             this.itemdata[i.target.id] = item;
+             this.getInvoiceTotal();
+             $(".createQuotationBtn").text('Quotation created').prop('disabled',false);
+         },
+         getInvoiceTotal(){
+             var total = 0;
+             this.itemdata.forEach(value => {
+                total += (parseFloat(value.quantity)*parseFloat(value.price));
+            });
+
+             return total.toFixed(2);
+         },
+         findCustomer(){
+
+             var q = $('#customer_search_edit').val().toLowerCase();
+             if ($('#customer_search_edit').val().length == 0 ) {
+                $('#showcustomeridcomp').hide()
+            }else{
+                $('#showcustomeridcomp').show()
+            }
+            this.customers = this.o_customers.filter((c,i)=>{
+             return Object.values(c).join("-").toLowerCase().includes(q);
+         })
+                                 
+        },
+                             
+         findItems(){
+             var q = $('#item_search_edit').val().toLowerCase();
+             if ($('#item_search_edit').val().length == 0 ) {
+                $('#showitemidedit').hide()
+            }else{
+                $('#showitemidedit').show()
+            }
+            this.items = this.o_items.filter((c,i)=>{
+                return Object.values(c).join("-").toLowerCase().includes(q);
+            })
+        },
+                            
+        searchCustomer(){
+            $('#modal-customer').modal('show');
+        },
+                     searchitems(){
+                         $('#modal-items').modal('show');
+                     },
+                     selectCustomeredit(c){;
+                         $('#showcustomeridcomp').hide()
+                         $('#selCust').show()
+
+                         this.selCust= c;
+                     },
+                              // setautoitem(){
+                              //    var items = []
+                              //    axios.get("/quotation/items/")
+                              //       .then(function(res){
+                              //       $.each( res.data, function( key, value ) {
+                              //         items.push({
+                              //             name: value.name,
+                              //             price: value.price,
+                              //             quantity: value.quantity,
+                              //             description: value.description
+
+                              //         })
+                              //       });
+                              //       })
+
+                              //     $( "tbody td[contenteditable]" ).autocomplete({
+                              //       minLength: 0,
+                              //       source: items,
+                              //       focus: function( event, ui ) {
+                              //         $( "#item" ).val( ui.item.name );
+                              //         $( "#item-price" ).val( ui.item.price );
+                              //         $( "#item-description" ).val( ui.item.description );
+                              //         $( "#item-quantity" ).val(ui.item.quantity );
+                              //         return false;
+                              //       },
+                              //       select: function( event, ui ) {
+                              //          console.log(this.name)
+                              //          $( "#item" ).val( ui.item.name );
+                              //          $( "#item-price" ).val( ui.item.price );
+                              //          $( "#item-description" ).val( ui.item.description );
+                              //          $( "#item-quantity" ).val(ui.item.quantity );
+                              //          return false;
+                              //       }
+                              //     })
+                              //     .autocomplete( "instance" )._renderItem = function( ul, item ) {
+                              //       return $( "<li  style='background-color: aliceblue; color:black'>" )
+                              //         .append( "<div'> <b> Name: </b>" + item.name + "<br> <b>Description :</b> "+ item.description + "<br> <b>Quantity</b> : "+ item.quantity+ "<br> <b>Price :</b>"+ item.price+"</div><hr>" )
+                              //         .appendTo( ul );
+                              //     };
+                              // },
+                              selectItem(c){
+                                 var self = this;
+                                 $('#modal-items').modal('hide');
+                                 $('#showitemidedit').hide()
+                                 console.log("c"+ c)
+
+                                 var total = (parseFloat(c.quantity)*parseFloat(c.price))
+                                 this.itemdata.push(
+                                    {name:c.name, description: c.description, quantity: 1, price: c.price, total:total, exists: true, isCustom: false }
+                                    )
+                                 this.getInvoiceTotal();
+                                 $(".createQuotationBtn").text('Quotation created').prop('disabled',false);
+
+                                 // this.$nextTick(function(){
+                                 //    self.setautoitem();
+                                 // })
+
+                             },
+                             getCookie(c_name){
+                                 if (document.cookie.length > 0)
+                                 {
+                                    c_start = document.cookie.indexOf(c_name + "=");
+                                    if (c_start != -1)
+                                    {
+                                      c_start = c_start + c_name.length + 1;
+                                      c_end = document.cookie.indexOf(";", c_start);
+                                      if (c_end == -1) c_end = document.cookie.length;
+                                      return unescape(document.cookie.substring(c_start,c_end));
+                                  }
+                              }
+                              return "";
+                          },
+                          createQuotation(){
+
+                             if(!this.selCust.name){
+                                toastr.error('Please choose customer first');
+                                return;
+                            }
+
+                            if(this.itemdata.length <=0){
+                                toastr.error('Please upload the items.');
+                                return;
+                            }
+
+                            const quotationdata ={
+                                items:this.itemdata,
+                                customer:this.selCust,
+                                date:this.date,
+                                terms_conditions:$('#terms_conditions').val(),
+                                description:$('#description').val(),
+                                quotationId:this.quotationId,
+                                subtotal:this.getInvoiceTotal(),
+                                total:this.getInvoiceTotal(),
+                                grandtotal:this.getInvoiceTotal()
+                            };
+                                 const headers = {
+                                    'Content-Type': 'application/json',
+                                    "X-CSRFToken": this.getCookie("csrftoken")
+                                 }
+
+                                 axios.post("/quotation/create/", quotationdata, {
+                                    headers: headers
+                                 })
+                                 .then((response) => {
+
+                                    this.idDb = response.data.qid
+                                    this.quotationId = response.data.qcode 
+
+                                    toastr.success('Quotation created.');
+                                    $("#quotationId").html(response.qcode)
+                                    $(".createQuotationBtn").text('Quotation created').prop('disabled',true);
+
+                                 })
+                                 .catch((error) => {
+
+                                 })
+                                 window.location.reload()
+                             },
+                             editQuotation(){
+                                 console.log($('#terms_conditions_edit').val())
+                                 const quotationdata ={
+                                    quotation_id:this.id,
+                                    items:this.itemdata,
+                                    customer:this.selCust,
+                                    date:this.date,
+                                    terms_conditions:$('#terms_conditions_edit').val(),
+                                    description:$('#description_edit').val(),
+                                    quotationId:this.quotationId,
+                                    subtotal:this.getInvoiceTotal(),
+                                    total:this.getInvoiceTotal(),
+                                    grandtotal:this.getInvoiceTotal()
+                                };
+                                 if(!this.selCust.name){
+                                    customer = this.account_customer;
+                                 }
+
+                                 const headers = {
+                                    'Content-Type': 'application/json',
+                                    "X-CSRFToken": this.getCookie("csrftoken")
+                                 }
+
+                                 axios.post("/quotation/edit/", quotationdata, {
+                                    headers: headers
+                                 })
+                                 .then((response) => {
+
+                                    this.idDb = response.data.qid
+                                    this.quotationId = response.data.qcode 
+
+                                    toastr.success('Quotation created.');
+                                    $("#quotationId").html(response.qcode)
+                                    $(".createQuotationBtn").text('Quotation created').prop('disabled',true);
+
+                                 })
+                                 .catch((error) => {
+
+                                 })
+                                 window.location.reload()
+                             },
+                            //  getcustomerdata(){
+                            //      const headers = {
+                            //         'Content-Type': 'application/json',
+                            //         "X-CSRFToken": this.getCookie("csrftoken")
+                            //     }
+
+                            //     axios.post("/quotation/quotation/4/", quotationdata, {
+                            //         headers: headers
+                            //     })
+                            //     .then((response) => {
+
+                            //     })
+                            //     .catch((error) => {
+
+                            //     })
+
+                            // },
+                            generatePdf(){
+                                 // window.print();
+                                 $("#custom-tabs-preview").printArea();
+                                 ///window.location.href = '/quotation/generatePdf/'+this.idDb;
+                             },
+                             downloadCSV() {
+
+                                 var people = [
+                                 {
+                                   name: 'Brian Guerrero',
+                                   price: '19',
+                                   description: 'description',
+                                   quantity: '1',
+                                   total: '13',
+                               },
+                               {
+                                   name: 'Brian Guerrero',
+                                   price: '19',
+                                   description: 'description',
+                                   quantity: '1',
+                                   total: '13',
+                               },
+                               {
+                                   name: 'Brian Guerrero',
+                                   price: '19',
+                                   description: 'description',
+                                   quantity: '1',
+                                   total: '13',
+                               }
+                               ]
+                                 var keys = Object.keys(people[0]); //Collects Table Headers
+
+                                 var result = ''; //CSV Contents
+                                 result += keys.join(','); //Comma Seperates Headers
+                                 result += '\n'; //New Row
+
+                                 people.forEach(function(item){ //Goes Through Each Array Object
+                                    keys.forEach(function(key){//Goes Through Each Object value
+                                       result += item[key] + ','; //Comma Seperates Each Key Value in a Row
+                                   })
+                                    result += '\n';//Creates New Row
+                                })
+
+                                 csv = 'data:text/csv;charset=utf-8,' + result; //Creates CSV File Format
+                                 excel = encodeURI(csv); //Links to CSV 
+
+                                 link = document.createElement('a');
+                                 link.setAttribute('href', excel); //Links to CSV File 
+                                 link.setAttribute('download', 'test.csv'); //Filename that CSV is saved as
+                                 link.click();
+                             },
+
+                             view_sidebar(row_id) {
+                                $('#showcustomeridcomp').hide();
+                                $('#showcustomer').hide();
+                                $('#showitemidedit').hide();
+                                $('.row-view').ControlSidebar('show');
+                                var self = this
+                                axios.get("/quotation/quotation/"+row_id).then(function(res){
+                                    self.id = res.data.data[0].id;
+                                    self.terms_conditions = res.data.data[0].terms_conditions;
+                                    self.description = res.data.data[0].description;
+                                    self.custom_data = res.data.data[0].grandtotal;
+                                    self.selCust = res.data.data[0].account;
+                                    self.itemdata = res.data.data[0].quotationitems;
+                                    console.log(self.selCust)
+                                })
+                                axios.get("/quotation/customersearch/")
+                                .then(function(res){
+                                    self.customers = res.data.results;
+                                    self.o_customers = res.data.results;
+                                })
+
+                                axios.get("/quotation/items/")
+                                .then(function(res){
+                                    self.items = res.data;
+                                    self.o_items = res.data;
+                                })
+
+                            },
+                            closeCtrlSidebar(elm){
+                               $('.row-view').ControlSidebar('collapse');
+                           },
+                       }
+                   })
+
+               </script>

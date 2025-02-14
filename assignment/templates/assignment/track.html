@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table with jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007BFF;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr id="table-headers"></tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            // JSON Data
+            const data = {
+                "tasks": [
+                    {
+                        "task": "tech 1",
+                        "shahid": { "id": 1, "notes": "new assign" },
+                        "abbu": { "id": 1, "notes": "second one" },
+                        "arif": 1,
+                        "kaif": { "id": 1, "notes": "tech 1" },
+                        "sameer": 1
+                    },
+                    {
+                        "task": "data",
+                        "shahid": 2,
+                        "abbu": { "id": 2, "notes": "third sameer" },
+                        "arif": 2,
+                        "kaif": { "id": 2, "notes": "tech 2" },
+                        "sameer": 2
+                    },
+                    {
+                        "task": "tech 2",
+                        "shahid": 3,
+                        "abbu": 3,
+                        "arif": 3,
+                        "kaif":  "add" ,
+                        "sameer": 3
+                    },
+                    {
+                        "task": "second one",
+                        "shahid": "",
+                        "abbu": "",
+                        "arif": "",
+                        "kaif": "",
+                        "sameer": "",
+                    },
+                    {
+                        "task": "add",
+                        "shahid": 5,
+                        "abbu": 5,
+                        "arif": 5,
+                        "kaif": 5,
+                        "sameer": 5
+                    },
+                    {
+                        "task": "new assign",
+                        "shahid": 6,
+                        "abbu": 6,
+                        "arif": 6,
+                        "kaif": 6,
+                        "sameer": 6
+                    }
+                ]
+            };
+
+            // Generate Table Headers Dynamically
+            const headers = Object.keys(data.tasks[0]);
+            const $headerRow = $('#table-headers');
+            headers.forEach(header => {
+                $headerRow.append(`<th>${header.toUpperCase()}</th>`);
+            });
+
+            // Generate Table Rows Dynamically
+            const $tableBody = $('#table-body');
+            data.tasks.forEach(task => {
+                const $row = $('<tr></tr>');
+                headers.forEach(header => {
+                    let cellValue = task[header];
+
+                    // If the value is an object, combine id and notes
+                    if (typeof cellValue === 'object' && cellValue !== null) {
+                        cellValue = `${cellValue.id}. ${cellValue.notes || ''}`;
+                    }
+
+                    $row.append(`<td>${cellValue}</td>`);
+                });
+                $tableBody.append($row);
+            });
+        });
+    </script>
+</body>
+</html>

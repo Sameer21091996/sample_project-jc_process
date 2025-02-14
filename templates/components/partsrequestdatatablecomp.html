@@ -1,0 +1,759 @@
+<style>
+    .dataTables_filter {
+        display: none;
+        }
+
+    
+     tfoot{
+        display: table-header-group;
+    }
+    .header-style {
+        background-color: #4b545c;
+        color: white;
+        width:100%;
+    }
+    </style>
+
+
+<template id="data-table-temp">
+    <div>
+       <div class="card-body" style="overflow: auto; zoom: .8;">
+          <table id="datalist_tabl" class="table table-bordered table-hover table-sm text-nowrap table-striped" style="overflow: auto;">
+          </table>
+       </div>
+    </div>
+ </template>
+
+
+
+ {% include 'components/columnsettingcomp.html' %}
+
+ <script type="application/javascript">
+
+function ajaxCustParam(d) {
+         // $.extend(d, params());
+         ShowLoading(['Loading...'])
+        //  d['btn_id'] = glo_clicked_btn_id;
+         d['customFilters'] = JSON.stringify({
+          'status':[].slice.call($('#filter_datalist a.active')).map(x=> x.dataset.value ),
+          'date_range_filter':$('.gl_picker').val(),
+      })
+      }
+
+
+      var defaultOnce = false;
+
+    Vue.component('partsrequestdatatablecomp', {
+        template: '#data-table-temp',
+        delimiters:['[[',']]'],
+        props:['tabl_meta_data'],
+        data: function () {
+            return {
+                list_items: {},
+                view_meta : { title : 'Column Settings' }
+            }
+        },
+        methods: {
+            
+            viewRowData(data) {
+                let preview_url =  self.tabl_meta_data.row_view_url
+                if(preview_url==undefined){
+                    EventBus.$emit("view_sidebar", data);
+                }else{
+                    preview_url =  preview_url.replace("/0", "/"+data)
+                    tabl_name = self.tabl_meta_data.table_name
+                    tab_title = 'View '+tabl_name+' '+data
+                    self.addOpenIframePage(tabl_name,data,preview_url,tab_title)
+                }
+            },
+
+            previewRowData(data) {
+                
+                EventBus.$emit("preview", data);
+            },
+
+            viewColSettings(data){
+                tabl_name = self.tabl_meta_data.table_name
+                EventBus.$emit("view_col_setting", tabl_name );
+            },
+
+            edit_row(el){
+                tabl_name = self.tabl_meta_data.table_name
+                row_id = $(el).parent().data('id')
+                
+                let edit_url =  self.tabl_meta_data.edit_form_url
+                
+                if(edit_url==undefined){
+                    app_name = self.tabl_meta_data.data_table_url.split('/')[1];
+                    edit_url = app_name+'/action/edit/'+ row_id
+                }else{
+                    edit_url =  edit_url.replace("/0", "/"+row_id)
+                }
+                self.addOpenIframePage(tabl_name,row_id,edit_url)
+            },
+            addOpenIframePage(tabl_name,row_id,tab_url,tab_title=''){
+               let tab_title2 = tab_title ? tab_title : 'Edit '+tabl_name ;
+               let unique_name = tab_title2.replace(/\s/g, ''); //(Math.random() + 1).toString(36).substring(7)
+               var data = ['createTab', tab_title2 , tab_url, unique_name , true ]
+               var event = new CustomEvent('addOpenIframePage', { detail: data })
+               window.parent.document.dispatchEvent(event)
+            },
+            buildTheadTfoot(d){
+                var html = ''
+                //html += '<tfoot style="display: table-header-group;"><tr>';
+                html = '<tfoot class="show-footer-above" ><tr>';
+                d.forEach(function(e, i){
+                        //html += '<th>'+e.title+'</th>';
+                        //console.log('e.title--->',e.title)
+                        html += '<th data-column='+e.data+'></th>';
+                        return;
+                });
+                return html + '</tr></tfoot>';
+            
+            },
+            init_datatable(element, url, column_defs,columns) {
+                element.append(self.buildTheadTfoot(columns))
+                  
+
+                //table_columns = columns();
+                /*if (show_header_filters) {
+                    element.append(buildTheadTfoot(table_columns));
+                }
+                if (!ordering) {
+                    ordering = "creation_date" in data_targets ? [[data_targets["creation_date"], "desc"]] : [[0, "desc"]];
+                }*/
+                //console.log('init table',columns)
+                console.log('ddddddddddddd',ajaxCustParam)
+                var table = element.DataTable({
+                    "bDestroy": true,
+                    'fixedHeader': true,
+                    'serverSide': true,
+                    'processing': true,
+                    "pageLength": 20,
+                    aLengthMenu: [
+                        [10, 25, 50, 100, -1],
+                        [10, 25, 50, 100, "All"]
+                    ],
+                    'ajax': {
+                        "url": url+'?format=datatables',
+                        "contentType": "application/json",
+                        "data":typeof(ajaxCustParam) === 'undefined'? function(){}: ajaxCustParam
+                    },
+                    //order: ordering,
+                    "ordering": true,
+                    //dom: '<"topbuttons"B>frt',
+                    buttons: [{
+                        text: '<i class="fas fa-indent"></i>',
+                        action: function ( e, dt, node, config ) {
+                            self.viewColSettings(1);
+                        }
+                    }],
+                    // scrollX: "100%",
+                    drawCallback : function( settings ) {
+                        HideLoading()
+                        $(this).find('thead').after($(this).find('tfoot'))
+                        if ($(".dataTables_empty").length > 0) {
+                            //handle_empty_table();
+                        }
+                        // console.log('last_row')
+                        // $(this).find('tbody').append(last_row)
+                            //if (show_header_filters) {
+                                this.api().columns().every(function (key, value) {
+                                    var a=Math.floor(Math.random() * 11);
+                                    var column = this;
+                                    col_th = $(this.footer());
+                                    search_input = col_th.find(".header_search");
+                                    default_val = search_input.val();
+                                    {% comment %} console.log('col_th.data(column)',col_th.data('column')) {% endcomment %}
+                                    col_th.find(".select2").remove();
+                                    col_th.find(".header_search").remove();
+                                    if(col_th.data('column')=='salesrep_name'){
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                let s_col_index = table.column('salesrep_name' + ':name').index()
+                                                table
+                                                .column(s_col_index)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                    if(col_th.data('column')=='customer_name'){
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(6)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                    if(col_th.data('column')=='om_order_number' && window.location.href.includes("/sales_delivery")){
+                                        let s_col_index = table.column('om_order_number' + ':name').index()
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(s_col_index)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                    {% comment %} if(col_th.data('column')=='creation_date'){
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(174)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    } {% endcomment %}
+                                    sales_search_cols = ['related_order','sale_type','is_units_acs']
+                                    if(sales_search_cols.includes(col_th.data('column'))){
+
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(key)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                });
+                               
+                            //}
+                            var scrollable_table = element.closest(".dataTables_scroll")
+                            scrollable_table.find(".dataTables_scrollHead").after(scrollable_table.find(".dataTables_scrollFoot"));
+                            //on_datatable_draw_callback();
+                            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                            setTimeout(function() {
+                                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                            }, 2000);
+
+
+                            {% comment %} if (!defaultOnce){
+                                $('input.salesrep_name').val('{{user.username|upper}}').trigger('change');
+                                $('#datalist_tabl_wrapper > div:nth-child(1) > div:nth-child(2)').empty().append(`
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn bg-olive">
+                                            <input type="radio" name="options" id="option_b1" autocomplete="off" onclick="$('input.salesrep_name').val('').trigger('change')" style="position: unset;"> Show All
+                                        </label>
+                                        <label class="btn bg-olive active">
+                                            <input type="radio" name="options" id="option_b2" autocomplete="off" checked=""  onclick="$('input.salesrep_name').val('{{user.username|upper}}').trigger('change')" style="position: unset;"> Show Mine
+                                        </label>
+                                    </div>
+                                `)
+                                defaultOnce = true;
+                            } {% endcomment %}
+                    },
+                    // initComplete:function(){
+                    //     setTimeout(function(){
+                    //     },1000)
+                    // },
+                    "headerCallback": function( nHead, aData, iStart, iEnd, aiDisplay ) {
+                        /*table.columns().iterator('column', function ( settings, column) {
+                            if (settings.aoColumns[ column ].tooltip!== undefined) {
+                                $(table.column(column).header()).attr('data-toggle', 'popover');
+                                $(table.column(column).header()).attr('data-placement', 'top');
+                                $(table.column(column).header()).attr('data-trigger', 'hover');
+                                $(table.column(column).header()).attr('title', settings.aoColumns[ column ].title);
+                                $(table.column(column).header()).attr('data-content', settings.aoColumns[ column ].tooltip);
+                            }
+                        });
+                        $('[data-toggle="popover"]').popover();*/
+                    },
+                    "columns": columns,
+                    'columnDefs': column_defs,
+                    initComplete: function () {
+                        $('.buttons-copy').html('<i class="fa fa-copy" data-widget="col-setting" data-target=".col-setting" />')
+                        var api = this.api();
+                        api.$('td').click(function () {
+                            column = $('#datalist_tabl thead tr th').eq($(this).index()).text()
+                            
+                            if (column == "Id" || $(this).index()==1 ){
+                                const cell = api.cell($(this));
+                                row_id = cell.row(this).data()['id'];
+                                if(row_id==undefined)
+                                    row_id =  $(this).closest('td').prev('td').data()['id']
+                                self.viewRowData(row_id);
+                            }
+                            /*else if(column == "Button"){
+                                const cell = api.cell($(this));
+                                enquiry_id = cell.row(this).data()['id'];
+                                self.previewRowData(enquiry_id);
+                            }.*/
+                        });
+                        setTimeout(function(){
+                            table.draw();
+                         },100)
+                    },
+                    
+                    //dom: 'Brtip',
+                });
+                
+                return table;
+            }
+        },
+        mounted(){
+            self = this;
+            custom_cols = self.tabl_meta_data.custom_columns
+            display_col_indexes = self.tabl_meta_data.display_col_indexes
+            console.log('custom_colscustom_colscustom_colscustom_cols',custom_cols)
+            console.log('display_col_indexesdisplay_col_indexesdisplay_col_indexes',display_col_indexes)
+            if(display_col_indexes != null ){
+                diplayCols = []
+                for(let display_col in display_col_indexes){
+                    disColIndex = display_col_indexes[display_col];
+                    diplayCols[disColIndex] = disColIndex;
+                }
+            }
+
+            let incIndex = 0;
+            
+
+            columnDefArr = [
+                {
+                    "targets": 0,
+                    "createdCell": function (td, cellData, rowData, row, col) {
+                        {% comment %} console.log("rowData",rowData) {% endcomment %}
+                        primary_key = Object.keys(rowData)[0]
+                        $(td).attr('data-id', rowData[primary_key]);
+                    }
+                },
+                {
+                    "targets": [1],
+                    "visible": false,
+                }
+            ]
+            if (! window.location.href.includes("/sales_delivery")) {
+                columnDefArr.push({ "targets": [13,17,18], "className": "text-right" })
+            }    
+            for( let col_defs in self.tabl_meta_data.column_info){
+                    singleColDef = {}
+                    singleColDef['target'] = [Number(incIndex)];
+                    if( custom_cols!=undefined && custom_cols[incIndex] !== undefined){
+                            let custom_html = custom_cols[incIndex];
+                            singleColDef['render'] =  function (data, type, row) {
+                                                            let custom_cell_html = custom_html.replace("cell_data", data);
+                                                            custom_cell_html = custom_cell_html.replace("cust_class", self.tabl_meta_data.cust_classes[data]);
+                                                            return custom_cell_html
+                                                    }
+                    }
+                    if(display_col_indexes != null ){
+                        if( diplayCols[incIndex]!== undefined){
+                            singleColDef['visible']   = true
+                        }else{
+                            singleColDef['visible']   = false
+                        }
+                    }
+                    columnDefArr.push(singleColDef)
+                    incIndex++;
+            }
+
+
+            let columns = self.tabl_meta_data.column_info;
+            actionColHtml = '<div class="btn-group">\
+            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                <i class="ti-menu"></i>Action\
+            </button>\
+            <div class="dropdown-menu animated flipInY">\
+                <a class="dropdown-item" href="javascript:void(0)" onclick="get_approver(this)"> History</a>\
+                <a class="dropdown-item" href="javascript:void(0)" onclick="cancel_order(this)">Cancel Order</a>\
+                <a class="dropdown-item" href="javascript:void(0)" onclick="modify_order(this)">Edit Order</a>\
+            </div>\
+            </div>'
+            actionColHtml1='<div class="btn-group">\
+            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                <i class="ti-menu"></i>Action\
+            </button>\
+            <div class="dropdown-menu animated flipInY">\
+            <a class="dropdown-item" href="javascript:void(0)" onclick="get_approver(this)">History</a>\
+            <a class="dropdown-item" href="javascript:void(0)" onclick="modify_order(this)">Edit Order</a>\
+            </div>\
+            </div>'
+            actionColHtml2 = '<div class="btn-group">\
+            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                <i class="ti-menu"></i>Action\
+            </button>\
+            <div class="dropdown-menu animated flipInY">\
+            <a class="dropdown-item" href="javascript:void(0)" onclick="get_approver(this)">History</a>\
+            </div>\
+            </div>'
+            actionColHtml3 = '<div class="btn-group">\
+            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                <i class="ti-menu"></i>Action\
+            </button>\
+            <div class="dropdown-menu animated flipInY">\
+            <a class="dropdown-item" href="javascript:void(0)" onclick="get_approver(this)">History</a>\
+            <a class="dropdown-item d-none" href="javascript:void(0)" onclick="finalize_order(this)">Finalize Order</a>\
+            <a class="dropdown-item" href="javascript:void(0)" onclick="cancel_order(this)">Cancel Order</a>\
+            </div>\
+            </div>'
+            actionCellHtml4 = '<div class="btn-group">\
+                    <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                        <i class="ti-menu"></i>Action\
+                    </button>\
+                    <div class="dropdown-menu animated flipInY">\
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="print_invoice(this)">Print Invoice</a>\
+                    </div>\
+                    </div>'
+            
+            if ( window.location.href.includes("/aye_parts_request") ){
+                console.log("in if")
+                columns.unshift({
+                    "data": null,
+                    "name": "buttonColumn",
+                    "render": function (data, type, row) {
+                        const header_id = data.header_id
+                        let actionCellHtml =""
+                        console.log(data)
+                        if(data.order_number && data.attribute1 == "Booked" && data.attribute2 == "To be received" || data.attribute2 == "Partially received"){
+                            actionCellHtml += '<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item " href="javascript:void(0)" onclick="view('+header_id+')">Acknowledgement</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view('+header_id+')">View</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="action_history('+header_id+')">Action History</a>\
+                            </div>\
+                            </div>'
+                        }else if(data.attribute1=="Error" || data.attribute3 == "Error"){
+                            actionCellHtml += '<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="retry('+header_id+')">Retry</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view('+header_id+')">View</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="action_history('+header_id+')">Action History</a>\
+                            </div>\
+                            </div>'
+                        }else if(data.attribute3 == "Draft"){
+                            actionCellHtml += '<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="update('+header_id+')">Edit</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view('+header_id+')">View</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="action_history('+header_id+')">Action History</a>\
+                            </div>\
+                            </div>'
+                        }else{
+                            actionCellHtml += '<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view('+header_id+')">View</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="action_history('+header_id+')">Action History</a>\
+                            </div>\
+                            </div>'
+                        }
+                        
+                        // actionCellHtml +='<a class="cursor-pointer expand-details">+<i class="mdi mdi-plus mdi-18px text-info"></i></a>'
+                        return actionCellHtml
+                    }
+                    
+                })
+            }else if( window.location.href.includes("/spares_to_garage_transfers")){
+                columns.unshift({
+                    "data": null,
+                    "name": "buttonColumn",
+                    "render": function (data, type, row) {
+                    const header_id = data.header_id
+                    let actionCellHtml =""
+                    if(data.transaction_type_name == "GARAGE" && data.header_status == "In-Process"){
+                            actionCellHtml += '<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="open_request('+header_id+')">View Request</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip('+header_id+')">Print Pick Slip</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip('+header_id+')">View Pick Slip</a>\
+                            </div>\
+                            </div>'
+                    }else{
+                            actionCellHtml += '<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="open_request('+header_id+')">View Request</a>\
+                            </div>\
+                            </div>'
+                    }
+                    // actionCellHtml = '<div class="btn-group">\
+                    //     <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                    //         <i class="ti-menu"></i>Action\
+                    //     </button>\
+                    //     <div class="dropdown-menu animated flipInY">\
+                    //         <a class="dropdown-item" href="javascript:void(0)" onclick="open_request('+header_id+')">View Request</a>\
+                    //         {% if data.transaction_type_name == "GARAGE" and data.header_status == "In-Process" %}\
+                    //             <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip('+header_id+')">Print Pick Slip</a>\
+                    //             <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip('+header_id+')">View Pick Slip</a>\
+                    //         {% endif %}\
+                    //     </div>\
+                    //     </div>';
+                    return actionCellHtml;
+                    }
+                });
+            }else if ( window.location.href.includes("/sales_delivery") ){
+                console.log(":inelse")
+                columns.unshift({
+                    "data": null,
+                    "name": "buttonColumn",
+                    "render": function (data, type, row) {
+                        const row_id = data[Object.keys(data)[0]]
+                        if(row.delivery_status=='PENDING'){
+                            return '<input class="bulk_ids" name="bulk_ids" type=checkbox value="'+row_id+'">';
+                        }else{
+                            return '<button type="button" class="btn btn-info btn-xs waves-effect waves-light" onclick="print_deliver('+row_id+')"> Print  </button>'
+                        }
+                    }
+                })
+                setTimeout(() => {
+                        datatable_url = self.tabl_meta_data.data_table_url;
+                        
+                        table = this.init_datatable($('#datalist_tabl'), datatable_url,  columnDefArr, columns)
+                        $('#tabl_global_search').on( 'keyup', function () {
+                            table.search( this.value ).draw();
+                        } ); 
+                    });
+            }else{
+                console.log(":inelse")
+                columns.unshift({
+                    "data": null,
+                    "name": "buttonColumn",
+                    "render": function (data, type, row) {
+                    console.log(data)
+
+                    const row_id = data[Object.keys(data)[0]]
+                    const order_number = data.order_number
+                    const order_header_id = data.order_header_id
+                    let actionCellHtml =""
+                    if(data.status == 'ENTERED'){
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            {% if page_url != "acs" %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip('+order_number+')">Print Pick Slip</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip('+order_number+')">View Pick Slip</a>\
+                            {% endif %}\
+                            {% if page == "aye" %}\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="preview_sale_order('+order_number+')">Preview Sales Order</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="convert_sale_order('+order_number+','+"'CANCELLED'"+')">Cancel Sales Order</a>\
+                            {% endif %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order('+order_number+')">View Sale Order</a>\
+                        </div>\
+                        </div>';
+                    }
+                    else if(data.status =='TEMP' || data.status ==''){
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            {% if page_url != "acs" %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip('+order_number+')">Print Pick Slip</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip('+order_number+')">View Pick Slip</a>\
+                            {% endif %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order('+order_number+')">View Sale Order</a>\
+                        </div>\
+                        </div>';
+                    }
+                    else if( data.status =='AWAITING PAYMENT CONFIRMATION' ){
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            {% if can_auto_receipt_and_finalize %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="can_auto_receipt_and_finalize('+order_number+')">Create Receipt & Finalize Order</a>\
+                            {% endif %}\
+                            {% if page_url != "acs" %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip('+order_number+')">Print Pick Slip</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip('+order_number+')">View Pick Slip</a>\
+                            {% endif %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order('+order_number+')">View Sale Order</a>\
+                        </div>\
+                        </div>';
+                    }
+                    else if(data.status =='PENDING INTERNAL APPROVAL' ||  data.status =='CANCELLED'){
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            {% if page_url != "acs" %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip('+order_number+')">Print Pick Slip</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip('+order_number+')">View Pick Slip</a>\
+                            {% endif %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order('+order_number+')">View Sale Order</a>\
+                        </div>\
+                        </div>';
+
+                    }
+                    else if(data.status =='PAYMENT RECEIVED'){
+                        actionCellHtml = `<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="get_approver(${order_number})">History</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="finalize_order(${order_number})">Finalize Order</a>\
+                            {% if page_url != "acs" %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip(${order_number})">Print Pick Slip</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip(${order_number})">View Pick Slip</a>\
+                            {% endif %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order(${order_number}">View Sale Order</a>\
+                            </div>\
+                            
+                            </div>`;
+                    }
+                    else if((row.status =='CLOSED' || row.status =='BOOKED')){
+                        // alert()
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            {% if server_status == "UAT" %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="return_order('+order_number+')">Proceed To Return</a>\
+                            {% endif %}\
+                            {% if page == "aye" %}\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="show_sale_order('+order_number+')">View Sales Order</a>\
+                            {% else %}\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order('+order_number+')">View Sale Order</a>\
+                            {% endif %}\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pdf_concprog('+order_number+')">Print Invoice</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pdf_print('+order_number+')">View Invoice</a>\
+                        </div>\
+                        </div>'
+                    }
+                    else if(row.status == 'PENDING FOR APPROVAL'){
+                        actionCellHtml += `&nbsp; &nbsp; <button type="button" class="btn btn-danger btn-sm" onclick="refresh_status(${order_number})"><i class="fa fa-sync" ></i> </button>`
+                    }
+                    else if(row.status == 'AWAITING_RETURN'){
+                        // alert()
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="return_acknowledeg('+order_number+')">Return Acknowledeg</a>\
+                        </div>\
+                        </div>'
+                        actionCellHtml += `&nbsp; &nbsp; <button type="button" class="btn btn-danger btn-sm" onclick="refresh_status(${order_number})"><i class="fa fa-sync" ></i> </button>`
+                    }else if(row.status == 'RETURN ACKNOWLEDGED'){
+                        // alert()
+                        actionCellHtml = '<div class="btn-group">\
+                        <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                            <i class="ti-menu"></i>Action\
+                        </button>\
+                        <div class="dropdown-menu animated flipInY">\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="print_pdf_concprog('+order_number+')">Print Return Invoice</a>\
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="view_pdf_print('+order_number+')">View Print Return Invoice</a>\
+                        </div>\
+                        </div>'
+                        actionCellHtml += `&nbsp; &nbsp; <button type="button" class="btn btn-danger btn-sm" onclick="refresh_status(${order_number})"><i class="fa fa-sync" ></i> </button>`
+                    }
+                    else if(row.status =='PENDING DISCOUNT APPROVAL'){
+                        actionCellHtml = `<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="getwfstatus(${order_number})">History</a>\
+                                {% if page == "aye" %}\
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="show_sale_order(${order_number})">View Sales Order</a>\
+                                {% else %}                        
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order(${order_number})">View Sale Order</a>\
+                                {% endif %}                        
+                                {% if page_url != "acs" %}\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip(${order_number})">Print Pick Slip</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip(${order_number})">View Pick Slip</a>\
+                                {% endif %}\
+                            </div>\
+                            </div>`;
+                                // <a class="dropdown-item" href="javascript:void(0)" onclick="getwfstatus(${order_number})">Finalize Order</a>\
+                    }
+                    else if( row.status =='REJECTED'){
+                        actionCellHtml = `<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                {% if sale_page == 'units' %}
+                                
+                                {% else %}\
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="convert_sale_order(${order_number},'DRAFT')">Revert To Draft</a>\
+                                {% endif %}\
+
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="getwfstatus(${order_number})">History</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_sale_order(${order_number})">View Sale Order</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip(${order_number})">Print Pick Slip</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip(${order_number})">View Pick Slip</a>\
+                            </div>\
+                            </div>`;
+                                // <a class="dropdown-item" href="javascript:void(0)" onclick="getwfstatus(${order_number})">Finalize Order</a>\
+                    }
+                    else if(row.status =='CLOSED'){
+                        actionCellHtml = `<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                            </div>\
+                            </div>`;
+                    }
+                    else if(row.status =='DRAFT'){
+                        actionCellHtml = `<div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="edit_sale_order(${order_number})">Edit Sales Order</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="convert_sale_order(${order_number},'CANCELLED')">Cancel Sales Order</a>\
+                                {% if page_url != "acs" %}\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="print_pick_slip(${order_number})">Print Pick Slip</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_pick_slip(${order_number})">View Pick Slip</a>\
+                                {% endif %}\
+                            </div>\
+                            </div>`;
+                    }
+                    if(row.status =='CANCELLED' || row.status =='REJECTED'){
+                        actionCellHtml += `&nbsp; &nbsp; <button type="button" class="btn btn-danger btn-sm" onclick="refresh_order(${order_number})"><i class="fa fa-sync" ></i> </button>`
+                    }
+                    return actionCellHtml;
+                    }
+                })
+            }
+            setTimeout(() => {
+                        datatable_url = self.tabl_meta_data.data_table_url;
+                        
+                        table = this.init_datatable($('#datalist_tabl'), datatable_url,  columnDefArr, columns)
+                        $('#tabl_global_search').on( 'keyup', function () {
+                            table.search( this.value ).draw();
+                        } ); 
+                    });
+        }
+    })
+    
+ </script>

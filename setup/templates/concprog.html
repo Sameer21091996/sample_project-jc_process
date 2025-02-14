@@ -1,0 +1,399 @@
+{% extends 'base.html' %} {% load static %} {% block css_files %}
+<style>
+  .dt-buttons.btn-group.flex-wrap {
+    float: right;
+  }
+  .dataTables_filter {
+      display: revert !important;
+      }
+  .required:before {
+        content: "*\00a0";
+        color: red;
+     }
+</style>
+{% endblock %} {% block content %}
+{% if messages %}
+    {% for message in messages %}
+            <input type="text" hidden name="message" id="message_id" value="{{message}}">
+    {% endfor %}
+{% endif %}
+
+
+<div class="border rounded m-3 " style="background: rgb(222, 226, 230); ">
+  <div class="">
+    {% if update %}
+    <div class="col-md-6 d-flex align-items-center justify-content-between py-2">
+        <label style="width: 35%">Report Name</label>
+        <select class="form-control js-example-basic-single" id="concprog_id" name="concprog">
+            <option value="0">Select Program</option> 
+            {% for concprog in concprogs %}
+            <option value="{{concprog.concurrent_program_id}}">{{concprog.user_concurrent_program_name}}</option>
+            {% endfor %}
+          </select>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-6" style="background-color: rgba(0,0,0,.05);">
+            <form action="{{'/setup/add-concprog'}}" method="get" id="formReport">
+                <input class="form-control" hidden type="type" name="concprog_id" id="concprog_id_field">
+                <div id="input_id"></div>
+                <div style="float: right;">
+                    <button type="reset" style="margin-right: 10px;" id="reset_button"  class="btn btn-info">Reset</button>
+                    <button type="submit" style="margin-right: 10px;" id="submit_button"  class="btn btn-info">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6"></div>
+    </div>
+    <br>
+    <button style="margin: 5px;" class="btn btn-info" onClick="window.location.href=window.location.href">Refresh</button>
+    <table id="tableId" class="table table-striped border table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Request No</th>
+          <th scope="col">Request Id</th>
+          <th scope="col">Request Date</th>
+          <th scope="col">Start Date</th>
+          <th scope="col">Completion Date</th>
+          <th scope="col">Report Name</th>
+          <th scope="col">Request Status</th>
+          <th scope="col">View Parameter</th>
+          <th scope="col">View Report</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for concreqdtl in concreqdtls %}
+        <tr>
+            <td>{{concreqdtl.header_id}}</td>
+            <td>{{concreqdtl.request_id}}</td>
+            <td>{{concreqdtl.request_date}}</td>
+            <td>{{concreqdtl.actual_start_date}}</td>
+            <td>{{concreqdtl.actual_completion_date}}</td>
+            <td>{{concreqdtl.user_concurrent_program_name}}</td>
+            <td>{{concreqdtl.request_status}}</td>
+            <td>
+              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#data{{concreqdtl.header_id}}">
+                View Param
+              </button>
+              <div class="modal fade" id="data{{concreqdtl.header_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Parameter</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <table style="width:100%">
+                      {% for requested_header in concreqdtl.requested_header %}
+                        <tr>
+                          <th>{{requested_header.prompt}}</th>
+                          <td>{{requested_header.parameter_value}}</td>
+                        </tr>
+                      {% endfor %}
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#{{concreqdtl.header_id}}">Report name</button>
+              <div class="modal fade" id="{{concreqdtl.header_id}}" role="dialog">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    {% for requested_header in concreqdtl.requested_header %}
+                    <div style="display:flex; flex-direction: row; justify-content: center; align-items: center;margin: 10px">'
+                      <label style="width: 32%;clear: both;float:left;margin-right:15px;">{{requested_header.parameter_name}}</label>
+                      <input readonly style="height: unset;" class="form-control" type="text" value="{{requested_header.parameter_value}}" />
+                    </div>
+                    {% endfor %}
+                  </div>
+                  </form>
+                </div>
+              </div> -->
+            </td>
+            {% if concreqdtl.request_status != "Completed"  %}
+            <td>
+              <button type="button" class="btn btn-warning fa fa-sync" onclick="refreshReport('{{concreqdtl.header_id}}')"> Refresh </button>
+            </td>
+            {% else %}
+              <td><a class="sub_btn btn btn-info" onclick="downloadFile(this)" data-link="{% url 'setup:pdf' %}" data-id="{{concreqdtl.header_id}}">Download</a></td>
+            {% endif %}
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+    <div id="print-div" class="p-5" style="width: auto; height: auto"></div>
+  </div>
+</div>
+
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %} 
+
+
+
+
+<script>
+
+  function refreshReport(id){
+    ShowLoading();
+    axios.get("/setup/refresh_report?id="+id)
+    .then(function(res)
+    {
+      if (res.data == 'Y'){
+        window.location.href=window.location.href;
+      }
+        HideLoading();
+      }).catch(function(err)
+    {
+        HideLoading();
+      })
+  }
+
+
+  function downloadFile(e){
+    var link = $(e).data('link');
+    var id =$(e).data('id'); 
+
+    var so_number = localStorage.getItem('so_number');
+    window.location.href = '{{ACCESS_APP_LINK}}/apis/get_conc_output' + '?id=' + id ;
+    // if (so_number != null){
+    //   window.location.href = link + '?id=' + id + '&so_number='+so_number;
+    // } else {
+    //   // window.location.href = link + '?id=' + id ;
+    // }
+  }
+// $('#concprog_id').on("select2:selecting", function(e) { 
+//    console.log(e)
+// });
+$( document ).ready(function() {
+    $('#submit_button').hide()
+    message = $('#message_id').val()
+    if(message.includes("Error:")){
+      toastr.error(message)
+    } else {
+      toastr.success(message)
+      
+    }
+
+
+
+
+    
+});
+// $(function () {
+//   setTimeout(()=> {
+//     $('#tableId').DataTable({
+//       filter: true,
+//       "searching": true,
+//       paging: true,
+//       scrollX: true,
+//       lengthChange : true,
+//       order: [[0, 'desc']],
+//     });
+//     // $('#tableId thead th').each( function () {
+//     //     var title = $(this).text();
+//     //     $(this).html( title+'<br><input type="text" placeholder="Search '+title+'" />' );
+//     // } );
+//     // // DataTable
+//     // var table = $('#tableId').DataTable();
+//     // // Apply the search
+//     // table.columns().every( function () {
+//     //     var that = this;
+//     //     $( 'input', this.footer() ).on( 'keyup change clear', function () {
+//     //         if ( that.search() !== this.value ) {
+//     //             that
+//     //                 .search( this.value )
+//     //                 .draw();
+//     //         }
+//     //     } );
+//     // } );
+//   },20000);
+// });
+
+$(document).on('click','#reset_button',function(){
+    $('#formReport input,#formReport select').val("").trigger('change');
+});
+
+
+$(document).on('submit','#formReport',function(){
+  localStorage.setItem('formData',JSON.stringify($('#formReport').serializeArray()));
+  ShowLoading();
+  
+
+});
+
+$(document).on('change', 'select#concprog_id', function(e) {
+    localStorage.setItem('reportID',this.value);
+    id = this.value
+    console.log(id)
+    if(id != 0){
+        $('#concprog_id_field').val(id)
+      axios.get("/setup/get-input?id="+id)
+      .then(function(res)
+      {
+        $('#submit_button').show()
+        $('#input_id').html(res.data.concprog)
+        // html = ""
+        // console.log(res)
+        // $.each(res.data.concprog, function(index, value) {
+        //     html +='<div style="display:flex; flex-direction: row; justify-content: center; align-items: center;margin: 10px">'
+        //     html +='<label style="width: 32%;clear: both;float:left;margin-right:15px;">'+value.prompt+'</label>'
+        //     a = value.prompt
+        //     if (a.charAt(a.length - 1) == "*"){
+        //         if (a.search('Date') == -1) {
+        //           if(value.default_value == "ORG_ID"){
+        //             html +='<select required class="form-control js-example-basic-single" id="" name="'+value.prompt+'">'
+        //               html +='<option value="0">Select Org</option>'
+        //                 $.each(res.data.operation_unit, function(index1, value1) {
+        //                   html +='<option value="'+value1.operating_unit_id+'">'+value1.name+'</option>'
+        //                 })
+        //                 html +='</select>'
+        //           }else if(value.default_value == "USERNAME"){
+        //             html +='<input required style="height: unset;" class="form-control" type="text" name="'+value.prompt+'" value="SERADMIN" />'
+        //           }else{
+        //             html +='<input required style="height: unset;" class="form-control" type="text" name="'+value.prompt+'" />'
+        //           }
+        //             html +='<input required style="height: unset;" class="form-control" type="text" name="'+value.prompt+'" />'
+        //         }else{
+        //             html +='<input required style="height: unset;" class="form-control" type="date" name="'+value.prompt+'" />'
+        //         }
+        //     }else{
+        //         if (a.search('Date') == -1) {
+        //           if(value.default_value == "ORG_ID"){
+        //             html +='<select class="form-control js-example-basic-single" id="" name="'+value.prompt+'">'
+        //               html +='<option value="0">Select Org</option>'
+        //                 $.each(res.data.operation_unit, function(index1, value1) {
+        //                   console.log('value1',value1)
+        //                   html +='<option value="'+value1.operating_unit_id+'">'+value1.name+'</option>'
+        //                 })
+        //                 html +='</select>'
+        //           }else if(value.default_value == "USERNAME"){
+        //             html +='<input style="height: unset;" class="form-control" type="text" name="'+value.prompt+'" value="SERADMIN" />'
+        //           }else{
+        //             html +='<input style="height: unset;" class="form-control" type="text" name="'+value.prompt+'" />'
+        //           }
+        //             html +='<input style="height: unset;" class="form-control" type="text" name="'+value.prompt+'" />'
+        //         }else{
+        //             html +='<input style="height: unset;" class="form-control" type="date" name="'+value.prompt+'" />'
+        //         }
+        //     }
+        //     html +='</div>'
+        //     $('#submit_button').show()
+        //     $('#input_id').html(html)
+        // }) 
+        $('#input_id select').select2({
+          width:'100%'
+       });
+
+       setTimeout(()=> {
+          $('input.P_APPS_USER').closest('div').addClass('d-none');
+
+
+          JSON.parse(localStorage.getItem('formData')).forEach(element => {
+              $('[name="'+element.name+'"]').val(element.value).trigger('change');
+          });  
+          $('[name="concprog_id"]').val($('[name="concprog"]').val());
+
+
+        },10);
+      })
+    }else{
+        $('#input_id').html("")
+        $('#submit_button').hide()
+    } 
+});
+
+
+$(function () {
+  ShowLoading();
+  setTimeout(()=> {
+    // $('#tableId thead tr')
+    //     .clone(true)
+    //     .addClass('filters')
+    //     .appendTo('#tableId thead');
+ 
+    var table = $('#tableId').DataTable({
+        // orderCellsTop: true,
+        // fixedHeader: true,
+        // responsive: true,
+        order: [[0, 'desc']],
+        initComplete: function () {
+            HideLoading();
+            if (localStorage.getItem('reportID') != null && localStorage.getItem('formData') != null){
+
+
+                      JSON.parse(localStorage.getItem('formData')).forEach(element => {
+                        $('[name="'+element.name+'"]').val(element.value);
+                      });
+                      $('#concprog_id').val(localStorage.getItem('reportID')).trigger('change');
+            }
+
+
+            var api = this.api();
+ 
+            // For each column
+            api
+                .columns()
+                .eq(0)
+                .each(function (colIdx) {
+                    // Set the header cell to contain the input element
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    var title = $(cell).text();
+                    $(cell).html('<input type="text" style="width: 100%;" placeholder="' + title + '" />');
+ 
+                    // On every keypress in this input
+                    $(
+                        'input',
+                        $('.filters th').eq($(api.column(colIdx).header()).index())
+                    )
+                        .off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+ 
+                            var cursorPosition = this.selectionStart;
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+ 
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                });
+        },
+    });
+
+
+
+
+  },3000);
+});
+</script>
+
+{% endblock %}

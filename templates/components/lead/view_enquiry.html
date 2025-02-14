@@ -1,0 +1,70 @@
+<template id="view_enq">
+    <div>
+        <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6 ">
+                  <h3 class="text-primary"> Account : [[component_info.account.first_name]] [[component_info.account.last_name]] </h3>
+                  <p class="text-muted"></p>
+                  <br>
+                  <p class="text-sm">Account type
+                    <b class="d-block"> [[component_info.account.account_type]] </b>
+                  </p>
+                  <p class="text-sm">Primary Number
+                    <b class="d-block"> [[component_info.account.primary_no]] </b>
+                  </p>
+                  <p class="text-sm"> Email Id
+                    <b class="d-block"> [[component_info.account.email_id]] </b>
+                  </p>
+                  <p class="text-sm"> Whatsapp Number
+                    <b class="d-block"> [[component_info.account.whatsapp_no]] </b>
+                  </p>
+                  <p class="text-sm">Preferred Contact Method
+                    <b class="d-block"> [[component_info.account.preferred_contact_method]] </b>
+                  </p>
+                  <p class="text-sm">Created At
+                    <b class="d-block">[[ component_info.account.creation_date ]] </b>
+                  </p>
+                </div>
+      
+                <div class="col-md-6 ">
+                  <h3 class="text-primary"> Enquiry : [[component_info.enquiry.enquiry_name]]</h3>
+                  <p class="text-muted"></p>
+                  <br>
+                  <p class="text-sm">Description
+                    <b class="d-block"> [[component_info.enquiry.description]] </b>
+                  </p>
+                  <p class="text-sm">Enquiry Status
+                    <b class="d-block"> [[component_info.enquiry.enquiry_status]] </b>
+                  </p>
+                  <p class="text-sm"> Enquiry Source
+                    <b class="d-block"> [[component_info.enquiry.enquiry_source]] </b>
+                  </p>
+                  <p class="text-sm">Created At 
+                    <!-- [[component_info.enquiry]] -->
+                    <b class="d-block">[[ component_info.enquiry.creation_date ]]</b>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+</template>
+
+
+
+<script type="application/javascript">
+
+    Vue.component('viewcomponent', {
+      template: '#view_enq',
+      delimiters: ['[[', ']]'],
+      props: ['component_info'],
+      methods: {
+        getFormattedDate(date) {
+            console.log(date)
+            return date //moment(date).format("YYYY-MM-DD")
+        }
+      }
+    })
+  
+  </script>

@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Operations</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: #fff;
+      min-height: 100vh;
+    }
+
+    /* Add this to your existing style section */
+    [class*="table"] th::after {
+      content: attr(data-mandatory);
+      color: red;
+    }
+
+    .mandatory-field::after {
+      content: " *";
+      color: red;
+    }
+
+    .container {
+      padding: 15px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header Section */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 14px;
+      color: #666;
+      font-weight: bold;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 3px;
+      color: white;
+      font-size: 10px;
+      cursor: pointer;
+      height: 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-green {
+      background: #4caf50;
+    }
+
+    .btn-blue {
+      background: #2196f3;
+    }
+
+    .btn-red {
+      background: #f44336;
+    }
+
+    .btn-gray {
+      background: #757575;
+    }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 2fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .info-field {
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #f8f9fa;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-field label {
+      display: block;
+      padding: 6px 8px;
+      font-size: 11px;
+      color: #333;
+      background: #e0e0e0;
+      border-bottom: 1px solid #bbb;
+      font-weight: bold;
+    }
+
+    .info-field input {
+      width: 100%;
+      padding: 6px 8px;
+      border: none;
+      font-size: 11px;
+      color: #333;
+      background: #fff;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .tab {
+      padding: 6px 16px;
+      border: none;
+      font-size: 11px;
+      cursor: pointer;
+      background: none;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      font-weight: bold;
+    }
+
+    .tab.active {
+      color: #2196f3;
+      border-bottom: 2px solid #2196f3;
+    }
+
+    /* RO Activity Section */
+    .activity-section {
+      padding: 0 1px;
+      overflow-x: auto;
+    }
+
+    .activity-header {
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .add-button {
+      width: 24px;
+      height: 24px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 2px;
+    }
+
+    /* Table Styles */
+    .operations-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .operations-table th {
+      background: #323d89;
+      color: white;
+      font-size: 11px;
+      font-weight: normal;
+      text-align: left;
+      padding: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .operations-table td {
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      font-size: 11px;
+      background: #fff;
+    }
+
+    /* Adjusted column widths */
+    .operations-table th:nth-child(1),
+    .operations-table td:nth-child(1) {
+      width: 5%;
+    }
+
+    .operations-table th:nth-child(2),
+    .operations-table td:nth-child(2) {
+      width: 25%;
+    }
+
+    .operations-table th:nth-child(3),
+    .operations-table td:nth-child(3),
+    .operations-table th:nth-child(4),
+    .operations-table td:nth-child(4),
+    .operations-table th:nth-child(5),
+    .operations-table td:nth-child(5) {
+      width: 12%;
+    }
+
+    .operations-table th:nth-child(6),
+    .operations-table td:nth-child(6) {
+      width: 15%;
+    }
+
+    .operations-table th:nth-child(7),
+    .operations-table td:nth-child(7) {
+      width: 19%;
+    }
+
+    .operations-table select,
+    .operations-table input {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 11px;
+      background: #fff;
+    }
+
+    /* For DropDown */
+    .operation-code-select {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 11px;
+      background: #fff;
+    }
+
+    .operation-code-select option {
+      padding: 4px;
+    }
+
+    .save-btn {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .delete-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    /* Search container styles */
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 5px;
+    }
+
+    .search-label {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .search-input {
+      border: 1px solid #ccc;
+      padding: 4px 8px;
+      border-radius: 2px;
+      width: 200px;
+      height: 24px;
+      font-size: 12px;
+    }
+
+    .btn-export {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 2px;
+      font-size: 12px;
+      height: 24px;
+    }
+
+    .btn-get-qty {
+      background: #ffa726;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 2px;
+      font-size: 12px;
+      height: 24px;
+      margin-left: auto;
+    }
+
+    /* Footer buttons */
+    .footer-buttons {
+      display: flex;
+      margin-top: 20px;
+      gap: 8px;
+    }
+
+    .plus-icon {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-size: 16px;
+    }
+
+    .btn-footer-gray {
+      background: #9e9e9e;
+      color: white;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 2px;
+      font-size: 12px;
+    }
+
+    .btn-footer-template {
+      background: #7b68ee;
+      color: white;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 2px;
+      font-size: 12px;
+    }
+
+    .btn-footer-upload {
+      background: #7b68ee;
+      color: white;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 2px;
+      font-size: 12px;
+    }
+
+    .btn-footer-paste {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 2px;
+      font-size: 12px;
+    }
+
+    .btn-footer-estimate {
+      background: #7b68ee;
+      color: white;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 2px;
+      font-size: 12px;
+    }
+
+    /* Update the estimate table header color to match others */
+    table th {
+      background: #323d89 !important;
+      /* Same as operations and actual tables */
+      color: white;
+      padding: 8px;
+      text-align: left;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: normal;
+    }
+
+    /* Table styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
+
+    th {
+      background: #1976d2;
+      color: white;
+      padding: 8px;
+      text-align: left;
+      font-weight: normal;
+    }
+
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      background: white;
+    }
+
+    .total-row {
+      background: #e8f5e9;
+      font-weight: bold;
+    }
+
+    .checkbox-cell {
+      width: 20px;
+      text-align: center;
+    }
+
+    .minus-icon {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-size: 16px;
+      margin-left: 5px;
+    }
+
+    .estimate-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .estimate-table th {
+      background: #323d89;
+      color: white;
+      padding: 8px;
+      text-align: left;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .estimate-table td {
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .component-type-select {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .editable-cell {
+      /* background-color: #e8f4f8 !important; */
+      cursor: pointer;
+    }
+
+    .editable-cell:hover {
+      background-color: #ddd !important;
+    }
+
+    .editable-input {
+      width: 100%;
+      border: 1px solid #4caf50;
+      padding: 4px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    /* Actual Tab Specific Styles */
+    .actual-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      margin-bottom: 15px;
+    }
+
+    #applyAdvanceBtn {
+      background-color: #4caf50 !important;
+      float: left;
+      clear: both;
+      margin-bottom: 20px;
+    }
+
+    .left-controls,
+    .right-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-box {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background-color: #fff;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .actual-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .actual-table th {
+      background: #323d89;
+      color: white;
+      padding: 8px;
+      text-align: left;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .actual-table td {
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .sublet-row {
+      background-color: #fff;
+    }
+
+    .labor-row {
+      background-color: #fff;
+    }
+
+    .total-row {
+      background-color: #e9f5e9;
+    }
+
+    .subtotal-row {
+      background-color: #fff3e6;
+    }
+
+    .actual-content {
+      overflow-x: auto;
+    }
+
+    .show-summary {
+      background: #4caf50 !important;
+      /* Same green color as other success buttons */
+      color: white !important;
+      border: none !important;
+      padding: 4px 10px !important;
+      border-radius: 3px !important;
+      font-size: 10px !important;
+      cursor: pointer !important;
+      height: 24px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      white-space: nowrap !important;
+    }
+
+    /* Update the existing .btn class */
+    .btn {
+      padding: 4px 10px;
+      border: none;
+      border-radius: 3px;
+      color: white;
+      font-size: 10px;
+      cursor: pointer;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .consumable-link {
+      color: black;
+      cursor: pointer;
+    }
+
+    .consumable-link:hover {
+      text-decoration: underline;
+    }
+
+    .inline-total {
+      font-weight: bold;
+      text-align: right;
+      padding-right: 15px !important;
+      color: #333;
+    }
+
+    .subtotal-row td {
+      background-color: #f8f9fa;
+    }
+
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    .table-wrapper table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+    }
+
+    .table-wrapper th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #323d89;
+      color: white;
+    }
+
+    .modal-content {
+      padding: 20px;
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+    }
+
+    .actions {
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .credit-table-container {
+      margin-top: 20px;
+    }
+
+    .credit-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+
+    /* Remove dropdown arrows from all select elements */
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: none !important;
+      padding-right: 8px !important;
+    }
+
+    /* For IE */
+    select::-ms-expand {
+      display: none;
+    }
+
+    .table-wrapper input[type="date"] {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      font-size: 11px;
+    }
+
+    /* Make activity description dropdown match others */
+    .table-wrapper select {
+      width: 100% !important;
+      min-width: 150px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      font-size: 11px;
+    }
+
+    .table-wrapper {
+      max-height: 300px;
+      /* Set a height for the table to enable vertical scrolling */
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ccc;
+      white-space: nowrap;
+      /* Ensure table cells don’t break into new lines */
+    }
+
+    th {
+      background-color: #f5f5f5;
+      position: sticky;
+      top: 0;
+      /* Sticky header for better UX when scrolling */
+      z-index: 1;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    .dropdown,
+    .checkbox {
+      width: 100%;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .actions button {
+      padding: 10px 15px;
+      margin-left: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .actions button.process {
+      background-color: #6a5acd;
+      color: white;
+    }
+
+    .actions button.return {
+      background-color: #aaa;
+      color: white;
+    }
+
+    .actions button.close {
+      background-color: #ff4c4c;
+      /* Red color for Close button */
+      color: white;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-info {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-print {
+      background-color: blue;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Modal/Popup styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .table-wrapper select,
+    .table-wrapper .dropdown {
+      width: 100% !important;
+      min-width: 150px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      font-size: 11px;
+      height: 28px;
+      /* Add fixed height for consistency */
+    }
+
+    /* Ensure all table cells have consistent padding and spacing */
+    .table-wrapper td {
+      padding: 5px !important;
+      vertical-align: middle;
+    }
+
+    /* Specific style for Activity Description dropdown */
+    .table-wrapper td:nth-child(4) select {
+      width: 100% !important;
+      min-width: 150px;
+      margin: 0;
+      height: 28px;
+    }
+
+    /* Remove any Select2 specific sizing */
+    .select2-container {
+      width: 100% !important;
+      min-width: 150px !important;
+    }
+
+    .select2-container .select2-selection--single {
+      height: 28px !important;
+    }
+
+    .sublet-dropdown {
+      width: 150px !important;
+      /* Fixed width for the dropdown */
+    }
+
+    /* Control Select2 container width */
+    .select2-container.select2-container--default {
+      width: 150px !important;
+    }
+
+    /* Control dropdown menu width */
+    .select2-container--default .select2-results__option {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+
+    /* Ensure the select2 dropdown doesn't expand */
+    .select2-container--default .select2-selection--single {
+      width: 150px !important;
+    }
+
+    /* Control dropdown list width */
+    .select2-dropdown {
+      width: 150px !important;
+      min-width: 150px !important;
+    }
+
+    /* Style the search box */
+    .select2-search__field {
+      width: 140px !important;
+      /* Slightly smaller than container to account for padding */
+      padding: 4px !important;
+      font-size: 11px !important;
+    }
+
+    /* Control search container width */
+    .select2-search--dropdown {
+      width: 150px !important;
+      padding: 4px;
+    }
+
+    /* Ensure dropdown remains same width with search */
+    .select2-results {
+      width: 150px !important;
+    }
+
+    /* Style search results */
+    .select2-results__option {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 1200px;
+      border-radius: 5px;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      right: 10px;
+      top: 5px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .close-modal:hover {
+      color: #000;
+    }
+
+    /* Make sublet text clickable */
+    .sublet-link {
+      color: black;
+      cursor: pointer;
+    }
+
+    /* The end */
+
+    /* Labour Table */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      color: #666;
+      font-weight: normal;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .refresh-btn {
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      font-weight: normal;
+      color: #666;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .select-field {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .bottom-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .process-btn {
+      background-color: #6c5ce7;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Add these styles in your existing <style> tag */
+    .add-labor-row {
+      width: 24px;
+      height: 24px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 2px;
+    }
+
+    .add-labor-row:hover {
+      background: #45a049;
+    }
+
+    .btn-delete {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .btn-delete:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Style date inputs */
+    input[type="date"] {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 11px;
+      height: 28px;
+    }
+
+    /* Remove calendar icon from date inputs in webkit browsers */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* action history */
+
+    h2 {
+      display: inline;
+    }
+
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      float: right;
+    }
+
+    /* Scrollable Table */
+    .table-wrapper {
+      max-height: 300px;
+      /* Adjust height as needed */
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      white-space: nowrap;
+      /* Prevents text from wrapping */
+    }
+
+    th {
+      background-color: #f4f4f4;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    h2 {
+      display: inline;
+    }
+
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      float: right;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    /* action history */
+    #actionHistoryModal .container {
+      width: 100%;
+      margin: 20px auto;
+    }
+
+    #actionHistoryModal h2 {
+      display: inline;
+      margin-right: 20px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    #actionHistoryModal .btn-print {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      float: right;
+      margin-bottom: 15px;
+    }
+
+    #actionHistoryModal table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      clear: both;
+    }
+
+    #actionHistoryModal th,
+    #actionHistoryModal td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    #actionHistoryModal th {
+      background-color: #f4f4f4;
+    }
+
+    /* Responsive adjustments for actual tab */
+    @media screen and (max-width: 768px) {
+      .actual-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .left-controls,
+      .right-controls {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* for labour */
+    /* Add these styles to your existing CSS */
+    .select2-labor-container {
+      width: 150px !important;
+    }
+
+    .select2-labor-dropdown {
+      width: 150px !important;
+      font-size: 11px;
+    }
+
+    /* Style specifically for labor modal */
+    #laborModal .table-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    #laborModal .labor-dropdown {
+      width: 150px !important;
+    }
+
+    /* Make labor text clickable */
+    .labor-row td:nth-child(2) {
+      cursor: pointer;
+      color: black;
+    }
+
+    .labor-row td:nth-child(2):hover {
+      text-decoration: underline;
+    }
+
+    /* for credit table  */
+    /* Credit table dropdown positioning */
+    .credit-table .select2-container .select2-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+    }
+
+    .credit-table .select2-container--open .select2-dropdown {
+      margin-top: 1px;
+    }
+
+    .credit-table .select2-container--default.select2-container--open {
+      z-index: 9999;
+    }
+
+    /* Ensure dropdown options are visible */
+    .credit-table .select2-results {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* Container positioning */
+    .credit-table .select2-container--default {
+      position: relative;
+      display: inline-block;
+    }
+
+    .apply-advance-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-loader {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .finalize-button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    .finalize-button:hover {
+      background-color: #45a049;
+    }
+
+    .finalize-button:active {
+      background-color: #3d8b40;
+    }
+
+    .finalize-button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .confirmation-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .confirmation-content {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .confirmation-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .confirm-btn {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .cancel-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* The end credit table */
+    .actual-table.summary-view {
+      transition: all 0.3s ease;
+    }
+
+    .actual-table.summary-view thead th {
+      display: none;
+    }
+
+    .actual-table.summary-view thead th:nth-child(2),
+    .actual-table.summary-view thead th:nth-child(14),
+    .actual-table.summary-view thead th:nth-child(15),
+    .actual-table.summary-view thead th:nth-child(16),
+    .actual-table.summary-view thead th:nth-child(17),
+    .actual-table.summary-view thead th:nth-child(18) {
+      display: table-cell;
+    }
+
+    /* Responsive Styles */
+    @media screen and (max-width: 1024px) {
+      .info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .button-group {
+        flex-wrap: wrap;
+      }
+
+      .operations-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+
+      .btn {
+        padding: 4px 8px;
+        font-size: 9px;
+      }
+
+      .tab {
+        padding: 6px 12px;
+        font-size: 10px;
+      }
+    }
+
+    .btn-loader {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .total-row td {
+      background-color: #ddd !important;
+    }
+
+    .returned-sublet {
+      background-color: #f5f5f5;
+    }
+
+    .returned-sublet input,
+    .returned-sublet select {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .discount-cell {
+      text-align: right !important;
+      padding-right: 5px;
+    }
+
+    .actual-table.summary-view {
+      width: 80%;
+      /* Reduce overall table width */
+      margin: 0 auto;
+    }
+
+    .actual-table.summary-view td,
+    .actual-table.summary-view th {
+      padding: 4px 8px;
+      /* Reduce cell padding */
+      font-size: 13px;
+      /* Slightly smaller font */
+    }
+
+    .actual-table.summary-view .editable-cell {
+      min-width: 60px;
+      /* Smaller width for editable cells */
+    }
+
+    .actual-table.summary-view td:not(.editable-cell) {
+      white-space: nowrap;
+      /* Prevent text wrapping */
+    }
+
+
+    /* Material Modal Specific Styles */
+    .material-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+
+    .material-table th,
+    .material-table td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .material-table th {
+      background-color: #323d89;
+      color: white;
+      font-weight: normal;
+    }
+
+    .material-table tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .material-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      margin-top: 15px;
+    }
+
+    .total-section {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .total-amount {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      background: #fff;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-return {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .btn-cancel {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .btn-close {
+      background-color: #757575;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .table-wrapper {
+      max-height: 300px;
+      overflow-y: auto;
+      overflow-x: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    .material-table {
+      min-width: 100%;
+      white-space: nowrap;
+    }
+
+    .material-table th,
+    .material-table td {
+      white-space: nowrap;
+      padding: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Create Operations</h1>
+      <div class="button-group">
+        <button class="btn btn-green">View Chatter</button>
+        <button class="btn btn-blue">Remarks</button>
+        <button class="btn btn-red">Back</button>
+        <button class="btn btn-green">Refresh</button>
+        <button class="btn btn-gray" style="background: #b0b0b0">
+          View Print Requests
+        </button>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-field">
+        <label>Actual Customer</label>
+        <input type="text" id="actualCustomer" readonly />
+      </div>
+      <div class="info-field">
+        <label>Incident Type</label>
+        <input type="text" id="incidentType" readonly />
+      </div>
+      <div class="info-field">
+        <label>Status</label>
+        <input type="text" id="status" readonly />
+      </div>
+      <div class="info-field">
+        <label>Problem Summary</label>
+        <input type="text" id="problemSummary" readonly />
+      </div>
+      <div class="info-field">
+        <label>Resolution Summary</label>
+        <input type="text" id="resolutionSummary" />
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="selectTab(event, 'operation')">
+        OPERATION
+      </button>
+      <button class="tab" onclick="selectTab(event, 'estimate')">
+        ESTIMATE
+      </button>
+      <button class="tab" onclick="selectTab(event, 'actual')">ACTUAL</button>
+    </div>
+
+    <div id="operation" class="activity-section tab-content">
+      <h3 class="activity-header">RO Activity</h3>
+      <button class="add-button" onclick="addRow()">+</button>
+      <table class="operations-table" id="operationsTable">
+        <thead>
+          <tr>
+            <th>Line</th>
+            <th>Operation Code <span class="mandatory-field"></span></th>
+            <th>Description</th>
+            <th>Problem <span class="mandatory-field"></span></th>
+            <th>Correction</th>
+            <th>View Components</th>
+            <th>Gift Voucher Scheme</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td><select class="operation-code-select"></select></td>
+            <td><input type="text" /></td>
+            <td><input type="text" /></td>
+            <td><input type="text" /></td>
+            <td><button class="save-btn">Save</button></td>
+            <td><input type="text" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ESTIMATE -->
+    <div id="estimate" class="activity-section tab-content" style="display: none">
+      <div class="search-container">
+        <span class="search-label">Search</span>
+        <input type="text" class="search-input" placeholder="Type to search" />
+        <button class="btn-export">Export</button>
+        <span style="flex: 1"></span>
+        <button class="btn-get-qty">Get On Hand Qty</button>
+      </div>
+
+      <table class="estimate-table">
+        <thead>
+          <tr>
+            <th class="checkbox-cell">
+              <input type="checkbox" id="selectAll" />
+            </th>
+            <th>Component Type</th>
+            <th>Activity Line</th>
+            <th>Activity Desc</th>
+            <th>Component Code</th>
+            <th>Component Description</th>
+            <th>Estimate Status</th>
+            <th>Sugg Qty <span class="mandatory-field"></span></th>
+            <th>Act Qty <span class="mandatory-field"></span></th>
+            <th>OH Qty <span class="mandatory-field"></span></th>
+            <th>Selling Price</th>
+            <th>Net Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr></tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="11" style="text-align: right">TOTAL(s)</td>
+            <td>0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="footer-buttons">
+        <div class="icon-group">
+          <button class="plus-icon">+</button>
+          <button class="minus-icon">-</button>
+        </div>
+        <button class="btn-footer-gray">Send Parts Input req</button>
+        <button class="btn-footer-template">Download Template</button>
+        <button class="btn-footer-upload">⬆ Upload</button>
+        <button class="btn-footer-paste">Paste Estimation</button>
+        <span style="flex: 1"></span>
+        <button class="btn-footer-estimate btn-create-estimate">
+          Create Estimate
+        </button>
+        <button class="btn-footer-estimate btn-finalize">
+          Finalize Estimation
+        </button>
+        <button class="btn-footer-estimate">Print Pre Estimate</button>
+        <button class="btn-footer-estimate">Print Estimate</button>
+      </div>
+    </div>
+
+    <!-- Actual -->
+    <div id="actual" class="activity-section tab-content" style="display: none">
+      <div class="actual-header">
+        <!-- In the actual-header div, update the button -->
+        <div class="left-controls">
+          <span>Search</span>
+          <input type="text" class="search-box" placeholder="Type to search" />
+          <button class="btn" style="background-color: #2196f3">
+            Export
+          </button>
+          <button class="btn" style="background-color: #4caf50">
+            Show Summary
+          </button>
+        </div>
+
+        <div class="right-controls">
+          <button class="btn" style="background-color: #2196f3">
+            Show Linked Receipts
+          </button>
+          <div class="radio-group">
+            <input type="radio" id="lumpsum" name="view" />
+            <label for="lumpsum">Lumpsum</label>
+            <input type="radio" id="detail" name="view" checked />
+            <label for="detail">Detail</label>
+          </div>
+          <button id="printInvoiceBtn" class="btn btn-blue" onclick="downloadInvoice()">
+            <span class="btn-text">Print Invoice</span>
+            <span class="btn-loader" style="display: none;"></span>
+          </button>
+
+
+          <button id="printPerformaBtn" class="btn btn-purple" onclick="downloadPerforma()">
+            <span class="btn-text">Print Performa</span>
+            <span class="btn-loader" style="display: none;"></span>
+          </button>
+
+          <button class="btn btn-green save-adjustment-btn" onclick="saveActualCalculations()">Save
+            Adjustment</button>
+        </div>
+      </div>
+
+      <div class="actual-content">
+        <table class="actual-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Component Type</th>
+              <th>Activity Line</th>
+              <th>Activity Desc</th>
+              <th>Component Code</th>
+              <th>Component Description</th>
+              <th>Parts Issue Status</th>
+              <th>Sugg Qty <span class="mandatory-field"></span></th>
+              <th>Act Qty <span class="mandatory-field"></span></th>
+              <th>Selling Price</th>
+              <th>Net Price</th>
+              <th>Adj (+/-)</th>
+              <th>Discount %</th>
+              <th>Net Amount</th>
+              <th>VAT</th>
+              <th>Final Amount</th>
+              <th>Est. Total</th>
+              <th>Est. Variation</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top: 20px">
+          <button class="btn btn-green apply-advance-btn">
+            <span class="btn-text">Apply Advance / Get Balances</span>
+            <span class="btn-loader" style="display: none"></span>
+          </button>
+        </div>
+
+        <div id="creditTableContainer" class="credit-table-container" style="display: none">
+          <table class="credit-table">
+            <thead>
+              <tr>
+                <th><span class="arrow"></span>Customer</th>
+                <th>Type</th>
+                <th>Receipt Number</th>
+                <th>Credit memo</th>
+                <th>Original Amount</th>
+                <th>Utilized / Outstanding Amt</th>
+                <th>Loc Available Amt</th>
+                <th>Split %</th>
+                <th>Txn Amount <span class="txn-amount">0.00</span></th>
+                <th>Receivable Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ALY MOHAMED</td>
+                <td>Current WS Level Credit Limit</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <select class="split-select">
+                    <option>1</option>
+                  </select>
+                </td>
+                <td></td>
+                <td>AY-AYM-AJM-GAR-GAR-AJMWS</td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="finalize-button">Finalize Invoice</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Sublet Table -->
+  <div id="subletModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeSubletModal()">&times;</span>
+      <h2>Sublet</h2>
+      <button class="add-labor-row" onclick="addSubletRow()">+</button>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th>Supplier Name</th>
+              <th>Petty Cash Supplier</th>
+              <th>Activity Description</th>
+              <th>Apply VAT</th>
+              <th>Transaction Amount</th>
+              <th>Supplier Invoice num</th>
+              <th>Supplier Invoice date</th>
+              <th>Action History</th>
+              <th>Return Sublet</th>
+              <th>VAT Percent</th>
+              <th>VAT Amount</th>
+              <th>Total Amt (incl VAT)</th>
+              <th>Operation Code</th>
+              <th>Supplier site name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- JavaScript will populate this -->
+          </tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button class="btn-process" onclick="processSublet()">Process</button>
+
+        <button class="return" onclick="returnSublet()">Return Sublet</button>
+        <button class="close" onclick="closeSubletModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Labor Table -->
+  <div id="laborModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeLaborModal()">&times;</span>
+      <h2>Labor</h2>
+      <button class="add-labor-row" onclick="addLaborRow()">+</button>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th>Operation Code</th>
+              <th>Employee Name</th>
+              <th>Employee No</th>
+              <th>Trx Qty</th>
+              <th>Plan Start Date</th>
+              <th>Plan End Date</th>
+              <th>Actual Start Date</th>
+              <th>Actual End Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button class="process-button">Process Labor</button>
+
+        <button class="close" onclick="closeLaborModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action History Modal -->
+  <div id="actionHistoryModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeActionHistoryModal()">&times;</span>
+      <div class="container">
+        <h2>Sublet action history</h2>
+        <button class="btn btn-print">Print GRN</button>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Requisition Number</th>
+              <th>Purchase Order Number</th>
+              <th>PO Receipts</th>
+              <th>AP Invoice Number</th>
+              <th>Return AP Invoice Number</th>
+              <th>Status</th>
+              <th>Output Msg</th>
+              <th>Print Return</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>1865560#SUBL#1#2#1#1</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Material Modal -->
+  <div id="materialModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeMaterialModal()">&times;</span>
+      <h2>Material Details</h2>
+      <div class="table-wrapper">
+        <table class="material-table">
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th>Requested Part</th>
+              <th>Issued Part</th>
+              <th>Req Qty</th>
+              <th>Issued Qty</th>
+              <th>Ack Qty</th>
+              <th>Canc Qty</th>
+              <th>Returned</th>
+              <th>Tot Selling Price</th>
+              <th>Request Number</th>
+              <th>Transaction Date</th>
+              <th>Line Status</th>
+              <th>Parts Status</th>
+              <th>Cancel Status</th>
+              <th>Cancel Parts</th>
+              <th>Action History</th>
+            </tr>
+          </thead>
+          <tbody id="materialTableBody">
+            <tr>
+              <td>1</td>
+              <td>61A-43821-09</td>
+              <td>61A-43821-09</td>
+              <td>1</td>
+              <td>1</td>
+              <td>1</td>
+              <td></td>
+              <td></td>
+              <td>101</td>
+              <td>240609401883</td>
+              <td>2022-01-02 14:30:40</td>
+              <td>Closed</td>
+              <td>Closed</td>
+              <td></td>
+              <td></td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-info">i</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="material-footer">
+        <div class="total-section">
+          <span>Total Amount:</span>
+          <span class="total-amount">101.00</span>
+        </div>
+        <div class="button-group">
+          <button class="btn-return" onclick="returnParts()">Return Parts</button>
+          <button class="btn-cancel" onclick="cancelParts()">Cancel Parts</button>
+          <button class="btn-close" onclick="closeMaterialModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="{% static 'js/estimate.js' %}"></script>
+  <script src="{% static 'js/create.js' %}"></script>
+  <script src="{% static 'js/performa.js' %}"></script>
+  <script src="{% static 'js/actual-tab.js' %}"></script>
+  <script src="{% static 'js/invoice.js' %}"></script>
+  <script src="{% static 'js/material.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</body>
+
+</html>

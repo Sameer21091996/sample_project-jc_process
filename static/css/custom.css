@@ -1,0 +1,39 @@
+.dt-action-btn {
+    padding: 6px;
+    height: auto;
+    min-width: auto;
+}
+
+.header-select {
+    height: 88%;
+    line-height: 100%;
+    width: 113%;
+    padding: 3px;
+}
+
+.formulate-input .form-group {
+    margin-bottom: 0rem;
+}
+
+
+.dataTables_filter {
+    display: none;
+  }
+
+  .header-style {
+    background-color: #4b545c;
+    color: white;
+  }
+  /* #datalist_tabl_wrapper .dataTable, #datalist_tabl_wrapper .dataTables_scrollHeadInner {
+    width: 100% !important;
+} */
+  /* .dataTables_scrollHeadInner {
+    position: relative;
+    box-sizing: content-box;
+    padding-left: 0px; 
+    min-width: 100% !important; 
+  }*/
+  .table {
+    width: 100% !important;
+    min-width: 100% !important;
+  } 

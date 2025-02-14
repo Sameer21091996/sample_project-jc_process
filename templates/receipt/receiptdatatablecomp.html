@@ -1,0 +1,361 @@
+<style>
+    .dataTables_filter {
+    display: none;
+    }
+    
+     tfoot{
+        display: table-header-group;
+    }
+    .header-style {
+        background-color: #4b545c;
+        color: white;
+        width:100%;
+    }
+    </style>
+    <template id="data-table-temp">
+      <div>
+         <div class="card-body" >
+            <table id="datalist_tabl" class="table table-bordered table-hover table-sm text-nowrap table-striped">
+              <thead class="header-style" ></thead>
+            </table>
+         </div>
+      </div>
+    </template>
+    
+    
+    
+    {% include 'components/columnsettingcomp.html' %}
+    
+    <script type="application/javascript">
+        var show_default = true;
+    
+      Vue.component('datatablecomp', {
+          template: '#data-table-temp',
+          delimiters:['[[',']]'],
+          props:['tabl_meta_data'],
+          data: function () {
+              return {
+                  list_items: {},
+                  view_meta : { title : 'Column Settings' }
+              }
+          },
+          methods: {
+              viewRowData(data) {
+                  let preview_url =  self.tabl_meta_data.row_view_url
+                  if(preview_url==undefined){
+                      EventBus.$emit("view_sidebar", data);
+                  }else{
+                      preview_url =  preview_url.replace("/0", "/"+data)
+                      tabl_name = self.tabl_meta_data.table_name
+                      tab_title = 'View '+tabl_name+' '+data
+                      self.addOpenIframePage(tabl_name,data,preview_url,tab_title)
+                  }
+              },
+    
+              previewRowData(data) {
+                  
+                  EventBus.$emit("preview", data);
+              },
+    
+              viewColSettings(data){
+                  tabl_name = self.tabl_meta_data.table_name
+                  EventBus.$emit("view_col_setting", tabl_name );
+              },
+    
+              edit_row(el){
+                  tabl_name = self.tabl_meta_data.table_name
+                  row_id = $(el).parent().data('id')
+                  
+                  let edit_url =  self.tabl_meta_data.edit_form_url
+                  
+                  if(edit_url==undefined){
+                      app_name = self.tabl_meta_data.data_table_url.split('/')[1];
+                      edit_url = app_name+'/action/edit/'+ row_id
+                  }else{
+                      edit_url =  edit_url.replace("/0", "/"+row_id)
+                  }
+                  self.addOpenIframePage(tabl_name,row_id,edit_url)
+              },
+              addOpenIframePage(tabl_name,row_id,tab_url,tab_title=''){
+                 let tab_title2 = tab_title ? tab_title : 'Edit '+tabl_name ;
+                 let unique_name = tab_title2.replace(/\s/g, ''); //(Math.random() + 1).toString(36).substring(7)
+                 var data = ['createTab', tab_title2 , tab_url, unique_name , true ]
+                 var event = new CustomEvent('addOpenIframePage', { detail: data })
+                 window.parent.document.dispatchEvent(event)
+              },
+              buildTheadTfoot(d){
+                var html = ''
+                //html += '<tfoot style="display: table-header-group;"><tr>';
+                html = '<tfoot class="show-footer-above" ><tr>';
+                d.forEach(function(e, i){
+                        //html += '<th>'+e.title+'</th>';
+                        //console.log('e.title--->',e.title)
+                        html += '<th data-column='+e.data+'></th>';
+                        return;
+                });
+                return html + '</tr></tfoot>';
+            
+            },
+            buildLastRow(d){
+                var html = ''
+                //html += '<tfoot style="display: table-header-group;"><tr>';
+                html = '<tr>';
+                d.forEach(function(e, i){
+                        //if(hidenCols.len<i){
+                            if(i== 5)
+                                html += '<td class="dt-body-right" id="receipt_amount">0</td>';
+                            else
+                                html += '<td></td>';
+                                return;
+                        //}
+                });
+                return html + '</tr>';
+            
+            },
+              init_datatable(element, url, column_defs,columns,params=[]) {
+                console.log('params--->',params)
+                  self = this  
+                  element.append(self.buildTheadTfoot(columns))
+                  last_row = self.buildLastRow(columns)
+                    
+                  //table_columns = columns();
+                  /*if (show_header_filters) {
+                      element.append(buildTheadTfoot(table_columns));
+                  }
+                  if (!ordering) {
+                      ordering = "creation_date" in data_targets ? [[data_targets["creation_date"], "desc"]] : [[0, "desc"]];
+                  }*/
+                  //console.log('init table',columns)
+                  var table = element.DataTable({
+                      'fixedHeader': true,
+                      'serverSide': true,
+                      'processing': true,
+                      "pageLength": 100,
+                      "language": {
+                        processing: "<h4>Fetching Receipts...</h4>"
+                      },
+                     "processing": true,
+                      aLengthMenu: [
+                          [10, 25, 50, 100, -1],
+                          [10, 25, 50, 100, "All"]
+                      ],
+                      'ajax': {
+                          "url": url+'?format=datatables',
+                          "contentType": "application/json",
+                          "data": function (d) {
+                              $.extend(d, params());
+                          },
+                         // "type":"POST"
+                      },
+                      "ordering": true,
+                      buttons: [{
+                          text: '<i class="fas fa-indent"></i>',
+                          action: function ( e, dt, node, config ) {
+                              self.viewColSettings(1);
+                          }
+                      }],
+                      //scrollX: "100%",
+                      "drawCallback": function( settings ) {
+                        $(this).find('thead').after($(this).find('tfoot'))
+                        if ($(".dataTables_empty").length > 0) {
+                            //handle_empty_table();
+                        }
+                        $(this).find('tbody').append(last_row)
+                            //if (show_header_filters) {
+                                this.api().columns().every(function (key, value) {
+                                    var a=Math.floor(Math.random() * 11);
+                                    var column = this;
+                                    col_th = $(this.footer());
+                                    search_input = col_th.find(".header_search");
+                                    default_val = search_input.val();
+                                    
+                                    col_th.find(".select2").remove();
+                                    col_th.find(".header_search").remove();
+                                    if(col_th.data('column')=='receipt_method_type'){
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(2)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                    if(col_th.data('column')=='customer'){
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(6)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                    if(col_th.data('column')=='bank_account_name'){
+                                        var select = $('<input type="text" placeholder="Search ' + col_th.text() + '" class="header_search form-control '+col_th.data('column')+'" id='+key+a+' style="width: 100% !important;">')
+                                            .appendTo($(column.footer())).on('change blur', function () {
+                                                var val = $.fn.dataTable.util.escapeRegex( $(this).val());
+                                                table
+                                                .column(19)
+                                                .search(this.value)
+                                                .draw();
+                                                
+                                            });
+                                        select.val(default_val);
+                                    }
+                                });
+                               
+                            //}
+                            var scrollable_table = element.closest(".dataTables_scroll")
+                            scrollable_table.find(".dataTables_scrollHead").after(scrollable_table.find(".dataTables_scrollFoot"));
+                            //on_datatable_draw_callback();
+                            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                            setTimeout(function() {
+                                $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                            }, 2000);
+                        },
+                        "footerCallback": function ( row, data, start, end, display ) {
+                            var api = this.api(), data;
+                    
+                            // Remove the formatting to get integer data for summation
+                            var intVal = function ( i ) {
+                                return typeof i === 'string' ?
+                                    i.replace(/[\$,]/g, '')*1 :
+                                    typeof i === 'number' ?
+                                        i : 0;
+                            };
+                           
+                            setTimeout(() => {
+                                // Total over all pages
+                                    total = api
+                                    .column(5)
+                                    .data()
+                                    .reduce( function (a, b) {
+                                        return intVal(a) + intVal(b);
+                                    }, 0 );
+                                
+                                    $('#receipt_amount').html(total.toFixed(2))
+                               }, 200);
+                        },
+                      "headerCallback": function( nHead, aData, iStart, iEnd, aiDisplay ) {
+                      },
+                      "columns": columns,
+                      'columnDefs': column_defs,
+                      initComplete: function () {
+                          $('.buttons-copy').html('<i class="fa fa-copy" data-widget="col-setting" data-target=".col-setting" />')
+                          var api = this.api();
+                          /*api.$('td').click(function () {
+                              column = $('#datalist_tabl thead tr th').eq($(this).index()).text()
+                              if (column == "Id" || $(this).index()==1 ){
+                              }
+                          });*/
+                      },
+                     // "filter": true, 
+                      //dom: 'Brtip',
+                  });
+                  return table;
+              }
+          },
+          mounted(){
+              self = this;
+              custom_cols = self.tabl_meta_data.custom_columns
+              display_col_indexes = self.tabl_meta_data.display_col_indexes
+             
+              if(display_col_indexes != null ){
+                  diplayCols = []
+                  for(let display_col in display_col_indexes){
+                      disColIndex = display_col_indexes[display_col];
+                      diplayCols[disColIndex] = disColIndex;
+                  }
+              }
+    
+              let incIndex = 0;
+              
+    
+              columnDefArr = [{
+                  "targets": 0,
+                  "createdCell": function (td, cellData, rowData, row, col) {
+                      primary_key = Object.keys(rowData)[0]
+                      $(td).attr('data-id', rowData[primary_key]);
+                  }
+                  }]
+              amount_class = []
+              for( let col_defs in self.tabl_meta_data.column_info){
+                        
+                      singleColDef = {}
+                      singleColDef['target'] = [Number(incIndex)];
+                      if( custom_cols!=undefined && custom_cols[incIndex] !== undefined){
+                              let custom_html = custom_cols[incIndex];
+                              singleColDef['render'] =  function (data, type, row) {
+                                                              let custom_cell_html = custom_html.replaceAll("cell_data", data);
+                                                              custom_cell_html = custom_cell_html.replaceAll("cust_class", self.tabl_meta_data.cust_classes[data]);
+                                                              return custom_cell_html
+                                                      }
+                      }
+                      if(display_col_indexes != null ){
+                          if( diplayCols[incIndex]!== undefined){
+                              singleColDef['visible']   = true
+                          }else{
+                              singleColDef['visible']   = false
+                          }
+                      }
+                      col_type = self.tabl_meta_data.column_info[col_defs]['type']                      
+                      if (col_type == 'amount'){
+                         amount_class.push(Number(incIndex)+2)
+                      }
+                      columnDefArr.push(singleColDef)
+                      incIndex++;
+              }
+              columnDefArr.push({
+                targets: amount_class, 
+                className: 'dt-body-right',
+                "render": $.fn.dataTable.render.number( ',', '.', 2, '','' )
+             })
+    
+              let columns =  self.tabl_meta_data.column_info;
+              actionColHtml = '<button id="dynButton" onclick="self.edit_row(this)" class="btn btn-info btn-sm waves-effect waves-light mdi mdi-pencil" data-toggle="modal"><i class="fas fa-edit"></i></button>'
+              if(custom_cols!=undefined && custom_cols[0] != undefined){
+                  actionColHtml = custom_cols[0]
+              }
+              columns.unshift({
+                  "data": null,
+                  "name": "buttonColumn",
+                  "render": function (data, type, row) {
+                        const row_id = data[Object.keys(data)[0]]
+                        let actionCellHtml = actionColHtml.replaceAll("cell_data", row_id);
+                        if ( typeof action_dropdown == 'function' ) { 
+                            actionCellHtml = action_dropdown(data,row_id)
+                        }
+                        return actionCellHtml;
+                  }
+              })
+              
+              if (typeof datatable_multiselect !== 'undefined'){
+                    columns.unshift({
+                        "data": null,
+                        "name": "buttonColumn",
+                        "render": function (data, type, row) {
+                            const row_id = data[Object.keys(data)[0]]
+                            return '<input class="bulk_ids" name="bulk_ids" type=checkbox value="'+row_id+'">';
+                        }
+                    })
+              }
+              //setTimeout(() => {
+               // console.log('22222222222')
+                      datatable_url = self.tabl_meta_data.data_table_url;
+                      table = this.init_datatable($('#datalist_tabl'), datatable_url,  columnDefArr, columns,get_params)
+                      $('#tabl_global_search').on( 'change blur', function () {
+                          table.search( this.value ).draw();
+                      }); 
+              //  }, 200);
+          },
+          
+      })
+    
+      
+      
+    </script>

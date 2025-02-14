@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+   .dt-buttons.btn-group.flex-wrap {
+   float: right;
+   }
+   .testInput .form-control{
+    //border : 1px solid transparent !important
+   }
+</style>
+{% endblock %}
+{% block content %}
+<div >
+  
+   <datatableheadercomp :header_meta='defaultProp.header_meta' > </datatableheadercomp>
+
+   <div class="tab-content">
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="">
+         <!-- Main content -->
+         <!-- Content Header (Page header) -->
+         <div class="content-header">
+            <div class="container-fluid">
+               <div class="row mb-2">
+                  <div class="col-sm-6">
+                     <!-- <h1 class="m-0">Dashboard</h1> -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-sm-6">
+                     <ol class="breadcrumb float-sm-right">
+                        <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
+                           <li class="breadcrumb-item active">Dashboard v1</li> -->
+                     </ol>
+                  </div>
+                  <!-- /.col -->
+               </div>
+               <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+         </div>
+         <!-- /.content-header -->
+         <div class="card-header">
+         </div>
+         <section class="content">
+            <div class="container-fluid">
+               {% comment %} 
+               <datawidget :widgets='widgets'>  </datawidget>
+               {% endcomment %}
+               <div class="row">
+                  <div class="col-12" >
+                     <div class="card" >
+                        <!-- /.data table -->
+                        <datatablecomp  v-bind:tabl_meta_data="defaultProp.tabl_meta_data">
+                        </datatablecomp>
+                        <!-- /.data table -->
+                     </div>
+                  </div>
+               </div>
+         </section>
+         <!-- /.content -->
+         </div>
+         
+      </div>
+   </div>
+  
+   <viewrowsidebarcomp :view_meta='defaultProp.view_meta'> 
+    <editviewcomponent :view_meta = 'defaultProp.view_meta'>  </editviewcomponent>
+   </viewrowsidebarcomp>
+
+
+
+</div>
+{% endblock %}
+<!-- Custom Javascript of page -->
+{% block js_files %}
+
+{% include 'components/datatableheadercomp.html' %}
+{% include 'components/datatablecomp.html' %}
+{% include 'components/viewrowsidebarcomp.html' %}
+{% include 'components/editviewcomponent.html' %}
+
+<script>
+
+    
+</script>
+
+<script>
+  //initilizing app in lead
+
+  
+</script>
+
+{% endblock %}

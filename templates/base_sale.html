@@ -1,0 +1,143 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- {% block title %}{% endblock %} -->
+  <title id="page_name">AlY Reservation Process | </title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Ionicons -->
+
+
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+  <!-- Google Font: Source Sans Pro -->
+  
+
+
+  <link rel="stylesheet" href="{% static 'plugins/select2/css/select2.min.css' %}">
+
+  <link rel="stylesheet" href="{% static 'plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+
+  <!-- <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}"> -->
+
+  <link rel="stylesheet" href="{% static 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+
+  <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}">
+
+
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/css/jquery.dataTables.min.css"> -->
+
+  <!-- <link rel="stylesheet" type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.10/css/dataTables.checkboxes.css">
+
+
+   -->
+
+
+   
+   <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+
+   <link rel="stylesheet" href="{% static 'css/sweetalert.min.css' %}">
+   <link rel="stylesheet" href="{% static 'css/ionicons.min.css' %}">
+   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+
+
+   
+   <!-- <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> -->
+
+
+   <link rel="stylesheet" href="{% static 'plugins/daterangepicker/daterangepicker.css' %}">
+
+ 
+
+   <link rel="stylesheet" href="{% static 'css/jquery.loadingModal.css' %}">
+
+</head>
+<body class="hold-transition sidebar-mini">
+
+<div class="modal" tabindex="-1" role="dialog" id="empModal">
+    <div class="modal-dialog" role="document" style="    max-width: 65%;">
+      <div class="modal-content">
+        <!-- <div class="modal-header">
+
+          <h4 class="modal-title">Order Info </h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> -->
+<style>
+.timer{
+  font-weight: bold;
+
+}
+.bold_txt
+{
+  font-weight: bold;
+}
+
+  </style>
+        <div class="modal-body">
+         <div class="table-responsive" id="empModal_data" >
+
+
+         </div>
+            
+        </div>
+        
+        <!-- <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel_reservation" style="display: none;"  onclick="cancel_reservation()">Cancel Reservation</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+<div class="wrapper">
+
+  
+        
+    {% block content %}
+
+
+
+    {% endblock %}
+
+
+
+    {% include 'footer.html' %}    
+
+
+    {% block script_block %}
+
+
+
+    {% endblock %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/polyfills.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+   
+    <div class="p-2 mt-3 d-flex justify-content-center d-none" id="view-template-container">
+
+      <div id="print-div" class="p-5 " style="width: 1200px; height: auto">
+  
+         
+  
+      </div>
+  
+  </div>
+

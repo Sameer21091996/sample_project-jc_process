@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Invoice Print  ||    {{ohid|safe}}  </title>
+<script src="{% static 'js/axios.min.js' %}"></script>
+<script src="{% static 'js/vue.min.js' %}"></script>
+
+
+
+        <style>
+            /** 
+                Set the margins of the page to 0, so the footer and the header
+                can be of the full height and width !
+             **/
+            @page {
+                margin: 0cm 0cm;
+            }
+
+            /** Define now the real margins of every page in the PDF **/
+            body {
+                margin-top: 3cm;
+                margin-left: 2cm;
+                margin-right: 2cm;
+                margin-bottom: 2cm;
+            }
+
+            /** Define the header rules **/
+            header {
+                position: fixed;
+                top: 0cm;
+                left: 0cm;
+                right: 0cm;
+                height: 3cm;
+            }
+
+            /** Define the footer rules **/
+            footer {
+                position: fixed; 
+                bottom: 0cm; 
+                left: 0cm; 
+                right: 0cm;
+                height: 2cm;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Define header and footer blocks before your content -->
+        <header>
+            <img src="header.png" width="100%" height="100%"/>
+        </header>
+
+        <footer>
+            <img src="footer.png" width="100%" height="100%"/>
+        </footer>
+
+        <!-- Wrap the content of your PDF inside a main tag -->
+        <main>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            v
+
+            <h1>Hello World</h1>
+            <var></var>
+            <h1>Hello World</h1><var>  <h1>Hello World</h1></var>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            v
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>  <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            v
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            v
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>  <h1>Hello World</h1>
+
+            <h1>Hello World</h1>  <h1>Hello World</h1>
+
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>  <h1>Hello World</h1>
+
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>  <h1>Hello World</h1>
+            <h1>Hello World</h1>
+
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1>
+            <h1>Hello World</h1><var>  <h1>Hello World</h1>
+                <h1>Hello World</h1>
+                <h1>Hello World</h1>
+                <h1>Hello World</h1>
+                <h1>Hello World</h1>
+            <var>  <h1>Hello World</h1>
+                <h1>Hello World</h1>
+                <h1>Hello World</h1>
+                <h1>Hello World</h1>  <h1>Hello World</h1></var></var>
+
+                  <h1>Hello World</h1>  <h1>Hello World</h1>
+
+                  <h1>Hello World</h1>
+                  <h1>Hello World</h1>
+                  <h1>Hello World</h1>
+                  <h1>Hello World</h1>
+                  <h1>Hello World</h1>  <h1>Hello World</h1>
+                  <h1>Hello World</h1>
+
+                    <h1>Hello World</h1>  <h1>Hello World</h1>
+                    <h1>Hello World</h1>  <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>  <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+
+                    <h1>Hello World</h1>  <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    v
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                    <h1>Hello World</h1>
+                      <h1>Hello World</h1>
+                      <h1>Hello World</h1>
+                      <var>
+                          <var></var>
+                          <h1>Hello World</h1>  <h1>Hello World</h1>
+                          <h1>Hello World</h1>
+                          
+                      </var>
+        </main>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.withCredentials = true;
+    
+    var vInv = new Vue({
+       el:'#v-invoice',
+       delimiters:["[[","]]"],
+       methods:{
+           formatCalculation(d){
+               if(d=="" || d==null || d==" ")
+               {
+                   d=0
+               }
+               return parseFloat(d).toLocaleString(undefined,{minimumFractionDigits: 2,
+                                                               maximumFractionDigits: 2});
+           },
+       },
+       mounted(){
+        //showloader();
+    
+      
+               this.base_url = window.location.origin;
+               axios.post("{% url 'get-sales-inv-api' %}",{
+                   ohid:"{{ohid|safe}}",              
+               })
+               .then(function (res) 
+               {
+                   // hideloader()
+                   console.log(res.data)
+                   vInv.invs = res.data.invs;
+                   vInv.drafts = res.data.drafts;
+               })
+               .catch(function () 
+               {
+                   // hideloader()
+                    alert('No Invoice Record found');
+               })
+       },
+       data:{
+           html:'',
+           invs: [],
+           base_url:'',
+           drafts: [],
+           draft_line_number:0,
+           draft_line_number_2:0,
+           
+       }
+    });
+    
+    </script>
+</html>

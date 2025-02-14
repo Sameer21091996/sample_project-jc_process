@@ -1,0 +1,318 @@
+<template id="enq_form">
+  <div @onload="initilizing_scripts()" id="form_dom">
+    <form id="accountForm" action='{% url 'leads:' %}' method="POST">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card-header">
+            <h3 class="card-title" >Account</h3>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+
+                <div class="form-group">
+                  <label for="primary_no">Primary No</label>
+                  <select class="form-control select2_primary_no" name="primary_no" id="primary_no">
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="first_name">First Name</label>
+                  <input type="text" name="first_name" class="form-control" id="first_name" placeholder="Enter First Name"
+                    :value=" component_info.edit_data.account!=undefined ? component_info.edit_data.account.first_name: '' ">
+                </div>
+                <div class="form-group">
+                  <label for="last_name">Last Name</label>
+                  <input type="text" name="last_name" class="form-control" id="last_name" placeholder="Last Name"
+                    :value="component_info.edit_data.account!=undefined ? component_info.edit_data.account.last_name: ''">
+                </div>
+
+                <div class="form-group">
+                  <label for="account_type">Account Type</label>
+                  <select class="form-control" name="account_type" id="account_type">
+                    <option value="">Select</option>
+                    <option v-for="type in component_info.master_data.account_types" v-bind:value="type.code"
+                      v-bind:selected="type.code ==(component_info.edit_data.account!=undefined ? component_info.edit_data.account.account_type : '')">
+                      [[type.code]]</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="whatsapp_no">Whatsapp No</label>
+                  <input type="text" name="whatsapp_no" class="form-control" id="whatsapp_no" placeholder="Whatsapp No"
+                    :value="component_info.edit_data.account!=undefined ? component_info.edit_data.account.whatsapp_no: '' ">
+                </div>
+
+                <div class="form-group">
+                  <label for="email_id">Email Id</label>
+                  <input type="email" name="email_id" class="form-control" id="email_id" placeholder="Email Id"
+                    :value="component_info.edit_data.account!=undefined ? component_info.edit_data.account.email_id: '' ">
+                </div>
+
+                <div class="form-group">
+                  <label for="preferred_contact_method">Preferred Contact Methods</label>
+                  <select class="form-control" name="preferred_contact_method" id="preferred_contact_method">
+                    <option value="">Select</option>
+                    <option v-for="method in component_info.master_data.contact_methods" v-bind:value="method.code"
+                      v-bind:selected="method.code ==(component_info.edit_data.account!=undefined ? component_info.edit_data.account.preferred_contact_method : '')">
+                      [[method.code]]</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- /.card-body -->
+        </div>
+
+        <div class="col-md-4">
+          <!-- general form elements -->
+          <div class="card-header">
+            <h3 class="card-title"> Enquiries </h3>
+          </div>
+          <!-- /.card-header -->
+          <input type="hidden" name="edit_enquiry_id" id="edit_enquiry_id"
+            :value="component_info.edit_data.enquiry!=undefined ? component_info.edit_data.enquiry.enquiry_id: ''">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="enquiry_name">Enquiry Name</label>
+              <input type="text" class="form-control" id="enquiry_name" name="enquiry_name" placeholder="Enquiry Name"
+                :value="component_info.edit_data.enquiry!=undefined ? component_info.edit_data.enquiry.enquiry_name: '' ">
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <input type="description" class="form-control" id="description" name="description"
+                placeholder="enquiry description"
+                :value="component_info.edit_data.enquiry!=undefined ? component_info.edit_data.enquiry.description: '' ">
+            </div>
+            <div class="form-group">
+              <label for="enquiry_status">Enquiry Status</label>
+              <select class="form-control" name="enquiry_status" id="enquiry_status">
+                <option value="">Select</option>
+                <option v-for="status in component_info.master_data.enquiry_statuses" :value=status.code
+                  v-bind:selected="status.code == (component_info.edit_data.enquiry!=undefined ? component_info.edit_data.enquiry.enquiry_status : '')">
+                  [[status.code]] </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="enquiry_source">Enquiry Source</label>
+              <select class="form-control" name="enquiry_source" id="enquiry_source">
+                <option value="">Select</option>
+                <option v-for="source in component_info.master_data.enquiry_sources" :value=source.code
+                  v-bind:selected="source.code == (component_info.edit_data.enquiry!=undefined ? component_info.edit_data.enquiry.enquiry_source : '')">
+                  [[source.code]]</option>
+              </select>
+            </div>
+            <!-- /.card-body-->
+
+          </div>
+          <!-- /.card -->
+        </div>
+
+        
+
+      </div>
+      <div class="card-footer text-center">
+        <button type="submit" @click="formValidate" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+
+
+<script type="application/javascript">
+
+  Vue.component('enquiryformcomp', {
+    template: '#enq_form',
+    delimiters: ['[[', ']]'],
+    props: ['component_info', 'script_change'],
+    // created(){
+
+    //       },
+    created(){
+      
+          this.$nextTick(function() {
+
+            var self = this;
+            
+            var edit_data_numbers = [];
+
+            this.component_info = self.component_info
+            
+            edit_account_id = self.component_info.edit_data.account.ACCOUNT_ID != undefined ? self.component_info.edit_data.account.ACCOUNT_ID : '';
+            console.log('--edit_account_id-->',edit_account_id)
+            if (edit_account_id != '') {
+              edit_data_numbers.push({
+                id: edit_account_id,
+                text: self.component_info.edit_data.account.primary_no +'-'+ self.component_info.edit_data.account.first_name ,
+              })
+            }
+            
+              //console.log('twat');
+              //initilizing select2
+              $('.select2_primary_no').select2({
+                data: edit_data_numbers,
+                minimumInputLength: 3,
+                tags: true,
+                placeholder: "Primary Phone number",
+                ajax: { //load matching accounts based on given primary number
+                  url: '{% url 'leads:get_accounts' %}',
+                  processResults: function (data) {
+                    return {
+                      results: $.map(data.items, function (value, key) {
+                        return {
+                          id: value[0],
+                          text: value[1] + '-' + value[2]
+                        }
+                      })
+                    };
+                  }
+                },
+                createTag: function (params) { //create new tag if the account primary number exists
+                  var term = $.trim(params.term);
+                  if (term === '') {
+                    return null;
+                  }
+                  return {
+                    id: 'new_num_' + term, //attaching prefix 'new_num' to identify newly added tag/primary number
+                    text: term,
+                    newTag: true
+                  }
+                }
+
+              });
+
+              //fetchin account information when select the exising account primary number
+              $('.select2_primary_no').on("change", function (e) {
+               // console.log("change");
+                var account_id = $("#primary_no option:selected").val();
+                var url = "{% url 'leads:get_account_details' 0 %}".replace('0', account_id);
+                $.ajax({
+                  type: "GET",
+                  url: url,
+                  success: function (data) {
+                    //adding account holder information based on the selection
+                    $('#first_name').val(data['account_info'].first_name);
+                    $('#last_name').val(data['account_info'].last_name);
+                    $('#account_type').val(data['account_info'].account_type);
+                    $('#whatsapp_no').val(data['account_info'].whatsapp_no);
+                    $('#email_id').val(data['account_info'].email_id);
+                    $('#preferred_contact_method').val(data['account_info'].preferred_contact_method);
+                  }
+                })
+              });
+
+              
+              
+              
+          });
+
+    },
+    watch: {
+      script_change: function (val) {
+        console.log('changedddddddddd')
+      }
+    },
+    methods: {
+      formValidate: function () {
+
+        $.validator.setDefaults({
+          submitHandler: function (form) {
+            form.submit();
+          }
+        });
+
+        $('#accountForm').validate({
+          rules: {
+            primary_no: {
+              required: true
+            },
+            first_name: {
+              required: true,
+              minlength: 3
+            },
+            last_name: {
+              required: true,
+              minlength: 2
+            },
+            account_type: {
+              required: true
+            },
+            whatsapp_no: {
+              required: true,
+              minlength: 5
+            },
+            email_id: {
+              required: true,
+              email: true,
+            },
+            enquiry_name: {
+              required: true,
+              minlength: 3
+            },
+            enquiry_description: {
+              required: true,
+              minlength: 5
+            },
+            enquiry_status: {
+              required: true
+            },
+            enquiry_source: {
+              required: true
+            }
+          },
+          messages: {
+            primary_no: {
+              required: "Please provide a mobile number"
+            },
+            first_name: {
+              required: "Please provide a first name",
+              minlength: "Your first name must be at least 3 characters long"
+            },
+            last_name: {
+              required: "Please provide a last name",
+              minlength: "Your last name must be at least 2 characters long"
+            },
+            account_type: "Please select account type",
+            whatsapp_no: {
+              required: "Please provide a Whatsapp number",
+              minlength: "Your Whatsapp number must be at least 5 characters long"
+            },
+            email_id: {
+              required: "Please enter a email address",
+              email: "Please enter a valid email address"
+            },
+            enquiry_name: {
+              required: "Please provide enquiry name",
+              minlength: "Your enquiry name must be at least 3 characters long"
+            },
+            enquiry_description: {
+              required: "Please provide enquiry description",
+              minlength: "Your description must be at least 5 characters long"
+            },
+            enquiry_status: "Please select enquiry status",
+            enquiry_source: "Please select enquiry source",
+          },
+          errorElement: 'span',
+          errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+          },
+          highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+          },
+          unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+          }
+        });
+      },
+    }
+  })
+
+</script>

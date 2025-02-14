@@ -1,0 +1,628 @@
+<template id="data_header_div">
+    <div id="header_div">
+        <nav class="navbar navbar-expand navbar-white navbar-light" style="zoom:.75">
+           <ul class="navbar-nav" >
+              <li class="nav-item"><a id="side_toggle"
+                 role="button" class="nav-link" data-toggle="collapse" data-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter"><i class="fa fa-filter"></i></a>
+                </li>
+              <li class="nav-item d-sm-inline-block">
+                 <select aria-label=".form-select-lg example"
+                    class="form-select form-select-lg mb-3 btn-secondary header-select"
+                    style="height: 88%; line-height: 100%; width: fit-content; padding: 3px;">
+                    <option selected="selected">[[header_meta.filter_label]]</option>
+                    <option value="1">Saved Filter 1</option>
+                    <option value="2">Saved Filter 2</option>
+                    <option value="3">Saved Filter 3</option>
+                 </select>
+              </li>
+           </ul>
+           
+           <ul class="navbar-nav overflow-hidden w-25 ml-3" role="tablist" >
+              <li class="nav-item w-100">
+               <input type="search" id="tabl_global_search" placeholder="Search"
+                             aria-label="Search" class="form-control form-control-navbar">
+              
+              </li>
+           </ul>
+           <ul class="navbar-nav ml-auto mr-3" >
+                <li class="nav-item d-none" style="padding-right: 15px;" id="resfresh_button">
+                    <button id="refresh-pend-approval" type="button" class="btn btn-primary btn-sm mr-3" 
+                    style="height: 88%; line-height: 100%; fit-content; padding: 3px; display: none;" @click='refreshPendingApproval($event)'>
+                        Refresh Pending Approval 
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" id="refresh-page" 
+                    style="height: 88%; line-height: 100%; fit-content; padding: 3px;" @click='refreshPage()'>
+                        Refresh 
+                    </button>
+                </li>
+               {% comment %} v-show="header_meta.menu_access.full_access === true || header_meta.menu_access.create_access === true "  {% endcomment %}
+              <li class="nav-item" style="padding-right: 15px;
+                 "><button type="button" class="btn btn-primary btn-sm"
+                 style="height: 88%; line-height: 100%; fit-content; padding: 3px;" @click='addOpenIframePage()'>
+                 [[header_meta.add_label]]
+                 </button>
+              </li>
+              <li class="nav-item">
+                <div class="btn-group btn-lg"> <button type="button" class="btn btn-secondary btn-md waves-effect waves-light dropdown-toggle"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="ti-menu"></i>Action </button>
+                    <div class="dropdown-menu animated flipInY" style="">
+                          <a v-for="action in header_meta.bulk_action_dropdown"  class="dropdown-item cust_class" href="javascript:void(0)" onclick="action_function(this)" :data-value="action.value">[[ action.text ]]</a>
+                          
+                    </div>
+                 </div>
+              </li>
+           </ul>
+        </nav>
+
+        <div class="collapse show" id="collapseFilter">
+             <div class="col-sm-12" id="filter_datalist">
+                        
+                    </div>
+          </div>
+     </div>
+     <!-- <div class="collapse" id="collapseFilter">
+        <div class="col-sm-12" id="filter_datalist">
+           <ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills "> 
+              <li class="nav-item waves-effect waves-info shadow-sm" v-for="prop in filter_props">
+                 <a :data-value="prop.value" data-toggle="tab" role="tab" :class="`nav-link ${prop.active?'active':''}`" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                    <span class="hidden-xs-down h5">[[prop.status]]</span> 
+                    <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">[[prop.count]]</span>
+                 </a>
+              </li> 
+           <li class="nav-item waves-effect waves-info shadow-sm"> <input class="gl_picker flatpickr-input form-control" type="text" placeholder="Select Accouting Date" data-id="range"> </li>
+           </ul>            
+        </div>
+      </div> -->
+</template>
+
+<viewrowsidebarcomp :view_meta='view_meta'>  </viewrowsidebarcomp>
+  
+<script type="application/javascript">
+    var openIframeTabCount = 1;
+    var glo_clicked_btn_id = '';
+    Vue.component('datatableheadercomp', {
+        template: '#data_header_div',
+        delimiters: ['[[', ']]'],
+        props: ['header_meta','filter_status'],
+        methods: {
+            openAddPopup() {
+               data = ''
+               EventBus.$emit("view_sidebar", data);
+            },
+            refreshPendingApproval($event){
+                $('a[data-value="PENDING DISCOUNT APPROVAL"]').click();
+                glo_clicked_btn_id = $event.target.id;
+            },
+            refreshPage(){
+                $('a[data-value="PENDING DISCOUNT APPROVAL"]').click();
+                glo_clicked_btn_id = $event.target.id;
+                $('a[data-value="ALL"]').click();
+            },
+            addOpenIframePage(){
+                
+                var tabOpenKey = 'tab_open_count_'+this.header_meta.add_link;
+                
+                if (localStorage.getItem(tabOpenKey) == null){
+                    localStorage.setItem(tabOpenKey,"1");
+                    var tabCount = 1;    
+                } else {
+                    var i =  parseInt(localStorage.getItem(tabOpenKey));
+                    localStorage.setItem(tabOpenKey,++i);
+                    var tabCount = i;    
+                }
+    
+                var endUrl = '?'+(tabCount);
+                if (window.location.href.includes("/invoice")){
+                    var endUrl = '/?'+(tabCount);
+
+                }
+
+
+               var data = ['createTab', this.header_meta.add_title  , this.header_meta.add_link +endUrl , this.header_meta.add_unique_name +(tabCount) , true ]
+               var event = new CustomEvent('addOpenIframePage', { detail: data })
+               window.parent.document.dispatchEvent(event)
+            //    alert();
+            },
+            initComp(header_meta){
+                if (window.location.href.includes("/sales_delivery") ){
+                    var filter_props = [
+                        {
+                            label:'PENDING',
+                            status:'PENDING',
+                            count:header_meta.pending,
+                            active:true,
+                        },
+                        {
+                            label:'DELIVERED',
+                            status:'DELIVERED',
+                            count:header_meta.delivered,
+                            active:false,
+                        },
+                        {
+                            label:'DELIVERED & PRINTED',
+                            status:'DELIVERED_AND_PRINTED',
+                            count:header_meta.printed,
+                            active:false,
+                        },
+                        {
+                            label:'ALL',
+                            status:'ALL',
+                            count:header_meta.total_order,
+                            active:false,
+                        }]
+                        $('#resfresh_button').removeClass('d-none')
+                        $('#filter_datalist').empty().append(
+                            `<input type="checkbox" onclick='handleClick(this)' value="CLOSED"> CLOSED
+                                    <input type="checkbox"value="AWAITING PAYMENT CONFIRMATION"> AWAITING PAYMENT CONFIRMATION
+                                    <input type="checkbox" onclick='handleClick(this)' value="PAYMENT RECEIVED"> PAYMENT RECEIVED`
+                        );
+
+
+                        $('#filter_datalist').empty().append(
+                            `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills " style="zoom: .75;">
+                            
+
+                                ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                                    <a data-value="${prop.status}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                        <span class="hidden-xs-down h5">${prop.label}</span> 
+                                        <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                                    </a>
+                                </li> `).join("")} 
+                                <li class="nav-item waves-effect waves-info shadow-sm"> <input style="width: 220px;" class="gl_picker flatpickr-input form-control" type="text" placeholder="Select Date" data-id="range"> </li>
+                            </ul>`
+                            
+                        );
+
+                        setTimeout(function(scope) {
+                            self = this
+                            $('.gl_picker').flatpickr({
+                                dateFormat: 'd-M-Y',
+                                allowInput: true,
+                                mode: "range",
+                                static	:true,
+                                onClose: function(selectedDates, dateStr, instance) {
+                                    info = table.draw();
+        
+        
+                                    axios.get(window.location.href+'?daterange='+dateStr)
+                                    .then(response => {
+                                            pageProperties = response.data
+                                            vApp.$children[0].initComp(pageProperties.header_meta);
+                                            // vApp.initComp();
+                                    })
+                                    .catch(e => {
+                                        console.log(e)
+                                    });
+                                    //self.change_bucket_count();
+                                },
+                            });
+        
+                            }.bind(this), 2)
+
+                }else if (window.location.href.includes("/invoice") || window.location.href.includes("/sales")){
+                    if (window.location.href.includes("/aye_return_acknowledgement") || window.location.href.includes("/unit_return_acknowledgement") || window.location.href.includes("/return_acknowledgement")){
+                        var filter_props = [
+                        {
+                            label:'RETURN PENDING FOR APPROVAL',
+                            status:'PENDING FOR APPROVAL',
+                            count:header_meta.pending_for_approval,
+                            active:true,
+                        },
+                        {
+                            label:'AWAITING RETURN',
+                            status:'AWAITING_RETURN',
+                            count:header_meta.awaiting_return,
+                            active:false,
+                        },
+                        {
+                            label:'RETURN ACKNOWLEDGED',
+                            status:'RETURN ACKNOWLEDGED',
+                            count:header_meta.return_acknowledge,
+                            active:false,
+                        },
+                        ];
+                        $('.ml-auto').addClass('d-none')
+                        $('#data_range').addClass('d-none')
+                    }else{
+                        $('#refresh-pend-approval').show();
+                        console.log('thisssssssssss',this)
+                        var filter_props = [
+                            {
+                                label:'ALL',
+                                status:'ALL',
+                                count:header_meta.total_order,
+                                active:true,
+                            },
+                            {
+                                label:'DRAFT',
+                                status:'DRAFT',
+                                count:header_meta.draft,
+                                active:false,
+                            },
+                            {% if page == 'aye' %}
+                            {
+                                label:'ENTERED',
+                                status:'ENTERED',
+                                count:header_meta.entered,
+                                active:false,
+                            },
+                            {% endif %}
+                            {
+                                label:'PENDING APPROVAL',
+                                status:'PENDING DISCOUNT APPROVAL',
+                                count:header_meta.pending_discount_approval,
+                                active:false,
+                            },
+                            {
+                                label:'AWAITING PAYMENT',
+                                status:'AWAITING PAYMENT CONFIRMATION',
+                                count:header_meta.awaiting_payment_confirmation,
+                                active:false,
+                            },
+                            {
+                                label:'PAYMENT RECEIVED',
+                                status:'PAYMENT RECEIVED',
+                                count:header_meta.payment_received,
+                                active:false,
+                            },
+                            {
+                                label:'CLOSED',
+                                status:'CLOSED',
+                                count:header_meta.booked_order,
+                                active:false,
+                            },
+                            {
+                                label:'REJECTED',
+                                status:'REJECTED',
+                                count:header_meta.rejected,
+                                active:false,
+                            },
+                            {
+                                label:'CANCELLED',
+                                status:'CANCELLED',
+                                count:header_meta.cancelled,
+                                active:false,
+                            },
+                            {
+                                label:'NOT PRINTED',
+                                status:'NOT PRINTED',
+                                count:header_meta.not_printed,
+                                active:false,
+                            },
+                            {% if  return == "Allow" and request.session.tenant != '379' %}
+                            {
+                                label:'RETURN PENDING FOR APPROVAL',
+                                status:'PENDING FOR APPROVAL',
+                                count:header_meta.pending_for_approval,
+                                active:false,
+                            },
+                            {
+                                label:'AWAITING RETURN',
+                                status:'AWAITING_RETURN',
+                                count:header_meta.awaiting_return,
+                                active:false,
+                            },
+                            {
+                                label:'RETURN ACKNOWLEDGED',
+                                status:'RETURN ACKNOWLEDGED',
+                                count:header_meta.return_acknowledge,
+                                active:false,
+                            },
+                            {% endif %}
+
+                        ];
+                        $('#resfresh_button').removeClass('d-none')
+                    }
+                    $('#filter_datalist').empty().append(
+                        `<input type="checkbox" onclick='handleClick(this)' value="CLOSED"> CLOSED
+                                <input type="checkbox"value="AWAITING PAYMENT CONFIRMATION"> AWAITING PAYMENT CONFIRMATION
+                                <input type="checkbox" onclick='handleClick(this)' value="PAYMENT RECEIVED"> PAYMENT RECEIVED`
+                    );
+
+
+                    $('#filter_datalist').empty().append(
+                        `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills " style="zoom: .75;">
+                        
+
+                            ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                                <a data-value="${prop.status}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                    <span class="hidden-xs-down h5">${prop.label}</span> 
+                                    <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                                </a>
+                            </li> `).join("")} 
+<li class="nav-item waves-effect waves-info shadow-sm"> <input style="width: 220px;" class="gl_picker flatpickr-input form-control" type="text" placeholder="Select Date" id="data_range" data-id="range"> </li>
+                        </ul>`
+                        
+                    );
+
+
+                    // var d = new Date();
+                    // $(".gl_picker").val(moment().subtract(1, 'day').format('DD-MMM-YYYY'))
+
+                    //self.change_bucket_count()
+                    setTimeout(function(scope) {
+                    self = this
+                    $('.gl_picker').flatpickr({
+                        dateFormat: 'd-M-Y',
+                        allowInput: true,
+                        mode: "range",
+                        static	:true,
+                        onClose: function(selectedDates, dateStr, instance) {
+                            // dateSearch(dateStr,selectedDates)
+                            // self.change_bucket_count();
+                            info = table.draw();
+
+
+                            axios.get(window.location.href+'?daterange='+dateStr)
+                            .then(response => {
+                                    pageProperties = response.data
+                                    // vAppProperties.data.defaultProp.view_meta = pageProperties.view_meta
+                                    // vAppProperties.data.defaultProp.header_meta = pageProperties.header_meta;
+                                    
+                                    // vAppProperties.data.defaultProp.tabl_meta_data = pageProperties.data_tabl_meta
+                                    // vApp = new Vue(vAppProperties);
+
+                                    // vApp.defaultProp.header_meta = pageProperties.header_meta;
+
+
+                                    vApp.$children[0].initComp(pageProperties.header_meta);
+                                    // vApp.initComp();
+                            })
+                            .catch(e => {
+                                console.log(e)
+                            });
+                            //self.change_bucket_count();
+                        },
+                    });
+
+                    }.bind(this), 2)
+                    
+                } else if (window.location.href.includes("/installation")){
+                    var filter_props = [
+                        {
+                            label:'All',
+                            status:'',
+                            count:header_meta.all_count,
+                            active:true,
+                        },
+                        {
+                            label:'Open',
+                            status:'Open',
+                            count:header_meta.open_count,
+                            active:false,
+                        },
+                        {
+                            label:'In Progress',
+                            status:'In Progress',
+                            count:header_meta.in_progress_count,
+                            active:false,
+                        },
+                        {
+                            label:'Closed',
+                            status:'Closed',
+                            count:header_meta.closed_count,
+                            active:false,
+                        },
+                    ];
+
+                    $('#filter_datalist').empty().append(
+                        `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills">
+                            ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                                <a data-value="${prop.status}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                    <span class="hidden-xs-down h5">${prop.label}</span> 
+                                    <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                                </a>
+                            </li> `).join("")} 
+                        </ul>`
+                        
+                    );
+
+                    //$('#side_toggle').click();
+                } else if (window.location.href.includes("/purchase_order")){
+                    var filter_props = [
+                        {
+                            label:'ALL',
+                            status:'ALL',
+                            count:header_meta.all_count,
+                            active:true,
+                        },
+                        {
+                            label:'Draft',
+                            status:'Draft',
+                            count:header_meta.draft_count,
+                            active:false,
+                        },
+                        {
+                            label:'Approved',
+                            status:'Approved',
+                            count:header_meta.approved_count,
+                            active:false,
+                        },
+                    ];
+
+                    $('#filter_datalist').empty().append(
+                        `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills">
+                            ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                                <a data-value="${prop.status}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                    <span class="hidden-xs-down h5">${prop.label}</span> 
+                                    <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                                </a>
+                            </li> `).join("")} 
+                        </ul>`
+                        
+                    );
+
+                    //$('#side_toggle').click();
+                }
+            },
+            commonHeaderBuckets(filter_props){
+                console.log('filter_props--->',filter_props)
+                $('#filter_datalist').empty().append(
+                        `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills " style="zoom: .75;">
+                        
+                            ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                                <a data-value="${prop.value}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                    <span class="hidden-xs-down h5">${prop.label}</span> 
+                                    <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                                </a>
+                            </li> `).join("")} 
+                            <li class="nav-item waves-effect waves-info shadow-sm"> <input style="width: 220px;" class="gl_picker flatpickr-input form-control" type="text" placeholder="Select Date" data-id="range"> </li>
+                        </ul>`
+                        
+                );
+            }
+        },
+        mounted(){
+            console.log('this-----------------')
+            this.initComp(this.header_meta);
+        
+            if(this.header_meta.filter_props_data!=undefined){
+                this.commonHeaderBuckets(this.header_meta.filter_props_data);
+                if ($('input.gl_picker').length) {
+                    $('.gl_picker').flatpickr({
+                        dateFormat: 'd-M-Y',
+                        allowInput: true,
+                        mode: "range",
+                        static	:true,
+                        onClose: function(selectedDates, dateStr, instance) {
+                            info = table.draw();
+                            axios.get(window.location.href+'?daterange='+dateStr)
+                            .then(response => {
+                                    pageProperties = response.data
+                                    vApp.$children[0].initComp(pageProperties.header_meta);
+                                    // vApp.initComp();
+                            })
+                            .catch(e => {
+                                console.log(e)
+                            });
+                        },
+                    });
+                }
+            }
+        
+            if (window.location.href.includes("/invoice") || window.location.href.includes("/sales")){
+                //$('#side_toggle').click();
+            }else if(window.location.href.includes("/aye_parts_request")){
+                var filter_props = [
+                    // parts_request
+                    {
+                        label:'ALL',
+                        status:'ALL',
+                        count:this.header_meta.total_order,
+                        active:true,
+                    },
+                    {% if type == 'parts_request' %}
+                    {
+                        label:'DRAFT',
+                        status:'Draft',
+                        count:this.header_meta.draft,
+                        active:false,
+                    },
+                    {% endif %}
+                    {
+                        label:'IN-PROCESS',
+                        status:'In-Process',
+                        count:this.header_meta.in_process,
+                        active:false,
+                    },
+                    {
+                        label:'CLOSED',
+                        status:'CLOSED',
+                        count:this.header_meta.closed,
+                        active:false,
+                    },
+                    {% if type == 'parts_request' %}
+                    {
+                        label:'TO BE RECEIVED',
+                        status:'TO BE RECEIVED',
+                        count:this.header_meta.to_be_received,
+                        active:false,
+                    },
+                    {
+                        label:'FULLY RECEIVED',
+                        status:'FULLY RECEIVED',
+                        count:this.header_meta.fully_received,
+                        active:false,
+                    },
+                    {
+                        label:'PARTIALLY RECEIVED',
+                        status:'PARTIALLY RECEIVED',
+                        count:this.header_meta.partially_received,
+                        active:false,
+                    },
+                    {% endif %}
+                ];
+                $('#resfresh_button').removeClass('d-none')
+                $('#filter_datalist').empty().append(
+                    `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills " style="zoom: .75;">
+                           ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                            <a data-value="${prop.status}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                <span class="hidden-xs-down h5">${prop.label}</span> 
+                                <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                            </a>
+                        </li> `).join("")} 
+                        
+                    </ul>`
+                );
+                //$('#side_toggle').click()
+            }else if(window.location.href.includes("/spares_to_garage_transfers")){
+                var filter_props = [
+                    {
+                        label:'All',
+                        status:'all_spare_to_garage',
+                        count:this.header_meta.all_spare_to_garage,
+                        active:true,
+                    },
+                    {
+                        label:'Spare To Garage',
+                        status:'spare_to_garage',
+                        count:this.header_meta.spare_to_garage,
+                        active:false,
+                    },
+                    {
+                        label:'Return From Garage',
+                        status:'return_to_garage',
+                        count:this.header_meta.return_to_garage,
+                        active:false,
+                    },
+                    {
+                        label:'In-Process Spare To Garage',
+                        status:'in_process_spare_to_garage',
+                        count:this.header_meta.in_process_spare_to_garage,
+                        active:false,
+                    },
+                    {
+                        label:'In-Process Return From Garage',
+                        status:'in_process_return_to_garage',
+                        count:this.header_meta.in_process_return_to_garage,
+                        active:false,
+                    },
+                    {
+                        label:'Closed Spare To Garage',
+                        status:'closed_spare_to_garage',
+                        count:this.header_meta.closed_spare_to_garage,
+                        active:false,
+                    },
+                    {
+                        label:'Closed Return From Garage',
+                        status:'closed_return_to_garage',
+                        count:this.header_meta.closed_return_to_garage,
+                        active:false,
+                    },
+                ];
+                $('#filter_datalist').empty().append(
+                    `<ul id="transfersTabs" role="tablist" class="nav nav-pills custom-pills " style="zoom: .75;">
+                           ${filter_props.map(prop=>`<li class="nav-item waves-effect waves-info shadow-sm">
+                            <a data-value="${prop.status}" data-toggle="tab" role="tab" class="nav-link ${prop.active?'active':''}" style="cursor:pointer;"  onclick='handleClick(this)' > 
+                                <span class="hidden-xs-down h5">${prop.label}</span> 
+                                <span class="badge badge-pill badge-success ml-auto m-r-15" style="font-size: 13px;">${prop.count}</span>
+                            </a>
+                        </li> `).join("")} 
+                        
+                    </ul>`
+                );
+                //$('#side_toggle').click()
+            }
+        }
+    });
+</script>

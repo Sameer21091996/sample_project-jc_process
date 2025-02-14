@@ -1,0 +1,704 @@
+{% extends "base_sale.html" %}
+
+{% load static %}
+
+
+{% block content %}
+<style>
+   .dt-button {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: none;
+    }
+#dept_line{
+display: none;
+
+}
+
+.badge{
+    padding: 4px;
+
+}
+
+.tbl_font{
+  width: 100%;
+
+  font-size:12px
+
+}
+
+</style>
+
+<div class="container-fluid">
+
+  
+
+
+    <div class="row"  id="counts_row">
+        <div class="col-12 col-sm-6 col-md-2">
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="info-box" onclick="onDashClick(this)" style="background:  rgb(160, 160, 160);">
+            <span class="info-box-icon bg-info elevation-1"><i class="ion ion-cube"></i></span>
+    
+            <div class="info-box-content">
+              <span class="info-box-text">Pending Payment Requests</span>
+              <span class="info-box-number">
+                
+                <small>[[data.payment_request]]</small>
+              </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        
+        
+        <div class="col-12 col-sm-6 col-md-1">
+        </div>
+        <div class="col-12 col-sm-6 col-md-3">
+          <div class="info-box mb-3" onclick="onDashClick(this)" style="background: rgb(244, 246, 249);">
+            <span class="info-box-icon bg-danger elevation-1"><i class="ion ion-refresh"></i></span>
+    
+            <div class="info-box-content">
+              <span class="info-box-text">Payment Collected</span>
+              <span class="info-box-number">[[data.paid]]</span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+    
+        <!-- fix for small devices only -->
+        <div class="clearfix hidden-md-up"></div>
+    
+      
+        
+      </div>
+
+
+      <div id="payment_request"  class="common_area_cls" >
+        <div class="table-responsive">
+           <table   class="table table-bordered table-hover tbl_font table-sm "  style="      text-align: center;  white-space: nowrap;"      id="tbl_payment_request"></table>
+       </div>
+    </div>
+
+
+      <!-- <div id="payment_request"  class="common_area_cls" >
+          <div class="table-responsive">
+        <table   class="table table-bordered table-hover tbl_font table-sm "  style="      text-align: center;  white-space: nowrap;"      id="tbl_payment_request"></table>
+      </div>
+    </div> -->
+
+
+
+
+
+</div>
+
+
+
+
+<div class="modal  fade modal-small in" id="remarks_modal" role="dialog">
+  <div class="modal-dialog modal-lg" style="    max-width: 75% !important;">
+    <div class="modal-content">      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title" style="font-weight: 800;"></h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body"  style=" padding-left: 3%;      padding-right: 3%; margin-bottom: 4%; margin-top: 1%;">              
+
+          <label>Remarks</label>
+
+          <textarea name="remarks" id="remarks" style="width: 100%;" rows="10"></textarea>
+        
+     
+          <button type="button" class="btn btn-info" onclick="return_to_salesman(glo_order_header_id,true)">Submit</button>
+
+      </div>
+      
+      <!-- Modal footer -->
+     
+      
+    </div>
+  
+  
+  
+  </div>
+
+
+
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+{% block script_block %}
+  
+
+<script>
+  
+ var counts_row=new Vue({
+      el: '#counts_row',    
+      delimiters:['[[',']]'], 
+      data:
+      {
+        data: {{counts|safe}}   
+      },
+      methods: 
+      {
+
+      },
+  
+  });
+
+
+  localStorage.setItem('defs','{{defs|safe}}')
+function getElementByXpath(path)
+{
+    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+  function onDashClick(e) 
+    {
+
+
+            var selected= e.children[1].children[0].textContent.trim();
+            console.log(selected)
+            //
+            var all_dash_icon= document.querySelectorAll('.info-box')
+            for (var i = 0, len = all_dash_icon.length; i < len; i++) 
+            {
+                all_dash_icon[i].style.background='#fff'
+            }
+            // $(".common_area_cls").hide(); 
+
+            if(selected=='Pending Payment Requests')
+            {
+                e.style.background='#A0A0A0';                            
+               // $("#payment_request").show();     
+               
+               
+                update_table('tbl_payment_request','AWAITING PAYMENT CONFIRMATION');      
+            }
+            if(selected=='Payment Collected')
+            {
+                e.style.background='#A0A0A0';
+               // $("#payment_request").show();
+                update_table('tbl_payment_request','PAYMENT RECEIVED');               
+
+
+            }           
+            return 
+            }
+
+
+
+function update_table(tbl,type)
+{
+     ShowDIV()
+
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.withCredentials = true; 
+
+     axios.post("{% url 'accountant_orders_list' %}"
+    ,{
+            defs:localStorage.getItem('defs'),
+            type:type,
+            from_date:localStorage.getItem("fromdate"),
+            to_date: localStorage.getItem("todate")            
+    })
+    //axios.get("{% url 'accountant_orders_list' %}?defs="+ localStorage.getItem('defs')+'&type='+type+'&from_date='+localStorage.getItem("fromdate")+'&to_date='+localStorage.getItem("todate"))
+      .then(function(res)
+      { 
+        HideDIV();
+        if ($.fn.dataTable.isDataTable('#'+tbl))
+        {
+              $('#'+tbl).DataTable().destroy();
+              $('#'+tbl)[0].innerHTML = '';   
+              update_tblll(res,tbl);       
+        }
+        else
+        {
+                update_tblll(res,tbl)               
+        }       
+      })
+      .catch(function()
+      {
+         
+  
+      })
+  }
+function  update_tblll(res,tbl)
+{             var m=0;
+              var oTblReport = $("#"+tbl)
+              console.log(res.data.data)
+              console.log(res.data.columns)              
+              table= oTblReport.DataTable ({               
+                  "data" : res.data.data,
+                  "columns" : res.data.columns,
+                  //"dom": '<"toolbar">frtip',
+                  "dom": "<'row'<'col-md-2'B><'col-md-2'l><' toolbar col-md-5 '><'col-md-3'f>><'row'<'col-md-12't>><'row'<'col-md-3'i><'col-md-5'><'col-md-4'p>>",  
+                  buttons: [ 'csv', 'excel'],
+                  // "columnDefs": [
+                  // {
+                  //     "targets": [0],
+                  //     "render": function(data,type,row,meta)
+                  //     {
+                  //         console.log(row)
+
+
+                  //          if(row.status =='ADVANCE PAYMENT INITIATED')
+                  //         {
+                            
+                  //           return '<button  type="button" class="btn btn-sm btn-info"   onclick="collect_href('+row.order_header+')">Collect Payment</button> <button  type="button" class="btn btn-sm btn-info"   onclick="invoice_info('+row.order_header+')">Order Info</button> ';
+
+                  //         }
+                  //          if(row.status =='ADVANCE PAYMENT RECEIVED')
+                  //         {
+                            
+                  //           return ' <button  type="button" class="btn btn-sm btn-info"   onclick="invoice_info('+row.order_header+')">Order Info</button> ';
+                           
+                  //         }
+                  //        // else if
+                  //        // {
+
+                  //       //      return '';
+
+                  //       //  }
+                  //         //else
+                  //        /// {
+                  //         ///    return '<button  type="button" class="btn btn-sm btn-info"   onclick="initiate_payment('+row.order_header+')">Initiate Payment </button>  <button  type="button" class="btn btn-sm btn-info"   onclick="invoice_info('+row.order_header+')">Order Info</button> ';
+                          
+                  //        // }
+                         
+                       
+                  //      // return '<input type="checkbox" class="row-checkbox" >';
+  
+                  //     }
+                  // },
+                  // ],
+                  "order": [[ 2, "desc" ]],
+                  "initComplete": function(settings, json) 
+                  {
+                    // loop_for_timer()
+                  },
+                  "drawCallback": function( settings ) 
+                  {
+                       //   loop_for_timer()
+                  },
+                  "columnDefs": [
+                  {
+                      "targets": [0,1,2,8],
+                      "render": function(data,type,row,meta)
+                      {
+                          // console.log(row)
+                           console.log(data)
+                          // console.log(type)
+                          console.log(meta.col)
+                          console.log(meta)
+                          if(meta.col==8)
+                          {
+                              if(data=='CANCELED')
+                              return '<span    class="badge badge-danger" >'+data+'</span> ';
+                              else if (data=='ENTERED') 
+                              {
+                                  return '<span    class="badge badge-warning" >'+data+'</span> ';                    
+                              }
+                              else
+                              return '<span    class="badge badge-success" >'+data+'</span> ';             
+                      
+                          }   
+                          if(meta.col==2)
+                          {
+                            return '<span  style="color: -webkit-link;cursor: pointer; text-decoration: underline;"      onclick="invoice_info('+row.order_header+')" >'+data+'</span> ';
+
+                          }                        
+                          if(row.status =='AWAITING PAYMENT CONFIRMATION')
+                          {
+                            
+                            m++;
+                            m+=Math.floor((Math.random() * 925441470) + 1);
+                            // Time left:  <span id="countdown_'+m+'"      data-reservation="'+row.reservation_end_date_formate+'"    class="timer"></span>
+                            return '<button  type="button" class="btn btn-block bg-gradient-primary btn"   onclick="collect_href('+row.order_header+')">Payment</button><button  type="button" class="btn btn-block bg-gradient-danger btn"   onclick="return_to_salesman('+row.order_header+',false)">Return To Salesman</button>';
+
+
+                          }
+                           if(row.status =='PAYMENT RECEIVED')
+                          {
+                            m++;
+                            m+=Math.floor((Math.random() * 925441470) + 1);
+                            return '';
+                            return 'Time left:  <span id="countdown_'+m+'"      data-reservation="'+row.reservation_end_date_formate+'"    class="timer"></span>';
+                           
+                          }
+                          else
+                          {
+                           
+                            m++;
+                            m+=Math.floor((Math.random() * 925441470) + 1);
+                            return '';
+                            return 'Time left:  <span id="countdown_'+m+'"      data-reservation="'+row.reservation_end_date_formate+'"    class="timer"></span>';
+                           
+
+                           // return '';
+                          }
+                      }
+                  },
+                  ],
+
+
+
+                  rowId:function(d)
+                  {
+
+                      return (d.order_header).split(' ').join('').trim();
+                  }
+          
+                  });
+
+
+
+    $("div.toolbar").html('<p id="date_filter"><input  id="fromdate"  style="    margin-right: 20px;"  class="form-control-sm"  autocomplete="off"  /><input class="form-control-sm"  autocomplete="off"  id="todate" />    <button class="btn bg-gradient-primary btn-xs" style="     margin-bottom: 3px;   height: 30px;"  onclick="updatedate()"   tabindex="0" aria-controls="tbl_reserved_stock" type="button"><span>Set Date</span></button></p>');
+    date_range()           
+}
+
+function loop_for_timer()
+{
+ 
+   var a= document.querySelectorAll('.timer').length;
+
+   for (var i=0;i<a;i++)
+   {
+    //data-reservation='+row.reservation_end_date_formate+'
+        var hours= document.querySelectorAll('.timer')[i].getAttribute('data-reservation')
+        var id=document.querySelectorAll('.timer')[i].getAttribute('id')
+        if(document.getElementById(id).innerHTML=='')
+        {         
+            $("#"+id).fadeIn(3000);
+            createCountDown(id,hours)
+        }
+   }
+}
+
+function createCountDown(elementId, hours_1) 
+{  
+    var countDownDate = new Date(hours_1).getTime();
+    var x=elementId   
+    x= setInterval(function() 
+    {
+
+    var now = new Date().getTime(); 
+   //  countDownDate= d.getTime();  
+      var distance = countDownDate - now;       
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));    
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      if(document.getElementById(elementId) !=null)
+      {
+            document.getElementById(elementId).innerHTML = '&nbsp;&nbsp;'+ days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s ";
+
+            if(days < 2)
+            {
+                document.getElementById(elementId).style.color='red'
+            }
+            else
+            {
+                document.getElementById(elementId).style.color='black';
+            }
+           
+
+      }      
+    if (distance < 0) 
+    {
+    clearInterval(x);
+        document.getElementById(elementId).innerHTML = "&nbsp;&nbsp;EXPIRED";
+        document.getElementById(elementId).style.color='red'
+      }
+      
+  }, 1000);
+}
+
+
+
+  function invoice_info(idd)
+  {
+    ShowDIV()
+     //$("#empModal").modal("show");
+     var request_number = idd;
+     // AJAX request
+     //blockDIV('body')
+     $.ajax({
+      url: '/sales/order_info?defs='+ localStorage.getItem('defs')+'&order_number='+request_number,
+      type: "get",    
+      success: function(response)
+      { 
+          //unblockUIEntirePage()
+        // Add response in Modal body
+        HideDIV()
+        $("#empModal_data").html(response);
+  
+        // Display Modal
+        $("#empModal").modal("show"); 
+      }
+    });
+    
+  }
+
+  var glo_order_header_id = null; 
+  function return_to_salesman(ab,submited)
+  {
+    if (!submited){
+      glo_order_header_id = ab;
+
+      // alert(ab);
+      $("#remarks_modal").modal("show"); 
+      
+    } else{
+
+      if ($('#remarks').val() == ""  ){
+        return toastr.error("Please enter remarks !")
+      }
+
+
+
+      ShowDIV()
+        var d = {
+          ab:glo_order_header_id,
+          order_number:ab,
+          remarks:$('#remarks').val()
+        }
+        axios.post("/sales/return_to_salesman",d)
+        .then(function(res)
+        {   
+                  HideDIV();
+                  console.log(res.data)  
+                  $("#remarks_modal").modal("hide"); 
+                  toastr.success("Returned !");
+
+                  window.location = window.location.href;
+                  
+                }).catch(function()
+                {
+          HideDIV();
+          
+          //  $("#remarks_modal").modal("hide"); 
+        
+        })
+      
+    }
+
+
+
+
+  }
+  var link='';
+function collect_href(ab)
+{
+
+    ShowDIV()
+    var  queryString = window.location.search;
+    console.log(queryString);
+    var a= queryString.split('mid=')[1];
+    console.log(a)
+    var uid=88123
+    var mid=60106
+   // var smid= queryString.split('smid=')[1].split('&uid')[0];
+    var smid= 60106;
+    var rid=52763
+   // http://192.168.16.204:8001/ati/?mid=88123&smid=50694&uid=12445&rid=52733&aid=20043
+     link='/ati/?rid='+JSON.parse(localStorage['defs']).rid+'&aid='+JSON.parse(localStorage['defs']).aid+'&uname={{ user.username|upper }}&order_number='+ab+'&mid='+mid+'&smid='+smid+'&uid='+uid
+      
+
+    customer_email_mobile_update(ab)
+
+    //  window.open(link, '_blank');
+}
+
+
+function customer_email_mobile_update(order_number)
+  {
+    axios.get("/sales/customer_email_mobile?defs="+localStorage.getItem('defs')+'&order_number='+order_number)
+   .then(function(res)
+   {   
+        
+            HideDIV();
+            $("#form").modal("show"); 
+            $('#email1').val(res.data.email);
+            $('#mobile1').val(res.data.mobile);
+            $('#order_number_1').val(res.data.order_number);    
+            $('#customer_id_1').val(res.data.customer_id);   
+            //submit_customer_req(params)
+            console.log(res.data)  
+
+   }).catch(function()
+   {
+    
+   
+   })
+
+
+  }
+
+
+
+
+  function save_customer_mobile()
+  {   
+
+    var email=$('#email1').val();
+    var mobile= $('#mobile1').val();
+    var order_number= $('#order_number_1').val(); 
+    var customer_id=$('#customer_id_1').val();
+   
+    //alert(email)
+    //alert(mobile);
+    if(email =='' && mobile =='')
+    {
+            toaster_create('email or mobile number cannot be null')
+            return;
+    }
+    axios.get("/sales/update_customer_email_mobile?defs="+localStorage.getItem('defs')+'&order_number='+order_number+'&customer_id='+customer_id+
+    '&email='+email+'&mobile='+mobile)
+    .then(function(res)
+    {   
+         
+             if(res.data=='success')
+             {
+                alert('Customer information is updated.')
+                
+                $("#form").modal("hide");
+                window.open(link, '_blank');
+              //  submit_customer_req(); 
+
+
+             }
+             else
+             {
+                   alert(res.data)
+             }
+            
+             console.log(res.data)     
+    
+         
+ 
+    }).catch(function()
+    {
+     
+    
+    })
+
+  }
+
+
+//update_table('tbl_payment_request','ADVANCE PAYMENT INITIATED');  0
+getElementByXpath("//*[@id=\"counts_row\"]/div[2]/div").click() 
+
+
+
+
+
+
+
+
+
+
+function date_range()
+{
+            $("#fromdate").datepicker({ dateFormat: 'd/mm/yy' });
+            $("#todate").datepicker({ dateFormat: 'd/mm/yy' });
+            var d = new Date();
+            var currMonth = d.getMonth();
+            var currYear = d.getFullYear();
+            var currday=d.getDate();
+            var fromdate = localStorage.getItem("fromdate");
+            var todate = localStorage.getItem("todate");         
+            if(fromdate!=null && todate!=null)
+            {       
+                $("#todate").datepicker("setDate", todate);
+                $("#fromdate").datepicker("setDate", fromdate);
+            }
+            else
+            {       
+
+            var startDate = new Date(currYear, currMonth,currday);      
+            if(document.getElementById("todate").value==startDate)
+            {
+
+            }
+            else if(document.getElementById("todate").value.trim()=='')
+            {       
+
+            $("#todate").datepicker("setDate", startDate);
+
+            }    
+            var startDate = new Date(currYear, currMonth,currday-30 );  
+
+            if(document.getElementById("fromdate").value==startDate)
+            {
+
+
+            }
+            else if(document.getElementById("fromdate").value.trim()=='')
+            {
+
+            $("#fromdate").datepicker("setDate", startDate);
+
+            }
+            else
+            {     
+
+
+            }   
+            } 
+            updatedate4();
+}
+function updatedate4()
+{            
+        localStorage.setItem("fromdate",document.getElementById("fromdate").value); 
+        localStorage.setItem("todate",document.getElementById("todate").value);      
+}
+function updatedate()
+{            
+    localStorage.setItem("fromdate",document.getElementById("fromdate").value); 
+    localStorage.setItem("todate",document.getElementById("todate").value);
+    toastr.options.closeButton = true;   
+    toastr.success("A new date selection was made: " + document.getElementById("fromdate").value + ' to ' + document.getElementById("todate").value);
+    
+    for(var i=0;i<document.querySelectorAll('.info-box').length;i++)
+    {
+            if(document.querySelectorAll('.info-box')[i].style.background=="rgb(160, 160, 160)")
+            {
+                document.querySelectorAll('.info-box')[i].click();
+            }  
+    }     
+}  
+
+
+
+
+
+</script>
+
+
+
+
+
+{% endblock %}

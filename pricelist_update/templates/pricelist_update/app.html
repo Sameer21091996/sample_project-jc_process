@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+    .dt-buttons.btn-group.flex-wrap {
+        float: right;
+    }
+
+    #datalist_tabl tbody tr {
+        cursor: pointer;
+    }
+
+    #datalist_tabl tbody tr td:nth-child(1),
+    #datalist_tabl tbody tr td:nth-child(2),
+    #datalist_tabl tbody tr td:nth-child(3) {
+        color: blue;
+    }
+</style>
+{% endblock %}
+{% block content %}
+
+<div>
+
+    <datatableheadercomp :header_meta='defaultProp.header_meta'> </datatableheadercomp>
+
+    <div class="tab-content">
+        <!-- Content Wrapper. Contains page content -->
+        <div class="">
+            <!-- Main content -->
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <!-- <h1 class="m-0">Dashboard</h1> -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
+                          <li class="breadcrumb-item active">Dashboard v1</li> -->
+                            </ol>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
+            <div class="card-header">
+
+            </div>
+            <!-- <div class="d-flex justify-content-end py-2"><button class="btn btn-success mr-4" onclick="openItem360()">Product 360</button></div> -->
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <!-- /.data table -->
+                                <datatablecomp v-bind:tabl_meta_data="defaultProp.tabl_meta_data">
+
+                                </datatablecomp>
+                                <!-- /.data table -->
+                            </div>
+                        </div>
+                    </div>
+            </section>
+            <!-- /.content -->
+        </div>
+    </div>
+</div>
+<!-- action Modal -->
+
+<viewrowsidebarcomp :view_meta='defaultProp.view_meta'>
+    <editviewcomponent :view_meta='defaultProp.view_meta'></editviewcomponent>
+</viewrowsidebarcomp>
+</div>
+
+<columnsettingcomp>
+</columnsettingcomp>
+
+{% endblock %}
+{% block js_files %}
+
+{% include 'components/datatableheadercomp.html' %}
+{% include 'components/datatablecomp.html' %}
+{% include 'components/viewrowsidebarcomp.html' %}
+{% include 'components/editviewcomponent.html' %}
+{% include 'components/selectaccountcomp.html' %}
+
+<script>
+    vAppProperties.data.customProp = Object.assign(vAppProperties.data.customProp, {
+        'form_meta': {}
+    })
+
+    vAppProperties.mounted = function () {
+        var self = this;
+        this.customProp.form_meta = {
+            form_elm_url: 'enquiry_form_elements'
+        }
+    }
+
+    $(document).on('click', '#datalist_tabl tbody tr', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var rowData = $(this).closest('table').DataTable().row(this).data();
+        const event = new CustomEvent(
+            'addOpenIframePage',
+            { detail: ['createTab', `Edit Price List (${rowData.batch_id})`, `pricelist/update/${rowData.batch_id}/`, `${rowData.batch_id}`, true] }
+        )
+        window.parent.document.dispatchEvent(event)
+    })
+
+    function get_params() {
+        $data = {
+          "tab_status": $("#transfersTabs li a.active").data('value'),
+          "filter_date_val": ($(".gl_picker").val() != '' ? $(".gl_picker").val() : '')
+        };
+        return $data;
+    }
+
+    function handleClick(e) {
+        status = e.dataset.value
+        setTimeout(function () {
+          info = table.draw();
+        }, 150)
+    }
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,105 @@
+  <template id="edit_view_temp">
+    
+    
+
+        <formulate-form
+          v-model="formValues"
+          :schema="schema"
+          @submit="submitForm"
+        />
+        
+  </template>
+  
+  {% include 'components/selectaccountcomp.html' %}
+  {% include 'components/selectcomp.html' %}
+
+  <script>
+
+    var formComp = Vue.component('editviewcomponent', {
+        template    : '#edit_view_temp',
+        delimiters  : ['[[',']]'],
+        props       : ['view_meta'],
+        data        : function () {
+            return { 
+                formValues: {},
+                schema : [],
+                custom_data:[]                              
+                }
+        },
+        mounted(){
+          if (this.view_meta != undefined && this.view_meta.form_elm_url != undefined) {  
+            var url = this.view_meta.form_elm_url;
+            axios.get(url)
+                    .then(response => {
+                        jsonFormElm = response.data.data;
+                        this.schema = jsonFormElm
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+
+            EventBus.$on('mobile_number_selected', this.setAccountData);
+            EventBus.$on('options_selected', this.setSelectedOption);
+          }
+        },
+        methods : {
+          setAccountData(data) {
+            let account_id = data
+            this.custom_data.mobile_number  = data
+            if(account_id.startsWith('new_num_')== false ){
+              console.log('extsing account')
+              var url = (this.view_meta.account_info_url).replace(0,account_id) ;
+              axios.get(url)
+              .then(response => {
+                  data = response.data
+                  this.formValues = {
+                    party_name : data['account_info'].party_name,
+                    party_number : data['account_info'].party_number,
+                    person_title : data['account_info'].person_title,
+                    person_first_name : data['account_info'].person_first_name,
+                    person_last_name : data['account_info'].person_last_name,
+                    email_address : data['account_info'].email_address,
+                    tel_no : data['account_info'].tel_no,
+                  }; 
+              })
+              .catch(e => {
+                console.log(e)
+              });
+            }
+          },
+          setSelectedOption(data) {
+            key = Object.keys(data)
+            this.custom_data[key[0]] = data[key[0]]
+          },
+          submitForm(){
+
+            for (var key in this.custom_data) {
+              this.formValues[key] = this.custom_data[key]
+            }
+
+            let json_data = JSON.stringify(this.formValues)
+            axios.post(this.view_meta.form_submit_url,json_data ,
+                      {
+                        headers: {
+                            'X-CSRFTOKEN': '{{ csrf_token }}',
+                        },
+                    })
+                    .then(response => {
+                      var data = [response.data.list_src.slice(0,-1) , response.data.list_tab ]
+                      var event = new CustomEvent('refresTabPage', { detail: data })
+                      window.parent.document.dispatchEvent(event)
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    });
+          },
+          greet: function (event) {
+            alert('123');
+          }
+          
+        }
+    })
+
+    
+
+  </script>

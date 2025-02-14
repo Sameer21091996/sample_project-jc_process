@@ -1,0 +1,29 @@
+{% if em_data  %}
+<div class="card m-0 table-responsive p-3">
+    <table class="table table-sm table-bordered text-sm mt-2 mb-0" style="white-space:nowrap;" id="items-entry-tbl">
+        <thead>
+            <tr>
+                <td class="text-left font-weight-bold">Document Type</th>
+                <td class="text-left font-weight-bold">Document Number</td>
+                <td class="text-left font-weight-bold">Expiry Date</td>
+                <!-- <td class="text-left font-weight-bold">Created By</td> -->
+                <td class="text-left font-weight-bold">Order Number</td> 
+                <td class="text-left font-weight-bold">Action</td>  
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in em_data %}
+                <tr>
+                    <td>{{doc.document_type}}</td>
+                    <td>{{doc.document_number}}</td>
+                    <td>{{doc.expiry_date}}</td>
+                    <!-- <td>{{doc.created_by}}</td> -->
+                    <td>{{doc.order_number}}</td>
+                    <td><a href="{{doc.doc}}" download class="btn btn-secondary">Download/View</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>  
+{% endif %}
+             

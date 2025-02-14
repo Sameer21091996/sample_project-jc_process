@@ -1,0 +1,2115 @@
+{% extends "base_sale.html" %}
+{% load static %}
+{% block content %}
+
+
+
+<style>
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: black;
+
+}
+
+
+#headingTwo_1{
+
+  display: none;
+
+}
+.content-header{
+
+  display: none;
+}
+/* approver history workflow */
+#search-tbl{
+
+
+    text-align: center;
+
+}
+
+
+.popover-header{
+
+
+    background: rgb(255, 214, 204);
+    color: black;
+
+
+}
+
+
+#blink-bg{
+		color: #fff;
+		padding: 10px;
+		display: inline-block;
+		border-radius: 5px;
+		animation: blinkingBackground 2s infinite;
+	}
+	@keyframes blinkingBackground{
+		0%		{ background-color: #10c018;}
+		25%		{ background-color: #1056c0;}
+		50%		{ background-color: #ef0a1a;}
+		75%		{ background-color: #254878;}
+		100%	        { background-color: #04a1d5;}
+	}
+
+
+#customer_receipt
+{
+  /*   height: 250px;
+    overflow: scroll;
+ */
+}
+body {
+    background-color: #eee
+}
+
+.mt-70 {
+    margin-top: 70px
+}
+
+.mb-70 {
+    margin-bottom: 70px
+}
+
+.card {
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
+    border-width: 0;
+    transition: all .2s
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(26, 54, 126, 0.125);
+    border-radius: .25rem
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem
+}
+
+.vertical-timeline {
+    width: 100%;
+    position: relative;
+    padding: 1.5rem 0 1rem
+}
+
+.vertical-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 26%;
+    height: 100%;
+    width: 4px;
+    background: #e9ecef;
+    border-radius: .25rem
+}
+
+.vertical-timeline-element {
+    position: relative;
+    margin: 0 0 1rem
+}
+
+.vertical-timeline--animate .vertical-timeline-element-icon.bounce-in {
+    visibility: visible;
+    animation: cd-bounce-1 .8s
+}
+
+.vertical-timeline-element-icon {
+    position: absolute;
+    top: 0;
+    left: 60px
+}
+
+.vertical-timeline-element-icon .badge-dot-xl {
+    box-shadow: 0 0 0 5px #fff
+}
+
+.badge-dot-xl {
+    width: 18px;
+    height: 18px;
+    position: relative
+}
+
+.badge:empty {
+    display: none
+}
+
+.badge-dot-xl::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: .25rem;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -5px 0 0 -5px;
+    background: #fff
+}
+
+.vertical-timeline-element-content {
+    position: relative;
+    margin-left: 27%;
+    font-size: .8rem
+}
+
+.vertical-timeline-element-content .timeline-title {
+    font-size: .8rem;
+    text-transform: uppercase;
+    margin: 0 0 .5rem;
+    padding: 2px 0 0;
+    font-weight: bold
+}
+
+.vertical-timeline-element-content .vertical-timeline-element-date {
+    display: block;
+    position: absolute;
+    left: -25%;
+    top: 0;
+    /* padding-right: 10px; */
+    text-align: right;
+    /* color: #adb5bd; */
+    font-size: .7619rem;
+    white-space: nowrap;
+
+    border-radius: 4px;
+    background-color: #007bff;
+    display: inline-block;
+    font-weight: 600;
+    color: white;
+    padding: 5px;
+}
+
+.vertical-timeline-element-content:after {
+    content: "";
+    display: table;
+    clear: both
+}
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+<style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+.plus-item{
+
+display: none;
+
+}
+.minus-item{
+
+display: none;
+
+}
+
+.table-sm td {
+  
+    text-align: center;
+}
+
+
+
+.select2-results__option[aria-selected] {
+   
+    background: #c1c1c1; 
+}
+
+select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #909090;
+    color: white;
+}
+
+/* .select2-results{
+
+    width: 226%;
+    float: right;
+
+} */
+
+.right, .entered_price{
+
+    text-align: right;
+}
+
+.total{
+    font-weight: bold;
+}
+
+#search-tbl_filter > label{
+
+    font-weight: bold;
+}
+
+
+
+table#datagrid td:nth-child(9) {
+   display: none;
+}
+table#datagrid th:nth-child(9) {
+   display: none;
+}
+
+
+
+
+table#datagrid td:nth-child(13) {
+   display: none;
+}
+table#datagrid th:nth-child(13) {
+   display: none;
+}
+
+
+table#datagrid td:nth-child(10) {
+   display: none;
+}
+table#datagrid th:nth-child(10) {
+   display: none;
+}
+
+table#datagrid td:nth-child(11) {
+   display: none;
+}
+table#datagrid th:nth-child(11) {
+   display: none;
+}
+
+table#datagrid td:nth-child(12) {
+   display: none;
+}
+table#datagrid th:nth-child(12) {
+   display: none;
+}
+
+table#datagrid td:nth-child(14) {
+   display: none;
+}
+table#datagrid th:nth-child(14) {
+   display: none;
+}
+
+@-webkit-keyframes blink {
+    50% {
+        color: darkred;
+        background: white
+    }
+}
+@-moz-keyframes blink {
+    50% {
+        color:darkred;
+        background: white
+    }
+}
+@keyframes blink {
+    50% {
+        color: darkred;
+        background: white
+    }
+}
+.blink {
+    -webkit-animation-direction: normal;
+    -webkit-animation-duration: 5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: blink;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-direction: normal;
+    -moz-animation-duration: 5s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-name: blink;
+    -moz-animation-timing-function: linear;
+    animation-direction: normal;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-name: blink;
+    animation-timing-function: linear;
+}
+
+
+
+
+
+
+
+
+
+
+
+#show-cart td, .table-sm th {
+   
+    border: 1px solid #17a2b861;
+}
+
+#show-cart > thead > tr > td{
+
+font-weight: bold;
+
+}
+#dept_line{
+        
+        
+        }
+.badge{
+    padding: 4px;
+
+}
+   .dt-button {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: none;
+    }
+#products_wrapper > div:nth-child(2) > div
+{
+    overflow: hidden;
+    overflow-y: scroll !important;
+    height: 150px !important;
+}
+#products > thead
+{
+    position: sticky;
+    top: 0px;
+    background: white;
+}
+
+
+#search-tbl > tfoot > tr > th > input[type=text]
+{
+
+    width: 100%;
+
+}
+.tbl_font
+{
+    font-size:14px;
+}
+
+.row-checkbox
+{
+    zoom: 1.8;
+    margin-top: 2px;
+    
+}
+.dataframe{
+  
+    width: 100%;
+
+}
+/* @-webkit-keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: rgb(197, 80, 80); }
+    100% { background-color: #fff; }
+  } */
+  /* @-moz-keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: #a29c9c; }
+    100% { background-color: #fff; }
+  } */
+  @keyframes argh-my-eyes {
+    0%   { background-color: #ffdddd !important; }
+    49% { background-color: #e4aaaa !important }
+    50% { background-color: rgb(255, 255, 255); }
+    99% { background-color: #a29c9c;  }
+    100% { background-color: #fff; }
+  }
+  .forty_eight
+{
+  -webkit-animation: argh-my-eyes 1s infinite;
+  -moz-animation:    argh-my-eyes 1s infinite;
+  animation:         argh-my-eyes 5s infinite;
+  /*background-color: #ffdddd !important*/
+}
+.tw_four
+{
+    /* background-color: #ca2424 !important */
+    color: red;
+}
+tfoot 
+{
+    display: table-header-group;
+}
+
+</style>
+
+<script>
+function los_modal_s(thizz)
+{
+    $('#los_modal').modal('show');
+}
+
+document.addEventListener('DOMContentLoaded', function(event) {
+  
+$('#los_modal').on('shown.bs.modal', function (e) {
+    //alert("I want this to appear after the modal has opened!");
+    initSelect2();
+})
+
+})
+
+
+
+
+function initSelect2()
+{
+            $('select.form-control.wotags').select2({
+                    placeholder:' - Select -',
+                    dropdownAutoWidth : true,
+                    // tags: true,
+                    allowClear: true,
+                    // minimumResultsForSearch: Infinity,
+                    minimumInputLength: 0,
+                    language: {
+                        inputTooShort: $('<div>Please select </div>')
+                    },
+                    ajax: {
+                        url: "{% url 'getListOfValues' %}",
+                        dataType: 'json',
+                        delay: 250,
+                        beforeSend:function(xhr,settings){
+                            if (!this.crossDomain) {
+                                xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+                                }
+                        },
+                        data: function (params) {
+                            if ( $('.select2-results').find('.search-loader').length == 0){
+                                $('.select2-results').append('<div class="d-flex search-loader justify-content-center p-2">\
+                                <div class="spinner-grow text-info" role="status"><span class="sr-only">Loading...</span></div></div>');
+                            }
+                            console.log(this);
+                            return {
+                                q: params.term, // search term
+                                page: params.page,
+                                select_name:this.attr('name'),
+                                defs:localStorage.getItem('defs')
+
+                            };
+                    },
+                    processResults: function (data, params) {
+                            $('.search-loader').remove();
+                            params.page = params.page || 1;
+        
+                            // console.log(this);
+        
+                            return {
+                                results: data.items,
+                                pagination: {
+                                    more: (params.page * 30) < data.total_count
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    // templateSelection: function (data, container) {
+                    //     Object.keys(data).forEach(function (key) {
+                    //         $(data.element).attr('data-'+key, data[key]);  
+                    //     })
+                    //     return data.text;
+                    // }
+        
+                });
+        }
+
+function insertlos()
+{
+            ShowDIV()
+
+        var u_full_name=$('#u_full_name').html();
+        
+        $('#create_los').prop('disabled', true);
+
+        var organization_name=JSON.parse(localStorage.getItem('defs'))['organization_name'];
+
+        try 
+        {
+            var main_customner_name=$('#searchCust').select2('data')[0]['customer_name'];
+
+            var main_customer_number=$('#searchCust').select2('data')[0]['customer_number'];
+
+            var email_address =$('#searchCust').select2('data')[0]['email_address']
+
+           var additional_mobile_no=  $('#searchCust').select2('data')[0]['additional_mobile_no']
+
+        } 
+        catch (error) 
+        {
+                console.log(error);
+                alert('Please select a customer');
+                HideDIV()
+                return ;
+                // expected output: ReferenceError: nonExistentFunction is not defined
+                // Note - error messages will vary depending on browser
+        }
+
+        var data = $('.wotags').select2('data')
+        var los_reason=data[0].text;
+
+        var remarks =$('#remakrs_').val()
+
+        var qty =1
+        var cart= JSON.stringify(shoppingCart.listCart());
+        
+        
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+        axios.defaults.xsrfCookieName = "csrftoken";
+        axios.defaults.withCredentials = true;
+        axios.post('submit-los', 
+        {
+            staffname: u_full_name,
+            organization_name: organization_name,
+            main_customner_name:main_customner_name,
+            main_customer_number:main_customer_number,
+            los_reason:los_reason,
+            remarks:remarks,   
+            cart:cart  ,
+            email_address:email_address,
+            additional_mobile_no:additional_mobile_no      
+        })
+        .then(function (response) 
+        {
+            console.log(response);
+            toastr.success(response.data.message);
+            $('#los_modal').modal('hide');
+            HideDIV()
+            toastr.success(response.id)
+
+
+
+
+        })
+
+
+            //var data = parseForm('#lossofsale-form');
+           // var custphone =  data.filter(x => x.name == 'custphone')[0].value;
+            //if (custphone == "" || custphone.trim().length <10)
+           // {
+            //    return toastr.error("Please enter a valid phone number ");
+           // }
+
+           // var data = parseForm('#lossofsale-form')
+            // axios.post('submit-los',{
+        // staffname: u_full_name,
+        // organization_name: organization_name,
+        // main_customner_name:main_customner_name,
+        // main_customer_number:main_customer_number,
+        // los_reason:los_reason,
+        // remarks:remarks,
+        // qty:qty                
+            //     })
+            // .then(function (response) 
+            // {
+            //     if (response.data.flag == 'S')
+            //     {
+                   // toastr.success(response.data.message);
+                   // $('#lossofsale-form [type="reset"]').click();
+                   // window.location.href="/lossofsale/losdetails/"+window.location.search;
+                // }
+                // else if(response.data.flag == 'E')
+                // {
+                //     //toastr.error(response.data.message);
+                // }
+            // })
+            // .catch(function(error)
+            // {
+            //     toastr.error(error.response.data);
+            // })
+       
+
+
+
+}
+
+</script>
+<div class="modal" tabindex="-1" role="dialog" id="los_modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label class="control-label col-form-label">Reason for Loss of Sale <span style="color: red;">*</span></label>
+                    <select class="select wotags form-control form-control-sm text dyn-fld" type="text" style="width:100%" required><option></option> 
+                    </select>
+                </div>
+            </div>
+
+
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="remarks" class="control-label col-form-label">Remarks <span style="color: red;">*</span></label>
+                    <textarea class="form-control dyn-fld" id="remakrs_" rows="3" placeholder="Remarks"></textarea>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="insertlos()">Submit</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<!-- The Modal -->
+<div id="v-dash">
+
+    <!-- <div class="modal  fade modal-small in" id="pdi_req_modal" role="dialog">
+        <div class="modal-dialog modal-lg" style="    max-width: 86% !important;">
+          <div class="modal-content">      
+           
+            <div class="modal-header">
+              <h4 class="modal-title" style="font-weight: 800;">PDI   ( <span id="order_n">  </span>) <input type="hidden" id="order_id"  /></h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+           
+            <div class="modal-body" style="    padding-left: 3%;
+            padding-right: 3%;
+            margin-bottom: 4%;
+            margin-top: 1%;">
+            <div id="process_type">
+                
+            </div> 
+
+            <div id="header_v2">
+                
+            </div>   
+
+    
+              <p>* select lines and then click on save button to create a PDI request</p>
+            <div class="table-responsive-sm">
+                  
+                  <table id="pdi_main_tbl" class="table table-sm  table-hover table-responsive" style="white-space: nowrap;">
+                    <thead>
+                        <tr>
+                      
+                        <th></th>
+                        <th class="text-center" >SR </th>
+                        <th  class="text-center">PDI Number</th>
+                        <th  class="text-center">Item Name</th>
+                        <th  class="text-center">Item Description</th>
+
+                        <th  class="text-center">Mfg Code</th>
+                        <th  class="text-center">UOM</th>
+                        <th  class="text-center">Qty</th>
+                        <th  class="text-center">Color</th>
+                        <th  class="text-center">Year</th>
+                        <th  class="text-center">Source</th>
+                        <th  class="text-center">PDI Location</th>
+
+                        <th  class="text-center">Serial</th>
+                        <th  class="text-center">Required Date</th>
+                        <th  class="text-center">From Subinventry</th>
+                        <th  class="text-center">Job Card</th>
+
+
+                        <th  class="text-center">To Subinventry</th>
+                        <th  class="text-center">Header Status</th>
+                        <th  class="text-center">Line Status</th>
+                        <th  class="text-center">PDI Value</th>
+                        <th  class="text-center">Delivery Number</th>
+                        <th  class="text-center">Workshop Delivery</th> 
+                        <th  class="text-center">Return Reason</th>    
+                        <th  class="text-center">PDI Activities</th>                                 
+                      </tr>
+                    </thead>
+                    <tbody>
+                         
+                      <tr v-for="(row,index)  in ret_line_data">    
+                          <td    ><input    v-if="row['doc_number']==''"    type="checkbox" /></td>                    
+                        <td>[[row.line_number]]</td>
+                        <td>[[row.doc_number]]   </td>
+                       
+                      
+
+                        <td>[[row.item_code]] <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" /></td>
+                        <td>[[row.item_code]] <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" /></td>
+                      
+                            <td>[[row.mfg_code]]</td>
+                            <td>[[row.primary_uom_code]]</td>
+                            <td >[[row.ordered_qty]]</td>  
+                            <td >[[row.color]]</td>  
+                            <td >[[row.year]]</td>  
+                            <td >[[row.stock_location]]</td> 
+
+                            <td>                              
+
+                                <select    v-if="row['doc_number']==''"        class="form-control" :required="true"  style="    width: 234px;">
+                                    <option  v-for="option in ret_line_reason_lov"   v-bind:value="option.lookup_code" > [[option.meaning ]]</option>
+                                </select>
+
+                               <span   v-if="row['doc_number']!=''" >[[row.pdi_loc]]</span>
+
+                            </td>
+                            <td >[[row.vin_number]]</td>
+                            <td><input  v-if="row['doc_number']==''"        v-bind:id="row.line_number"  v-bind:value="row.delivery_date"   type="txt"  />
+                                <input  v-if="row['doc_number']!=''" disabled   v-bind:value="row.delivery_date"   type="txt"  />
+                            
+                            </td>
+
+                            <td>  [[row.subinventory]]</td>
+                            <td></td>
+                            <td>  [[row.subinventory]]</td>
+                            <td> [[row.header_status]]</td>
+                            <td> [[row.line_status]]</td>                           
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                           
+                            
+                           
+                        <td>
+                            <input type="hidden"  v-bind:value="row.order_header_id"    id="custom_table_oder_header_id" /> 
+                            <span style=" color: #E13300"  v-bind:id="[[index+1+'msg']]" ></span>
+                        </td>                    
+                        <td>
+                                <button  v-if="row['doc_number']!=''"     v-bind:id="row.line_id" style="    line-height: 12px;"      class="btn btn-sm btn-primary" onclick="line_activity(this)">Add Line Activities</button>                            
+                               
+                               <span   v-if="row['doc_number']!=''">
+
+                                <button   v-if="row['line_status']=='Draft'"     v-bind:id="row.header_id"  style="    line-height: 12px;"     onclick="request_pdi(this)"   class="btn  btn-sm btn-primary">Submit Request </button>
+                       
+
+                               </span>
+                              
+                       
+                            </td>                        
+    
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+    
+            </div>
+            
+            
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              <button type="button" class="btn bg-olive btn-flat"  id="sbtn_pdi" onclick="create_pdi_req_header()" >Save</button>
+    
+    
+            </div>
+            
+          </div>
+        
+        
+        
+        </div>
+      
+    
+    
+    
+    
+    </div> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="modal  fade modal-small in" id="pdi_req_line_modal" role="dialog">
+        <div class="modal-dialog modal-lg" style="    max-width: 50% !important;">
+          <div class="modal-content">      
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title" style="font-weight: 800;"></h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body"  id="pdi_req_line_modal_body" style=" padding-left: 3%;      padding-right: 3%; margin-bottom: 4%; margin-top: 1%;">              
+
+    
+              
+           
+  
+            </div>
+            
+            <!-- Modal footer -->
+           
+            
+          </div>
+        
+        
+        
+        </div>
+      
+    
+    
+    
+    
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+<div class="modal  fade modal-small in" id="ret_modal" role="dialog">
+    <div class="modal-dialog modal-lg" style="    max-width: 65% !important;">
+      <div class="modal-content">      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-weight: 800;">Return Sales</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+            <div class="row">
+            <div class="col-sm-2">
+            <label>
+
+                Return Type :
+
+            </label>
+
+            </div>
+            <div class="col-sm-5 text-left">
+                <select class="form-control" :required="true" id="sales_type_list" onchange="get_ret_line_type(this)">
+                    <option  v-for="option in ret_type"    v-bind:value="option.id" >[[option.text ]]</option>
+                  </select>
+
+            </div>
+            </div>
+
+            <br>
+
+          
+            <div class="table-responsive-sm">
+              
+              <table id="firstTable" class="table table-sm  table-hover table-responsive" style="white-space: nowrap;">
+                <thead>
+                    <tr>
+                    <!-- <th v-for="row in ret_line_col"> [[row.title]]</th> -->
+                    <th class="text-center" >SR </th>
+                    <th  class="text-center">Item Name</th>
+                    <th  class="text-center">Qty</th>
+                    <th  class="text-center" style="width: 4%;">Returned</th>
+                    <th  class="text-center" style="width: 4%;">Return Qty</th>
+                    <th  class="text-center">Return Category</th>        
+                    <th  class="text-center">Return Reason</th>    
+                    <th  class="text-center"  style="display: none;">Line Type</th>                                 
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row,index)  in ret_line_data">
+                    <td>[[row.line_number]]</td>
+                    <td  style="text-align: center; padding-top: 12px;" >[[row.item_code]] <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" />
+                        <input type="hidden"  v-bind:value="row.order_header_id"    id="custom_table_oder_header_id" /> 
+                        <span style=" color: #E13300"     v-bind:id="[[index+1+'msg']]" ></span></td>
+                    <td  style="text-align: center; padding-top: 12px;"  >[[row.ordered_qty]]</td>     
+                    <td style="text-align: center; padding-top: 12px;">[[row.returned]]</td>    
+                    <td ><input      type="text" class="form-control"  placeholder="0" v-bind:id="[[index+1]]"  v-bind:data_val="[[row.ordered_qty- row.returned]]"   name="qty[]"  value="0" onkeyup="receivedPurchase(this)"  /></td>  
+                    <td>
+                        <select class="form-control" :required="true" >
+                            <option  v-for="option in ret_line_reason_lov"   v-bind:value="option.lookup_code" > [[option.meaning ]]</option>
+                          </select>
+                    </td>
+                    <td><textarea style="    width: 100%;line-height: 31px;"  rows="1" placeholder="Return remarks " ></textarea><input type="hidden"  v-bind:value="row.inventory_item_id"  />                     
+                        
+                    </td>
+                    <td  style="display: none;"> 
+
+                            <select   v-bind:id="[[index+1+'ret_line_type']]"  >
+                                <option  v-for="option in ret_line_type"    v-bind:value="option.value" > [[option.display ]]</option>
+                            </select>
+
+                    </td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-olive btn-flat"  id="sbtn_r" onclick="savereturn()" >Save</button>
+
+
+        </div>
+        
+      </div>
+    
+    
+    
+    </div>
+  
+
+
+
+
+</div>
+
+
+  <!-- The Modal -->
+  <div class="modal  fade modal-small in" id="edit_order" role="dialog">
+    <div class="modal-dialog modal-lg" style="    max-width: 65% !important;">
+      <div class="modal-content">      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-weight: 800;"> Sales</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+         
+
+            <div class="row"  v-if="order_line_data.length">
+                <div class="col-6">
+                <table style="width:100%;">
+                        <tbody>  
+
+                            <tr style="line-height: 33px;">
+                                <td class="pr-3"><b>Order Number:</td>                      
+                                <td v-if="order_line_data[0]" > [[order_line_data[0].om_order_number]]</td>
+                            </tr>
+
+
+                            <tr style="line-height: 33px;">
+                                <td class="pr-3"><b>Order Type:</td>                      
+                                <td v-if="order_line_data[0]" > [[order_line_data[0].order_type]]</td>
+                            </tr>
+
+
+                            
+                            <tr style="line-height: 33px;">
+                                <td class="pr-3"><b>Customer LPO:</b></td>
+                                <td> 
+                                    [[order_line_data[0].lpo_number]] 
+                                </td>
+                            </tr>
+
+                            <tr style="line-height: 33px;"> 
+                              
+                                <td class="pr-3"><b>Order Note :</b></td>
+                                <td> 
+                                    [[order_line_data[0].order_note]] 
+                                </td>
+                            </tr>
+
+                        </tbody>
+                </table>
+           
+              
+                </div>
+                <div class="col-6">
+                
+                   <div class="col-sm-12"  id="invoice_total_v_1">
+                       <div class="card">
+                         
+                           <div class="card-body" style="    padding: 0rem;">                                
+                          
+                               
+                            <div >
+                           <div class="row ">
+
+                                   <label for="address" class="col-sm-4 col-form-label">Sub Total :</label>
+                                   <div class="col-sm-8">
+                                       <input type="text" class="form-control  form-control-sm " id="subtotal" :value="Number(t).toFixed(2)" placeholder="" readonly="">
+                                   </div>
+                           </div>
+                           <div class=" row ">
+
+                               <label for="address" class="col-sm-4 col-form-label">Tax (<span id="vat_percent">[[vat_p]]</span>) :</label>
+                               <div class="col-sm-8">
+                                   <input type="text" class="form-control  form-control-sm " id="tax" :value="Number(tv).toFixed(2)" placeholder="" readonly="">
+                               </div>
+                         </div>
+
+                         <div class="row ">
+
+                           <label for="address" class="col-sm-4 col-form-label">Discount / Surcharge :</label>
+                           <div class="col-sm-8">
+                               <input type="text" class="form-control  form-control-sm " id="discount"  :value="Number(td).toFixed(2)" placeholder="" readonly="">
+                           </div>
+                       </div>
+
+
+                        <div class=" row ">                                
+                           <label for="address" class="col-sm-4 col-form-label" >Grand Total :</label>
+                           <div class="col-sm-8">
+                               <input type="text" class="form-control  form-control-sm "  :value="Number(gt).toFixed(2)" placeholder="" readonly="">
+                         
+                             
+
+                           </div>
+                        
+                       </div>
+
+                       </div>
+
+                           </div>
+
+                       </div>
+                   </div>                       
+
+                     
+
+                </div>    
+        
+                <div class="col-0 text-right">
+                   <!-- <button id="clear-cart" class="btn btn-default btn-xs">Clear Cart</button>  
+                   -->
+                   <br>
+                 </div>
+             
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <br>
+
+          
+            <div class="table-responsive-sm">
+              
+              <table id="update_order_tbl" class="table table-sm  table-hover table-responsive" style="white-space: nowrap;">
+                <thead>
+                    <tr>
+                    <!-- <th v-for="row in ret_line_col"> [[row.title]]</th> -->
+                    <th class="text-center" >SR </th>
+                    <th  class="text-center">Item Name</th>
+                    <th  class="text-center">Qty</th>
+                    <th  class="text-center" style="width: 4%;">UOM</th>
+                    <th  class="text-center" style="width: 4%;">Color</th>
+                    <th  class="text-center" style="width: 4%;" style="display: none;" >Model Year</th>
+                    <th  class="text-center" style="width: 4%;" style="display: none;">Serial Number</th> 
+                    <th  class="text-center" style="width: 4%;">List Price</th>   
+                                     
+                    <th  class="text-center" style="width: 4%;">Price</th> 
+                    <th  class="text-center" style="width: 4%;">Discount / Surcharge</th>
+                    <th  class="text-center" style="width: 4%;">VAT</th>
+                    <th  class="text-center" style="width: 4%;">Line Total</th>
+
+                   
+                      </tr>
+                </thead>
+                <tbody>
+
+                   
+
+                  <tr v-for="(row,index)  in order_line_data">
+                    <td> [[row.line_number]]</td>
+                    <td> <span id="item_code"> [[row.item_code]]</span> <i class="fa fa-pencil-square-o" aria-hidden="true" onclick="get_stock_view_list()"></i> <br>  <input type="hidden"  v-bind:value="row.order_header"    id="custom_table_oder_number" />
+                        <input type="hidden"  v-bind:value="row.order_header_id"    id="custom_table_oder_header_id" /> 
+                        <span style=" color: #E13300"  v-bind:id="[[index+1+'msg']]" ></span></td>
+                    <td >[[row.ordered_qty]]</td>     
+                    <td>  [[row.primary_uom_code]] </td> 
+                    <td> [[row.color]]                        
+                      <!--   <input type="text" class="form-control"  placeholder="0" v-bind:id="[[index+1]]"  v-bind:data_val="[[row.ordered_qty]]"   name="qty[]"  value="0" onkeyup="receivedPurchase(this)"  />
+                      -->
+
+                    </td>  
+                    
+                    <td>
+                        [[row.year]]                
+                    </td>
+                    <td>
+                        [[row.vin_number]]
+                        <!--
+                        <textarea rows="1" placeholder="Return remarks " ></textarea><input type="hidden"  v-bind:value="row.inventory_item_id"  />                     
+                        -->
+                    </td>
+                    <td v-bind:id="[[index+'-list-price']]">[[row.list_price]]</td>
+                    <td contenteditable="true"  v-bind:id="[[index]]"   onkeyup="price_enter_change(this)" >[[row.unit_selling_price]]</td>
+                    <td  v-bind:id="[[index+'-discount']]">[[row.line_discount]]</td>    
+                    <td v-bind:id="[[index+'-line-vat']]" >[[row.line_tax]]</td>  
+                    <td v-bind:id="[[index+'-line-total']]" > [[row.line_total]]</td>  
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-flat pull-left" data-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-olive btn-flat"  id="sbtn" onclick="savereturn()" >Save</button>
+
+
+        </div>
+        
+      </div>
+    
+    
+    
+    </div>
+  
+
+
+
+
+</div>
+
+
+
+
+
+<div class="modal  fade modal-small in" id="ret_rec" role="dialog">
+    <div class="modal-dialog modal-lg" style="    max-width: 65% !important;">
+      <div class="modal-content">      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="font-weight: 800;">Return Receiving</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body" id="ret_rec_body">
+        
+
+        </div>  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn bg-olive btn-flat"  onclick="ret_receving_btn()" >Confirm Receiving</button>
+        </div>        
+      </div> 
+    
+    
+    </div>
+</div>
+
+
+
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="approver_history">
+    <div class="modal-dialog" role="document" style="    max-width: 100%;">
+      <div class="modal-content">
+        <div class="modal-header">        
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"  id="time_lines_list">       
+
+            <!-- <div class="row d-flex justify-content-center">
+                <div class="col-md-12">
+                    <div class="main-card mb-3 card">
+                        <div class="card-body">              
+                            <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="time_lines_list">
+                              
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+         
+         
+
+        </div>        
+        <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+<div class="modal" tabindex="-1" role="dialog" id="initiate_payment_modal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="    max-width: 100%;margin-left: 1%;">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h4 class="modal-title">Initiate Advance Payment</h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+
+         <div class="table-sm" id="initiate_payment_modal_data">
+           
+            
+
+         </div>
+
+         
+         
+
+        </div>
+        
+        <!-- <div class="modal-footer"    id="initiate_payment_modal_data_footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  
+
+
+  <div class="modal" tabindex="-1" role="dialog" id="reservation_modal">
+    <div class="modal-dialog" role="document" style="    max-width: 65%;">
+      <div class="modal-content">
+        <div class="modal-header">
+
+          <h4 class="modal-title">Extend Reservation <span id="res_number"></span></h4>
+
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <label> Remarks :</label> 
+           </div>
+
+           <div class="col-sm-6">
+                        <textarea   style="    width: 100%;" placeholder="Please write here"   id="remarks"></textarea>
+           </div>
+        </div><br>
+           <div class="row">
+
+            <div class="col-sm-2">
+
+                <label>Days :</label> 
+
+            </div>
+            <div class="col-sm-6">
+                  <input  style="width:100%;"  type="text" id="days" value="7" />
+
+            </div>
+        </div>
+
+
+
+
+         
+         
+
+        </div>
+        
+        <!-- <div class="modal-footer"    id="initiate_payment_modal_data_footer">
+          <button type="button" class="btn btn-secondary" onclick="extend_reser()"  >Update</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+<style>
+	.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+	.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+.initSelc2  + .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 36px;
+}
+
+.initSelc2  + .select2-container .select2-selection--single 
+{
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    height: 50px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.select2-container .select2-selection--single {
+   
+    height: 100% ; 
+    padding: 6px;
+    
+}
+</style>
+
+
+
+<div class=" common_area_cls" id="avlable_stock" >
+
+
+<div class="accordion" id="accordionExample">
+      
+    <div class="card">
+        <div class="card-header" id="headingTwo_1">
+            <h2 class="mb-0">
+                <button type="button" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree">Select FisherMan for discount</button>
+               
+               <span id="sel_cust" style="float: right;font-size: 16px;color: green;padding-top: 12px;">
+    
+              </span>
+            
+            </h2>
+           
+        </div>
+        <div id="collapseThree" class="collapse multi-collapse show" aria-labelledby="headingTwo_1">
+            <div class="card-body">
+          
+           <div class="row">
+
+
+            <div class="col-sm-12">
+
+            <div class="row"  id="cart_area">
+
+                <div class="col-sm-12">
+                
+                
+                    <div class="card">
+	  
+                    <div class="card-header">
+                      <h3 class="card-title">                      
+                       Search FisherMan                 
+                      </h3>
+                      <div class="card-tools">		
+                      
+                      
+                        <!-- <a target_='blank' id="new_customer_url" href='#' target='_blank' style="float: right;">New Customer : <i class="fa fa-plus-square" aria-hidden="true" style="float: right;margin-top: 2px; margin-left: 6px;font-size: 19px;"></i></a> 
+                        
+                       -->
+                        
+                      </div>
+                    </div>  
+
+                  
+                    <div class="card-body">
+
+                    <div class="table-responsive ">
+                            {{fisher_man_list|safe}}           
+                    </div>
+                     
+
+                   
+
+                    </div>
+                    <div class="card-footer">
+                      
+                    </div>
+                    
+                  </div>
+                </div>
+
+            
+                
+            </div>          
+               
+            
+            </div>              
+               
+
+
+            <div id="show_when_customer_selected" class="row" style="display: none;       width: 100%;   ">
+
+           
+
+            <div class="col-sm-6">
+
+
+              <div class="card" >
+                <div class="card-header">
+                  <h3 class="card-title">                      
+                  Customer Details:                 
+                  </h3>                 
+                </div>  
+  
+                  <div class="card-body" id="selected_cust_det">
+                  </div>
+
+                  
+              <div id="selected_customer_det">
+
+
+              </div>
+                
+              </div>
+
+
+
+
+            </div>
+            <div class="col-sm-6">
+   
+
+                <div class="card" >
+  
+            <div class="card-body">
+                
+                        
+
+
+                        <button type="button" id="btn_draft_it" onclick="Pre_Initialize(this)" class=" btn-sm btn btn-primary rounded-0" style="    float: right;">Get Eid Data</button>
+                
+                        <textarea class="fontStyle textinput" placeholder="Response"   style="    width: 100%;     margin-top: 12px;                    margin-bottom: 17px;" id="prgssText" disabled></textarea>
+                
+                        <br>
+                
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col" colspan="2" style="text-align: center;"> Card Holder's Public Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th scope="row"> Card Holder Photo</th>
+                                <td>  <img id="pubphoto" src=""></td>                              
+                              </tr>
+                             
+
+                              <tr>
+                                <th scope="row"> ID Number</th>
+                                <td id="IDNumber_data" > </td>                              
+                              </tr>
+                              
+                              <tr>
+                                <th scope="row"> Card Number</th>
+                                <td id="CardNumberdata" > </td>                              
+                              </tr>
+                              
+                           <!--   <tr>
+                                <th scope="row"> Card Serial Number</th>
+                                <td id="Cardsl_no" > </td>                              
+                              </tr>-->
+                              
+                              <tr>
+                                <th scope="row">Gender</th>
+                                <td id="gender" > </td>                              
+                              </tr>
+                              <tr>
+                                <th scope="row">Full Name</th>
+                                <td id="fullname" > </td>                              
+                              </tr>
+                              
+                              <tr>
+                                <th scope="row">Email</th>
+                                <td id="email" > </td>                              
+                              </tr>
+                              <tr>
+                                <th scope="row">Mobile Number</th>
+                                <td id="mobilePhoneNumber" > </td>                              
+                              </tr>
+                              
+                              <tr>
+                                <th scope="row">EID Expiry Date</th>
+                                <td id="eid_expiry_date" > </td>                              
+                              </tr>
+                              
+                              <tr>
+                                <th scope="row">EID Issue Date</th>
+                                <td id="issueDate" > </td>                              
+                              </tr>
+                              
+
+
+                              
+                            
+
+                            </tbody>
+                          </table>
+
+               
+        </div>
+
+
+                </div>
+                
+                
+         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>    
+          </div>      
+            <div   class="col-sm-12">
+
+
+            </div>   
+            
+
+          </div>
+
+        </div>         
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                           
+                           
+                
+                       <!-- </div>
+                       
+                   </div>
+                </div> -->
+                
+    
+                
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+
+
+<div id="reserved_stock" class="common_area_cls table-responsive" >
+
+   
+    <table   class="table table-bordered table-hover table-hover tbl_font table-sm"  style="    white-space: nowrap;"     id="tbl_reserved_stock"></table>
+
+</div>
+
+
+
+
+
+<style>
+
+    .dataframe{
+        white-space: nowrap;
+
+    }
+    .pull-left{float:left!important;
+        width: 75%;
+        margin-bottom: 40px;
+    }
+    .pull-right{float:right!important;}
+    #search-tbl_filter{
+    
+        width: 90%;
+    }
+    #search-tbl{
+        border: 1px solid;
+    
+    }
+    #search-tbl_filter label
+    {
+            width: 100%;
+    }
+    #search-tbl_filter label input
+    {
+            width: 97%;
+            height: 47px;
+            font-size: 20px;
+    }
+    #search-tbl_length > label > select
+    {
+        height: 47px;
+        font-size: 20px;
+            
+    }
+
+
+    
+#search-tbl > tbody > tr:hover{
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF !important;
+    cursor: pointer;
+}
+#search-tbl > tbody > tr.selected 
+{
+    background-color: rgba(41, 103, 182, 0.89);
+    color: #FFF;
+}
+
+#serach_based_on_type+span span span{
+
+    font-size: 12px;
+    padding: 0px;
+    padding-left: 6px;
+}
+
+.tbl_hist{
+  width: 10%;
+
+}
+    </style>
+{% endblock %}
+
+
+{% block script_block %}
+
+
+<script>
+
+$(document).on("click", ".row-checkbox", function()
+{
+
+  $('#show_when_customer_selected').show()
+    var tr = $(this).closest("tr");
+    var row = $(".dataframe").DataTable().rows(tr).data();
+    console.log(row[0]);   
+    var data=row[0];
+    $('#selected_cust_det').html('<table><tr><th>Customer Name : </th><td>'+data[2] + '</td></tr><tr><th> Email : </th><td>'+data[7]+'</td></tr><tr><th> Phone Number : </th><td>'+data[3]+'</td></tr></table>');
+    //alert(12)
+});
+
+
+
+
+$(document).ready( function () {
+  // fixedHeader: true,
+  //   pageLength: 15,
+  //   orderCellsTop: true,
+
+  var table=$('.dataframe').DataTable({    
+    "drawCallback": function( settings ) {
+      $('.dataframe tr:eq(0) th:eq(0)').text("ACTIONS");
+    },
+    "columnDefs": [
+        {
+                "targets": [ 0 ],
+                "render": function(data,type,row,meta)
+                {
+                    
+                    return '<input type="radio" class="row-checkbox"  data-cust="'+data+'"    id="cust_account_id" name="cust_account_id" value="'+data+'">';
+                  
+                   
+                }
+        },
+        {
+                "targets": [ 1 ],
+                visible:false
+        }
+
+
+    ]
+
+
+    ,
+
+
+    initComplete: function () 
+        {
+            count = 0;
+            this.api().columns().every( function () {
+                var title = this.header();
+                //replace spaces with dashes
+                title = $(title).html().replace(/[\W]/g, '-');
+                var column = this;
+                var select = $('<br><select id="' + title + '" class="select2" ></select><br>')
+                    .appendTo( $(column.header())) //.empty()
+                    .on( 'change', function () {
+                      //Get the "text" property from each selected data 
+                      //regex escape the value and store in array
+                      var data = $.map( $(this).select2('data'), function( value, key ) {
+                        return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
+                                 });
+                      
+                      //if no data selected use ""
+                      if (data.length === 0) {
+                        data = [""];
+                      }
+                      
+                      //join array into string with regex or (|)
+                      var val = data.join('|');
+                      
+                      //search for the option(s) selected
+                      column
+                            .search( val ? val : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' );
+                } );
+              
+              //use column title as selector and placeholder
+              $('#' + title).select2({
+                multiple: true,
+                closeOnSelect: false,
+                placeholder: "Select a " + title
+              });
+              
+              //initially clear select otherwise first option is selected
+              $('.select2').val(null).trigger('change');
+            } );
+       
+        }
+
+});
+
+    // Add filtering
+ 
+} );
+
+
+
+
+
+
+var respp='';
+function link_customer(cust_id,rec_id,thizzz)
+{
+
+  $(thizzz).prop('disabled', true);
+	var cust_id=$("input[name='cust_account_id']:checked").val()
+	axios.post("insert_eid_link",
+	{
+		rec_id: rec_id,
+		cust_id:cust_id
+
+	}).then(function(res)
+	{
+		console.log(res);
+    alert('Customer has been linked.Redirecting order creation');
+
+    $('nav li.nav-item a.active').closest('ul').closest('li').find('a.nav-link').each(function( index ) 
+    {
+
+      var tx=($( this ).text()).trim();
+      console.log(tx)
+      if(tx=='Sales')
+      {
+        var ur= $( this ).attr('href');
+        var respp=res.data
+        //alert(respp.length)
+       // alert(respp.length)
+        if((respp.length) < 10 || typeof  (respp.length) =='undefined'  ||  typeof  (respp.length) ==undefined )
+        {         
+            ur=ur+'&discount_id='+res.data
+            console.log(ur)
+            window.location.href = (ur); 
+        }
+        else
+        {
+          alert(res.data)
+        }
+        
+        
+        //$(this).click()	 
+      }
+    });
+
+
+
+	
+
+	}).catch(function(error)
+	{
+		//alert(error)
+
+	})
+
+
+}
+
+
+function Pre_Initialize(thizz)
+{
+
+  //alert(1)
+  try 
+  {
+    var cust_id= $("input[name='cust_account_id']:checked").val();
+  }
+  catch(err) 
+  {
+      // alert(123456789)
+  }
+  var cust= (typeof cust_id );
+  //alert(cust)
+  if (typeof cust == undefined   ||  cust ==  'undefined' || cust ==  'Undefined')
+  {    
+    //alert(1)  
+      toastr.success('Please first select customer');
+      return;      
+  }
+  else
+  {
+      Initialize();
+  }
+    
+
+}
+
+
+
+
+
+
+  var table_1;
+  localStorage.setItem('defs','{{defs|safe}}')
+
+
+
+</script>
+
+<script src="{% static 'custom_js/saleswores.js' %}"></script>
+
+<script src="{% static 'custom_js/cart.js' %}"></script>
+
+<script src="{% static 'custom_js/inventroy_cart.js' %}"></script>
+
+<script src="{% static 'custom_js/sum().js' %}"></script>
+
+
+
+<script type="text/javascript" language="javascript" src="{% static 'custom_js/toolkit_sample.js' %}"></script>
+<script type="text/javascript" language="javascript" src="{% static 'custom_js/eidatoolkit.js' %}"></script>
+{% endblock %}

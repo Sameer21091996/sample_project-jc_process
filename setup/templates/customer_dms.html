@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css_files %}
+<style>
+    .card{
+        box-shadow:none
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body" style="display: block; padding : 5px;">
+        <form id="dmsForm">
+            <input type="hidden" name="form_field" value="submit">
+            <div class="row">
+                <div class="col-sm-12 col-lg-4">
+                    <div class="form-group row m-0"><label for="start_date"
+                            class="col-sm-4 text-left control-label col-form-label"> Start Date
+                            </label>
+                        <div class="col-sm-8">
+                            <input type="text" id="start_date" name="start_date" placeholder=""
+                                class="form-control form-control-sm form-fld start_date_picker"
+                                style="width: 100%;background-color: white;" >
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4">
+                    <div class="form-group row m-0"><label for="end_date"
+                            class="col-sm-4 text-left control-label col-form-label"> End Date
+                            </label>
+                        <div class="col-sm-8">
+                            <input type="text" id="end_date" name="end_date" placeholder=""
+                                class="form-control form-control-sm form-fld end_date_picker"
+                                style="width: 100%;background-color: white;" >
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4 ">
+                    <div class="form-group row m-0"><label for="status"
+                            class="col-sm-4 text-left control-label col-form-label">Status</label>
+                        <div class="col-sm-8">
+                            <select id="status" name="status" placeholder=""
+                            class="form-control form-control-sm form-fld" style="width: 100%;">
+                            <option value="">Select One</option>
+                            <option value="OPEN">OPEN</option>
+                            <option value="CLOSED">CLOSED</option>
+                            <option value="PENDING">PENDING</option>
+                            <option value="SHIPPED">SHIPPED</option>
+                            <option value="PICKED">PICKED</option>
+                            <option value="CUSTOMER RETURNED">CUSTOMER RETURNED</option>
+                            <option value="APPROVED FOR RMA">APPROVED FOR RMA</option>
+                            <option value="RMA">RMA</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4 ">
+                    <div class="form-group row m-0"><label for="dms_number"
+                            class="col-sm-4 text-left control-label col-form-label">DMS Number</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="dms_number" name="dms_number" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4 ">
+                    <div class="form-group row m-0"><label for="customer_number"
+                            class="col-sm-4 text-left control-label col-form-label">Cusomter Number</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="customer_number" name="customer_number" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4 ">
+                    <div class="form-group row m-0"><label for="phone_number"
+                            class="col-sm-4 text-left control-label col-form-label">Phone Number</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="phone_number" name="phone_number" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4 ">
+                    <div class="form-group row m-0"><label for="lpo_number"
+                            class="col-sm-4 text-left control-label col-form-label">LPO Number</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="lpo_number" name="lpo_number" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-4 ">
+                    <div class="form-group row m-0"><label for="order_number"
+                            class="col-sm-4 text-left control-label col-form-label">Order Number</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="order_number" name="order_number" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" onclick="submitForm()" class="btn btn-info float-sm-right">Submit</button>
+        </form>
+    </div>
+    <div class='card-body' style="padding:0px">
+        <div id="dash-tbl_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+            <table id="dms_customer_list" class="table table-sm w-100 table-bordered no-footer dataTable"
+                style="font-size: smaller; width: 1240px;">
+                <thead class="header-style">
+                      <tr>
+                        <th>Action </th>
+                        <th>Order Number</th>
+                        <th>Status</th>
+                        <th>Warehouse</th>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Dms Do</th>
+                        <th>So Qty</th>
+                        <th>DO Qty</th>
+                        <th>RMA Qty</th>
+                        <th>Open Date</th>
+                        <th>Pending Date</th>
+                        <th>Picked Date</th>
+                        <th>Shipped Date</th>
+                        <th>Returned Date</th>
+                        <th>Closed Date</th>
+                        <th>Request Ids</th>
+                        <th>Customer Name</th> 
+                        <th>Driver Phone Number</th>   
+                    </tr>
+                </thead>
+                <tbody id="dms_customer_body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="trip" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Trip</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="trip_modal_body">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 ">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Trip Number</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="trip_number" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6 ">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Status</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="trip_status" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6 ">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Driver Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="driver_name" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6 ">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Driver Phone</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="driver_phone" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="" class="opnTxns table table-sm w-100 table-bordered no-footer dataTable"
+                style="font-size: smaller; width: 1240px;" role="grid">
+                <thead class="header-style">
+                      <tr>
+                        <th>Trip Id</th>
+                        <th>Int Ext</th>
+                        <th>Driver Name</th>
+                        <th>Vehicle Num</th>
+                        <th>Dms No</th>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Shipped Date</th>
+                        <th>Qty</th> 
+                    </tr>
+                </thead>
+                <tbody id="trip_table_body">
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal fade" id="document" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Document Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="document_modal_body">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group row m-0">
+                        <label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Batch ID
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" id="batch_id" name="" placeholder=""
+                                class="form-control form-control-sm form-fld"
+                                style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Doc Sub date</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="doc_submission_date" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Remarks</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="remarks" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Rec Status</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="record_status" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Doc Stamp Date</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="doc_stamped_date" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group row m-0"><label for=""
+                            class="col-sm-4 text-left control-label col-form-label">Reason</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="reason" name="" placeholder=""
+                                class="form-control form-control-sm form-fld" style="width: 100%;" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+</div>
+                
+            
+{% endblock %}
+{% block js_files %}
+
+
+<script>
+$( document ).ready(function() {
+    setTimeout(()=> {
+        $('.start_date_picker').flatpickr({
+            enableTime: false,
+            dateFormat: "d-M-Y",
+        });
+        $('.end_date_picker').flatpickr({
+            enableTime: false,
+            dateFormat: "d-M-Y",
+        });
+    },1000)
+});
+function submitForm(){
+    console.log("helloooo")
+    start_date = $('#start_date').val()
+    end_date = $('#end_date').val()
+    status = $('#status').val()
+    dms_number = $('#dms_number').val()
+    customer_number = $('#customer_number').val()
+    phone_number = $('#phone_number').val()
+    lpo_number = $('#lpo_number').val()
+    order_number = $('#order_number').val()
+    formData = 'start_date='+start_date+'&end_date='+end_date+'&status='+status+'&dms_number='+dms_number+'&customer_number='+customer_number+'&phone_number='+phone_number+'&lpo_number='+lpo_number+'&order_number='+order_number
+
+    if(start_date == "" && end_date == "" && status == "" && dms_number == "" && customer_number == "" && phone_number == "" && lpo_number == "" && order_number == ""){
+        toastr.error("Enter Aleast One Value")
+        return;
+    }else if(start_date != "" && end_date != "" && status == "" ){
+        toastr.error("With dates status is required")
+        return;
+    }else if(start_date == "" && end_date == "" && status == "" && order_number != "" ){
+        toastr.error("With order number status is required")
+        return;
+    }else{
+        ShowLoading()
+        axios.defaults.xsrfCookieName = "csrftoken";
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+        axios.defaults.withCredentials = true;
+            // Assuming this is a function to show a loading indicator
+        axios.post("/setup/dms_records", formData).then(function(res) {
+                console.log("heeli", res.data);
+                HideLoading()
+                var html = ""
+                if (res.data.out_variable !=''){
+                $.each(JSON.parse(res.data.out_variable), function(key, value){
+                    console.log(value)
+                    html += "<tr>"
+                    html +='<td><div class="btn-group">\
+                            <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+                                <i class="ti-menu"></i>Action\
+                            </button>\
+                            <div class="dropdown-menu animated flipInY">\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_trip_details('+value.TRIP_ID+','+value.DMS_DO+','+value.DMS_LINE_ID+')">Trip Details</a>\
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="view_documentation_details('+value.DMS_DO+')">Documentation Details</a>\
+                            </div>\
+                            </div></td>'
+                    html +='<td>'+(value.ORDER_NUMBER !== null ? value.ORDER_NUMBER : '')+'</td>'
+                    html +='<td>'+(value.STATUS !== null ? value.STATUS : '')+'</td>'
+                    html +='<td>'+(value.WAREHOUSE !== null ? value.WAREHOUSE : '')+'</td>'
+                    html +='<td>'+(value.ITEM !== null ? value.ITEM : '')+'</td>'
+                    html +='<td>'+(value.DESCRIPTION !== null ? value.DESCRIPTION : '')+'</td>'
+                    html +='<td>'+(value.DMS_DO !== null ? value.DMS_DO : '')+'</td>'
+                    html +='<td>'+(value.SO_QTY !== null ? value.SO_QTY : '')+'</td>'
+                    html +='<td>'+(value.DO_QTY !== null ? value.DO_QTY : '')+'</td>'
+                    html +='<td>'+(value.RMA_QTY !== null ? value.RMA_QTY : '')+'</td>'
+                    html +='<td>'+(value.OPEN_DATE !== null ? value.OPEN_DATE : '')+'</td>'
+                    html +='<td>'+(value.PENDING_DATE !== null ? value.PENDING_DATE : '')+'</td>'
+                    html +='<td>'+(value.PICKED_DATE !== null ? value.PICKED_DATE : '')+'</td>'
+                    html +='<td>'+(value.SHIPPED_DATE !== null ? value.SHIPPED_DATE : '')+'</td>'
+                    html +='<td>'+(value.RETURNED_DATE !== null ? value.RETURNED_DATE : '')+'</td>'
+                    html +='<td>'+(value.CLOSED_DATE !== null ? value.CLOSED_DATE : '')+'</td>'
+                    html +='<td></td>'
+                    html +='<td>'+(value.CUSTOMER_NAME !== null ? value.CUSTOMER_NAME : '')+'</td>'
+                    html +='<td>'+(value.PHONE_NUMBER !== null ? value.PHONE_NUMBER : '')+'</td>'
+                    html += "</tr>"
+                });
+            }else{
+                toastr.error("No Record Found")
+            }
+                $("#dms_customer_body").html(html);
+                
+            })
+            .catch(function(error) {
+                HideLoading();
+                toastr.error("OIC not working")
+            });
+    }
+
+}
+// $("#dmsForm").on( "submit", function( event ) {
+//         console.log("--------------------")
+//         event.preventDefault();
+//         if ($('#dmsForm')[0].checkValidity() === false) {
+//            event.stopPropagation();
+           
+//         } else {
+//         const formData = $(this).serialize();
+
+//         axios.defaults.xsrfCookieName = "csrftoken";
+//         axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+//         axios.defaults.withCredentials = true;
+//          // Assuming this is a function to show a loading indicator
+//         ShowLoading()
+//         axios.post("/setup/dms_records", formData).then(function(res) {
+//                 console.log("heeli", res.data.out_variable);
+//                 HideLoading()
+//                 var html = ""
+//                 html += "<tr>"
+//                 $.each(JSON.parse(res.data.out_variable), function(key, value){
+//                     console.log(value)
+//                     html +='<td><div class="btn-group">\
+//                             <button type="button" class="btn btn-info btn-xs waves-effect waves-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\
+//                                 <i class="ti-menu"></i>Action\
+//                             </button>\
+//                             <div class="dropdown-menu animated flipInY">\
+//                                 <a class="dropdown-item" href="javascript:void(0)" onclick="trip_details('+value.TRIP_ID+','+value.DMS_DO+','+value.DMS_LINE_ID+')">Trip Details</a>\
+//                                 <a class="dropdown-item" href="javascript:void(0)" onclick="documentation_details('+value.DMS_DO+')">Documentation Details</a>\
+//                             </div>\
+//                             </div></td>'
+//                     html +='<td>'+value.ORDER_ID+'</td>'
+//                     html +='<td>'+value.STATUS+'</td>'
+//                     html +='<td>'+value.WAREHOUSE+'</td>'
+//                     html +='<td>'+value.ITEM+'</td>'
+//                     html +='<td>'+value.DESCRIPTION+'</td>'
+//                     html +='<td>'+value.DMS_DO+'</td>'
+//                     html +='<td>'+value.SO_QTY+'</td>'
+//                     html +='<td></td>'
+//                     html +='<td>'+value.RMA_QTY+'</td>'
+//                     html +='<td>'+value.OPEN_DATE+'</td>'
+//                     html +='<td>'+value.PENDING_DATE+'</td>'
+//                     html +='<td>'+value.PICKED_DATE+'</td>'
+//                     html +='<td>'+value.RETURNED_DATE+'</td>'
+//                     html +='<td>'+value.CLOSED_DATE+'</td>'
+//                     html +='<td></td>'
+//                 });
+//                 html += "</tr>"
+//                 $("#dms_customer_body").html(html);
+//             })
+//             .catch(function(error) {
+//                 console.error("Error:", error);
+//             });
+//         }
+        
+// });
+function view_trip_details(trip_id, dms_do, dms_line){
+    console.log('trip_id',trip_id)
+    console.log('dms_do',dms_do)
+    console.log('dms_line',dms_line)
+    ShowLoading()
+    axios.get('/setup/trip_details?trip_id='+trip_id+'&dms_do='+dms_do+'&dms_line='+dms_line).then(function(res){
+        HideLoading()
+        console.log(res.data)
+        $('#driver_name').val(res.data.trip.driversname)
+        $('#driver_phone').val(res.data.trip.driversphone)
+        $('#trip_status').val(res.data.trip.status_code)
+        $('#trip_number').val(res.data.trip.trip_num)
+        html = ""
+        $.each(res.data.tripDetails, function(key, value){
+            // Parse the date string into a JavaScript Date object
+        const originalDate = new Date(value.shippeddate);
+
+        // Months in short format
+        const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        // Extract day, month, and year from the Date object
+        const day = originalDate.getDate();
+        const month = monthsShort[originalDate.getMonth()];
+        const year = originalDate.getFullYear();
+
+        // Construct the new date format
+        const newDateFormat = `${day}-${month}-${year}`;
+            html += '<tr>'
+            html += '<td>'+value.tripid+'</td>'
+            html += '<td>'+value.int_ext+'</td>'
+            html += '<td>'+value.drivername+'</td>'
+            html += '<td>'+value.vehiclenumber+'</td>'
+            html += '<td>'+value.dms_do+'</td>'
+            html += '<td>'+value.item+'</td>'
+            html += '<td>'+value.description+'</td>'
+            html += '<td>'+value.status+'</td>'
+            html += '<td>'+newDateFormat+'</td>'
+            html += '<td>'+value.quantity+'</td>'
+            html += '</tr>'
+        })
+        $('#trip_table_body').html(html)
+        $("#trip").modal("show");
+    }).catch(function(error) {
+        HideLoading();
+        toastr.error("OIC not working")
+    });
+}
+function view_documentation_details(dms_do){ 
+    ShowLoading()
+    axios.get("/setup/documentation_details?dms_do="+dms_do).then(function(res){
+        HideLoading()
+        $('#batch_id').val(res.data.batchid)
+        $('#doc_stamped_date').val(res.data.DocstampDt)
+        $('#doc_submission_date').val(res.data.DocsubDt)
+        $('#reason').val(res.data.Reason)
+        $('#remarks').val(res.data.Remarks)
+        $('#record_status').val(res.data.recstatus)
+        $("#document").modal("show");
+    }).catch(function(error) {
+                HideLoading();
+                toastr.error("OIC not working")
+            });
+}
+</script>
+{% endblock %}
